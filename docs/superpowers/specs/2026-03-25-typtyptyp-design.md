@@ -69,7 +69,7 @@ App
 - Grid of lesson cards, organised by row group (Thuisrij, Bovenrij, Onderrij, Cijfers, Volledig)
 - Each card shows: key pair (e.g. "F J"), finger label, star rating (0–3), lock state
 - States: completed (green border + stars), available (cyan border + glow + "▶ SPELEN"), locked (dimmed + lock icon)
-- A lesson unlocks when the previous lesson is completed with at least 1 star
+- Lesson 1 is unlocked by default. Every subsequent lesson (2–20) unlocks when the immediately preceding lesson (N-1) has been completed with at least 1 star. Progression is strictly linear — lesson 6 requires lesson 5, regardless of row group boundaries.
 - Back button returns to Home
 
 ### 3. Oefenscherm (Exercise)
@@ -77,19 +77,19 @@ App
 - **Progress bar** at top with lesson label and count (e.g. "4 / 12")
 - **Pixel chick** (small, left-aligned) animates based on typing state:
   - Idle: gentle bob
-  - Correct keypress: fast bob, wings up, star eye (brief, then returns to idle)
-  - Wrong keypress: horizontal shake, X eyes, drooped wings (brief, then returns to idle)
-- **Letter tiles**: target characters shown as individual tiles. Done tiles: dimmed green. Active tile: neon glow (matches finger colour). Pending tiles: dark/invisible.
+  - Correct keypress: fast bob, wings up, star eye — a `state` prop is set to `'happy'` via a Svelte store; a `setTimeout` of 600ms in `PixelChick.svelte` resets it to `'idle'`
+  - Wrong keypress: horizontal shake, X eyes, drooped wings — same mechanism, `'error'` state resets to `'idle'` after 600ms
+- **Letter tiles**: target characters shown as individual tiles. Done tiles: dimmed green. Active tile: neon glow in the finger colour of the key required to type that character (e.g. if next key is J, tile glows cyan — right index). Pending tiles: dark/invisible. Each tile's finger colour is pre-computed from the lesson's key-to-finger mapping.
 - **Keyboard** (always visible):
   - Full QWERTY layout, colour-coded by finger (8 colours)
   - Rows not yet in scope for this lesson are dimmed (opacity ~0.3)
-  - Active key: bright, glowing, matches finger colour
+  - Active key: the single key corresponding to the next character in the sequence — bright, glowing, in that key's finger colour. Only one key is active at a time.
   - Typed keys: briefly flash correct (green) or wrong (red)
 - **Hand hints** (above keyboard):
   - Pixel art left and right hand, fingers as coloured columns
   - Inactive fingers: dimmed (opacity ~0.3)
   - Active finger: full brightness, glow animation
-  - Centre label: finger name in Dutch ("LINKER RINGVINGER")
+  - Centre label: finger name in Dutch ("LINKER RINGVINGER") — updates whenever the required finger changes (i.e. when the next character requires a different finger than the previous one)
 - Stats bar at bottom: nauwkeurigheid (accuracy), woorden/min (WPM)
 - Back button exits to lesson select (with confirmation if mid-exercise)
 
@@ -201,6 +201,7 @@ For early lessons: generate rhythmic character sequences using only the current 
 
 - Profiles stored in localStorage under `typtyptyp_profiles` (array of profile objects)
 - Each profile: `{ id, name, colour, createdAt, lessonProgress: { [lessonId]: { stars, bestAccuracy, bestWpm } } }`
+- `colour` is auto-assigned from a fixed palette of 8 neon values (cycling if more than 8 profiles exist): `['#00ffee','#00ff88','#ffcc00','#ff4488','#4488ff','#ff8844','#aa44ff','#ff44ff']`. It is used as the avatar background-tint and accent colour on the profile card — not user-selectable.
 - Home screen lists all profiles; tap to select active profile
 - Active profile ID stored in `sessionStorage` (resets on browser close — intentional, so the next person opening the app picks their own profile)
 - "Nieuw profiel" prompts for a name; duplicate names are rejected with an inline error
