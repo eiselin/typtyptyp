@@ -1,1 +1,65 @@
-/* theme tokens — populated in Task 2 */
+:root {
+  --bg:        #12082a;
+  --bg-raised: #0d0620;
+  --bg-sunken: #1a0e35;
+  --border:    #1e0f40;
+
+  /* Finger colours */
+  --f-lp: #ff4488;
+  --f-lr: #ff8844;
+  --f-lm: #ffcc00;
+  --f-li: #44ff88;
+  --f-ri: #00ffee;
+  --f-rm: #4488ff;
+  --f-rr: #aa44ff;
+  --f-rp: #ff44ff;
+
+  /* UI accents */
+  --accent-cyan:   #00ffee;
+  --accent-green:  #00ff88;
+  --accent-yellow: #ffcc00;
+  --text:          #c8b8e8;
+  --text-muted:    #3a2860;
+
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Screen container: applied to each screen's root element */
+.screen {
+  background: var(--bg);
+  border: 3px solid var(--accent-cyan);
+  border-radius: 6px;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-cyan) 15%, transparent),
+              inset 0 0 40px rgba(0,0,0,.3);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 560px;
+}
+
+/* Scanline overlay on all .screen elements */
+.screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0,0,0,.06) 2px, rgba(0,0,0,.06) 4px
+  );
+  pointer-events: none;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; }
