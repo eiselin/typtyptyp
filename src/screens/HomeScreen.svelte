@@ -32,7 +32,7 @@
     </div>
     <div class="tagline">{$t('home.tagline')}</div>
 
-    <div class="chick-wrap"><PixelChick size={90} /></div>
+    <div class="chick-wrap"><PixelChick size={135} /></div>
 
     <div class="section-label">{$t('home.whosPlaying')}</div>
     <div class="profile-list">
@@ -53,8 +53,22 @@
 
     <div class="lang-row">
       <span class="lang-lbl">{$t('home.language')}</span>
-      <button class="lang-btn lang-btn--on"  on:click={() => setLanguage('nl')}>🇳🇱 Nederlands</button>
-      <button class="lang-btn" disabled>🇬🇧 English</button>
+      <button class="lang-btn lang-btn--on" on:click={() => setLanguage('nl')}>
+        <svg width="18" height="12" viewBox="0 0 9 6" style="image-rendering:pixelated;vertical-align:middle;margin-right:5px">
+          <rect width="9" height="2" fill="#AE1C28"/>
+          <rect y="2" width="9" height="2" fill="#fff"/>
+          <rect y="4" width="9" height="2" fill="#21468B"/>
+        </svg>Nederlands
+      </button>
+      <button class="lang-btn" disabled>
+        <svg width="18" height="12" viewBox="0 0 9 6" style="image-rendering:pixelated;vertical-align:middle;margin-right:5px">
+          <rect width="9" height="6" fill="#012169"/>
+          <rect x="4" width="1" height="6" fill="#fff"/>
+          <rect y="2" width="9" height="2" fill="#fff"/>
+          <rect x="4" width="1" height="6" fill="#C8102E"/>
+          <rect y="2.5" width="9" height="1" fill="#C8102E"/>
+        </svg>English
+      </button>
     </div>
 
     <button class="btn-start" disabled={!$activeProfile} on:click={() => goTo('lessons')}>
@@ -64,25 +78,26 @@
 </div>
 
 <style>
-  .home { max-width:480px; margin:0 auto; }
-  .inner { padding:24px 22px 28px; }
-  .logo { font-size:26px; font-weight:bold; letter-spacing:4px; text-align:center; margin-bottom:2px; }
-  .c1 { color:var(--accent-cyan);   text-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
-  .c2 { color:var(--accent-green);  text-shadow:0 0 14px color-mix(in srgb,var(--accent-green)  60%,transparent); }
-  .c3 { color:var(--accent-yellow); text-shadow:0 0 14px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
-  .tagline { font-size:10px; color:var(--text-muted); letter-spacing:3px; text-align:center; margin-bottom:18px; }
-  .chick-wrap { display:flex; justify-content:center; margin-bottom:20px; }
-  .section-label { font-size:10px; color:var(--text-muted); letter-spacing:2px; margin-bottom:10px; }
-  .profile-list { display:flex; flex-direction:column; gap:7px; margin-bottom:16px; }
-  .new-input-row { display:flex; gap:8px; align-items:center; }
-  .new-input-row input { flex:1; background:var(--bg-raised); border:2px solid var(--accent-cyan); border-radius:4px; padding:8px 12px; color:var(--accent-cyan); font-family:inherit; font-size:13px; }
-  .err { font-size:10px; color:#ff4455; }
-  .btn-ok { background:var(--accent-cyan); color:var(--bg); border-radius:4px; padding:8px 12px; font-weight:bold; font-size:12px; letter-spacing:1px; }
-  .lang-row { display:flex; gap:8px; align-items:center; margin-bottom:18px; }
-  .lang-lbl { font-size:10px; color:var(--text-muted); letter-spacing:1px; }
-  .lang-btn { background:var(--bg-raised); border:2px solid var(--border); border-radius:4px; padding:4px 10px; font-size:12px; color:var(--text-muted); }
+  .home { max-width:680px; margin:0 auto; }
+  .inner { padding:36px 32px 42px; }
+  .logo { font-size:40px; font-weight:bold; letter-spacing:6px; text-align:center; margin-bottom:4px; }
+  .c1 { color:var(--accent-cyan);   text-shadow:0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
+  .c2 { color:var(--accent-green);  text-shadow:0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
+  .c3 { color:var(--accent-yellow); text-shadow:0 0 18px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
+  .tagline { font-size:13px; color:var(--text); letter-spacing:4px; text-align:center; margin-bottom:24px; }
+  .chick-wrap { display:flex; justify-content:center; margin-bottom:28px; }
+  .section-label { font-size:13px; color:var(--text); letter-spacing:2px; margin-bottom:12px; }
+  .profile-list { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; }
+  .new-input-row { display:flex; gap:10px; align-items:center; }
+  .new-input-row input { flex:1; background:var(--bg-raised); border:2px solid var(--accent-cyan); border-radius:4px; padding:12px 16px; color:var(--accent-cyan); font-family:inherit; font-size:16px; }
+  .new-input-row input::placeholder { color:var(--text); opacity:.6; }
+  .err { font-size:13px; color:#ff4455; }
+  .btn-ok { background:var(--accent-cyan); color:var(--bg); border-radius:4px; padding:12px 18px; font-weight:bold; font-size:15px; letter-spacing:1px; }
+  .lang-row { display:flex; gap:10px; align-items:center; margin-bottom:24px; }
+  .lang-lbl { font-size:13px; color:var(--text); letter-spacing:1px; }
+  .lang-btn { background:var(--bg-raised); border:2px solid var(--border); border-radius:4px; padding:7px 14px; font-size:14px; font-family:inherit; color:var(--text); cursor:pointer; display:flex; align-items:center; }
   .lang-btn--on { border-color:var(--accent-cyan); color:var(--accent-cyan); }
   .lang-btn:disabled { opacity:.4; cursor:not-allowed; }
-  .btn-start { width:100%; padding:13px; font-size:15px; font-weight:bold; letter-spacing:2px; background:var(--accent-green); color:var(--bg); border-radius:4px; box-shadow:0 0 20px color-mix(in srgb,var(--accent-green) 40%,transparent); }
+  .btn-start { width:100%; padding:18px; font-size:20px; font-weight:bold; letter-spacing:3px; background:var(--accent-green); color:var(--bg); border-radius:4px; box-shadow:0 0 24px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; }
   .btn-start:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
 </style>
