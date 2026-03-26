@@ -1,18 +1,10 @@
 import wordList from './nl.json'
 
-const POOL_THRESHOLD = 40
-const VOWELS = new Set('aeiou')
-// Dutch-characteristic digraphs — filters out most English/German loanwords
-const DUTCH_PATTERN = /aa|ee|oo|ij|oe|ui|ie|ei|ou|au/
+const POOL_THRESHOLD = 10
 
 export function getWordPool(learnedKeys) {
   const keySet = new Set(learnedKeys.map(k => k.toLowerCase()))
-  return wordList.filter(word =>
-    word.length >= 4 &&
-    [...word].some(c => VOWELS.has(c)) &&
-    DUTCH_PATTERN.test(word) &&
-    [...word.toLowerCase()].every(c => keySet.has(c))
-  )
+  return wordList.filter(word => [...word].every(c => keySet.has(c)))
 }
 
 export function hasEnoughWords(learnedKeys) {
@@ -39,12 +31,6 @@ export function generateNonsense(keySet, count) {
   })
 }
 
-/**
- * Build an exercise sequence that:
- * - Uses Dutch words (filtered by Dutch digraph patterns)
- * - Guarantees the newly introduced keys appear throughout
- * - Is long enough for meaningful practice (~200 chars)
- */
 export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 200) {
   const pool = getWordPool(learnedKeys)
   const useWords = pool.length >= POOL_THRESHOLD
