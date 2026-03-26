@@ -51,7 +51,7 @@
   function finish() {
     const total = sequence.replace(/ /g, '').length
     const acc   = Math.round(((total - errors) / total) * 100)
-    const mins  = (Date.now() - startTime) / 60000
+    const mins  = Math.max((Date.now() - startTime) / 60000, 1/60)
     const wpm   = Math.round(sequence.trim().split(' ').length / mins)
     const stars = acc >= 95 ? 3 : acc >= 80 ? 2 : 1
     if ($activeProfile) updateProgress($activeProfile.id, lesson.id, { stars, bestAccuracy: acc, bestWpm: wpm })
@@ -82,7 +82,7 @@
     <div class="kbd-block">
       <HandHints {activeKey} />
       <div class="divider"></div>
-      <Keyboard {activeKey} {lessonKeySet} />
+      <Keyboard {activeKey} lessonKeys={lessonKeySet} />
     </div>
 
     <div class="stats-row">
