@@ -1,8 +1,8 @@
 import { LESSONS, FINGER_MAP, getLearnedKeys, getFingerForKey } from '../../src/lessons/index.js'
 
 describe('LESSONS', () => {
-  it('has 20 lessons', () => {
-    expect(LESSONS).toHaveLength(20)
+  it('has 15 lessons', () => {
+    expect(LESSONS).toHaveLength(15)
   })
 
   it('each lesson has id, group, keys, label fields', () => {
