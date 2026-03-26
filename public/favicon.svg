@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur-outer"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur-inner"/>
+      <feMerge>
+        <feMergeNode in="blur-outer"/>
+        <feMergeNode in="blur-inner"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="100" height="100" fill="#0d0d0d"/>
+  <text x="50" y="82" font-family="'Courier New', Courier, monospace" font-weight="bold" font-size="84" text-anchor="middle" fill="#ff8c00" filter="url(#glow)">T</text>
+  <text x="50" y="82" font-family="'Courier New', Courier, monospace" font-weight="bold" font-size="84" text-anchor="middle" fill="#fff0d0">T</text>
+</svg>
