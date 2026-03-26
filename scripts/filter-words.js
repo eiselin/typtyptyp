@@ -22,6 +22,10 @@ const filtered = raw.filter(word => {
   return true
 })
 
-const unique = [...new Set(filtered)].sort()
+// Sort by length (shorter = more common), then alphabetically within same length.
+// Cap at 15k words — sufficient for the lesson word pools.
+const unique = [...new Set(filtered)]
+  .sort((a, b) => a.length - b.length || a.localeCompare(b))
+  .slice(0, 15000)
 writeFileSync(output, JSON.stringify(unique))
 console.log(`Wrote ${unique.length} words to ${output}`)
