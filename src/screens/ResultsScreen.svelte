@@ -72,13 +72,13 @@
   .cp { position:absolute; top:0; width:6px; height:6px; border-radius:1px; }
   .inner { padding:28px 22px; text-align:center; }
   .chick-wrap { display:flex; justify-content:center; margin-bottom:12px; }
-  .stars-lbl { font-size:11px; color:var(--text-muted); letter-spacing:2px; margin-bottom:8px; }
+  .stars-lbl { font-size:12px; color:var(--text-muted); letter-spacing:2px; margin-bottom:8px; }
   .stars { display:flex; gap:8px; justify-content:center; margin-bottom:20px; }
   .star { animation:star-pop .4s ease-out both; }
   .stat-cards { display:flex; gap:16px; justify-content:center; margin-bottom:24px; }
   .stat-card { background:var(--bg-raised); border:1px solid var(--border); border-radius:6px; padding:10px 20px; }
   .sv { font-size:22px; font-weight:bold; }
-  .sl { font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
+  .sl { font-size:11px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
   .btn-row { display:flex; gap:10px; }
   .btn-retry { flex:1; padding:11px; background:var(--bg-sunken); border:1px solid var(--border); border-radius:4px; font-size:13px; font-weight:bold; letter-spacing:2px; color:var(--text); }
   .btn-next  { flex:2; padding:11px; background:var(--accent-green); color:var(--bg); border-radius:4px; font-size:14px; font-weight:bold; letter-spacing:2px; box-shadow:0 0 18px color-mix(in srgb,var(--accent-green) 40%,transparent); }

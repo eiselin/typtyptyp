@@ -61,7 +61,7 @@ export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestW
   profiles.update(ps => ps.map(p => {
     if (p.id !== profileId) return p
     const prev = p.lessonProgress[lessonId] ?? { stars: 0, bestAccuracy: 0, bestWpm: 0 }
-    return {
+    const updated = {
       ...p,
       lessonProgress: {
         ...p.lessonProgress,
@@ -72,5 +72,7 @@ export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestW
         },
       },
     }
+    if (get(activeProfile)?.id === profileId) activeProfile.set(updated)
+    return updated
   }))
 }

@@ -22,12 +22,7 @@ export const LESSONS = [
   { id:12, group:'onderrij', keys:['c',','],         label:'C ,' },
   { id:13, group:'onderrij', keys:['x','.'],         label:'X .' },
   { id:14, group:'onderrij', keys:['z','/'],         label:'Z /' },
-  { id:15, group:'cijfers',  keys:['4','7'],         label:'4 7' },
-  { id:16, group:'cijfers',  keys:['3','8'],         label:'3 8' },
-  { id:17, group:'cijfers',  keys:['2','9'],         label:'2 9' },
-  { id:18, group:'cijfers',  keys:['1','0'],         label:'1 0' },
-  { id:19, group:'volledig', keys:Object.keys(FINGER_MAP).filter(k => !'1234567890'.includes(k)), label:'VOLLEDIG I' },
-  { id:20, group:'volledig', keys:Object.keys(FINGER_MAP), label:'VOLLEDIG II' },
+  { id:15, group:'volledig', keys:Object.keys(FINGER_MAP).filter(k => !'1234567890'.includes(k)), label:'VOLLEDIG' },
 ]
 
 /** Returns all keys introduced in lessons 1..lessonId (cumulative, deduped). */

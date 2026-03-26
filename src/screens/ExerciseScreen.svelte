@@ -1,6 +1,7 @@
 <script>
+  import { get } from 'svelte/store'
   import { t } from '../i18n/index.js'
-  import { LESSONS, getLearnedKeys } from '../lessons/index.js'
+  import { LESSONS, getLearnedKeys, getFingerForKey } from '../lessons/index.js'
   import { buildExerciseSequence } from '../words/index.js'
   import { activeProfile, updateProgress } from '../stores/profiles.js'
   import { selectedLesson, goTo } from '../stores/screen.js'
@@ -10,28 +11,46 @@
   import HandHints from '../components/HandHints.svelte'
   import LetterTiles from '../components/LetterTiles.svelte'
 
-  let chick
-  let cursor = 0
-  let errors = 0
-  let startTime = null
-  let sequence = ''
+  const FINGER_VARS = {
+    lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
+    ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
+  }
 
-  $: lesson      = LESSONS.find(l => l.id === $selectedLesson)
-  $: learnedKeys = lesson ? getLearnedKeys(lesson.id) : []
-  $: lessonKeySet = new Set(lesson?.keys ?? [])
+  let chick = $state()
+  let cursor = $state(0)
+  let errors = $state(0)
+  let startTime = $state(null)
+  let sequence  = $state('')
+  let introDismissedForLesson = $state(null)
 
-  $: if (lesson) { sequence = buildExerciseSequence(learnedKeys); cursor = 0; errors = 0; startTime = null }
+  const lesson      = $derived(LESSONS.find(l => l.id === $selectedLesson))
+  const learnedKeys = $derived(lesson ? getLearnedKeys(lesson.id) : [])
 
-  $: activeKey = (sequence[cursor] !== ' ' && sequence[cursor]) ? sequence[cursor] : null
-  $: progress  = sequence.length ? cursor / sequence.length : 0
-  $: accuracy  = cursor > 0 ? Math.round(((cursor - errors) / cursor) * 100) : 100
+  const newKeys     = $derived.by(() => {
+    if (!lesson) return []
+    const prevKeys = new Set(getLearnedKeys(lesson.id - 1))
+    return lesson.keys.filter(k => !prevKeys.has(k))
+  })
+  const showIntro = $derived(!!(lesson && newKeys.length > 0 && introDismissedForLesson !== lesson.id))
+
+  $effect(() => {
+    if (lesson) {
+      sequence = buildExerciseSequence(learnedKeys, newKeys)
+      cursor = 0; errors = 0; startTime = null
+    }
+  })
+
+  const activeKey = $derived(cursor < sequence.length ? sequence[cursor] : null)
+  const progress  = $derived(sequence.length ? cursor / sequence.length : 0)
+  const accuracy  = $derived(cursor > 0 ? Math.round(((cursor - errors) / cursor) * 100) : 100)
 
   function handleKeydown(e) {
+    if (showIntro) return
     if (!sequence || cursor >= sequence.length) return
     if (e.metaKey || e.ctrlKey || e.altKey) return
     if (e.key === 'Escape') { confirmExit(); return }
+    if (e.key.length !== 1) return   // ignore modifier-only events (Shift, CapsLock…)
 
-    if (sequence[cursor] === ' ') { cursor++; return }
     if (!startTime) startTime = Date.now()
 
     if (e.key === sequence[cursor]) {
@@ -60,13 +79,32 @@
   }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="screen exercise">
   <div class="topbar">
-    <button class="back-btn" on:click={confirmExit}>{$t('nav.back')}</button>
+    <button class="back-btn" onclick={confirmExit}>{$t('nav.back')}</button>
     <span class="lesson-lbl">{lesson?.label ?? ''}</span>
   </div>
+
+  {#if showIntro}
+    <div class="intro">
+      <div class="intro-chick"><PixelChick size={90} state="happy" /></div>
+      <div class="intro-title">{$t('exercise.newKeys')}</div>
+      <div class="intro-desc">{$t('exercise.newKeysDesc')}</div>
+      <div class="intro-key-grid">
+        {#each newKeys as key}
+          {@const finger = getFingerForKey(key)}
+          {@const color  = finger ? FINGER_VARS[finger] : 'var(--text)'}
+          <div class="intro-key-card" style="--kc:{color}">
+            <div class="intro-key-char">{key.toUpperCase()}</div>
+            <div class="intro-key-finger">{finger ? $t(`finger.${finger}`) : ''}</div>
+          </div>
+        {/each}
+      </div>
+      <button class="btn-begin" onclick={() => introDismissedForLesson = lesson.id}>{$t('exercise.begin')}</button>
+    </div>
+  {:else}
   <div class="inner">
     <div class="prog-row">
       <span>{$t('exercise.progress')}</span>
@@ -75,34 +113,57 @@
     <div class="pbar"><div class="pfill" style="width:{progress*100}%"></div></div>
 
     <div class="main-row">
-      <PixelChick bind:this={chick} size={52} />
-      <LetterTiles {sequence} {cursor} />
+      <div class="chick-wrap"><PixelChick bind:this={chick} size={100} /></div>
+      <div class="tiles-wrap"><LetterTiles {sequence} {cursor} /></div>
     </div>
 
     <div class="kbd-block">
       <HandHints {activeKey} />
       <div class="divider"></div>
-      <Keyboard {activeKey} lessonKeys={lessonKeySet} />
+      <Keyboard {activeKey} />
     </div>
 
     <div class="stats-row">
       <span>{$t('exercise.accuracy')} <strong>{accuracy}%</strong></span>
     </div>
   </div>
+  {/if}
 </div>
 
 <style>
-  .screen.exercise { max-width:560px; margin:0 auto; }
-  .topbar { display:flex; justify-content:space-between; align-items:center; padding:12px 18px 0; }
-  .back-btn { font-family:inherit; font-size:11px; color:var(--text-muted); background:none; border:none; cursor:pointer; }
-  .lesson-lbl { font-size:10px; color:var(--text-muted); letter-spacing:1px; }
-  .inner { padding:10px 18px 16px; }
-  .prog-row { display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-bottom:4px; }
-  .pbar { height:5px; background:var(--bg-sunken); border-radius:3px; margin-bottom:14px; overflow:hidden; }
+  .screen.exercise { max-width:1400px; width:100%; margin:0 auto; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; padding:20px 36px 0; }
+  .back-btn { font-family:inherit; font-size:13px; color:var(--text); background:none; border:none; cursor:pointer; }
+  .lesson-lbl { font-size:13px; color:var(--text); letter-spacing:1px; }
+  .inner { padding:18px 36px 30px; }
+  .prog-row { display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; }
+  .pbar { height:6px; background:var(--bg-sunken); border-radius:3px; margin-bottom:26px; overflow:hidden; }
   .pfill { height:100%; background:linear-gradient(90deg,var(--accent-cyan),var(--accent-green)); border-radius:3px; transition:width .1s; }
-  .main-row { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
-  .kbd-block { background:var(--bg-raised); border-radius:8px; padding:12px 10px 8px; border:1px solid var(--border); }
-  .divider { height:1px; background:var(--border); margin:8px 0; }
-  .stats-row { display:flex; gap:16px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); font-size:10px; color:var(--text-muted); letter-spacing:1px; }
+  .main-row { display:flex; align-items:center; gap:32px; margin-bottom:28px; }
+  .main-row .chick-wrap { flex-shrink:0; }
+  .main-row .tiles-wrap { flex:1; min-width:0; }
+  .kbd-block { background:var(--bg-raised); border-radius:8px; padding:22px 20px 18px; border:1px solid var(--border); }
+  .divider { height:1px; background:var(--border); margin:14px 0; }
+  .stats-row { display:flex; gap:16px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border); font-size:13px; color:var(--text-muted); letter-spacing:1px; }
   .stats-row strong { color:var(--accent-green); }
+
+  /* ── Lesson intro ── */
+  .intro { display:flex; flex-direction:column; align-items:center; padding:36px 26px 40px; gap:16px; }
+  .intro-chick { margin-bottom:4px; }
+  .intro-title { font-size:22px; font-weight:bold; letter-spacing:4px; color:var(--accent-cyan); text-shadow:0 0 16px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
+  .intro-desc  { font-size:13px; color:var(--text-muted); letter-spacing:1px; }
+  .intro-key-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin:16px 0 8px; }
+  .intro-key-card {
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    background:var(--bg-raised); border:2px solid var(--kc);
+    border-radius:8px; padding:20px 28px;
+    box-shadow:0 0 18px color-mix(in srgb,var(--kc) 30%,transparent);
+  }
+  .intro-key-char   { font-size:56px; font-weight:bold; color:var(--kc); text-shadow:0 0 20px var(--kc); font-family:'Courier New',monospace; line-height:1; }
+  .intro-key-finger { font-size:12px; color:var(--kc); letter-spacing:2px; opacity:.8; }
+  .btn-begin {
+    margin-top:8px; padding:16px 48px; font-size:18px; font-weight:bold; letter-spacing:3px;
+    background:var(--accent-cyan); color:var(--bg); border-radius:4px; border:none; cursor:pointer;
+    font-family:inherit; box-shadow:0 0 24px color-mix(in srgb,var(--accent-cyan) 40%,transparent);
+  }
 </style>

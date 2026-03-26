@@ -5,7 +5,8 @@
 
   export let activeKey = null
 
-  $: activeFinger = activeKey ? getFingerForKey(activeKey) : null
+  $: isSpace      = activeKey === ' '
+  $: activeFinger = isSpace ? 'thumb' : (activeKey ? getFingerForKey(activeKey) : null)
   $: fingerLabel  = activeFinger ? get(t)(`finger.${activeFinger}`) : ''
 
   const C = {
@@ -14,8 +15,8 @@
   }
 
   // [finger-id, tip-height-px]
-  const LEFT  = [['lp',30],['lr',38],['lm',44],['li',36]]
-  const RIGHT = [['ri',36],['rm',44],['rr',38],['rp',30]]
+  const LEFT  = [['lp',55],['lr',70],['lm',80],['li',65]]
+  const RIGHT = [['ri',65],['rm',80],['rr',70],['rp',55]]
 </script>
 
 <div class="hand-hints">
@@ -29,8 +30,8 @@
           <div class="fbase"></div>
         </div>
       {/each}
-      <div class="finger thumb" style="--fc:{C.li};opacity:.3">
-        <div class="ftip" style="height:20px;transform:rotate(10deg);transform-origin:bottom center;border-radius:5px 5px 0 0;"></div>
+      <div class="finger thumb" class:active={isSpace} style="--fc:var(--accent-yellow)">
+        <div class="ftip" style="height:28px;transform:rotate(10deg);transform-origin:bottom center;border-radius:5px 5px 0 0;"></div>
         <div class="fbase"></div>
       </div>
     </div>
@@ -41,8 +42,9 @@
   <div class="hint-centre">
     <div class="hint-title">{get(t)('exercise.nextFinger')}</div>
     {#if activeFinger}
-      <div class="hint-finger" style="color:{C[activeFinger]};text-shadow:0 0 8px {C[activeFinger]}">{fingerLabel}</div>
-      <div class="hint-key"    style="color:{C[activeFinger]}">{activeKey?.toUpperCase()}</div>
+      {@const hintColor = isSpace ? 'var(--accent-yellow)' : C[activeFinger]}
+      <div class="hint-finger" style="color:{hintColor};text-shadow:0 0 8px {hintColor}">{fingerLabel}</div>
+      <div class="hint-key"    style="color:{hintColor}">{isSpace ? '⎵' : activeKey?.toUpperCase()}</div>
     {/if}
   </div>
 
@@ -50,8 +52,8 @@
   <div class="hand">
     <div class="hlabel">{get(t)('hand.right')}</div>
     <div class="fingers">
-      <div class="finger thumb" style="--fc:{C.ri};opacity:.3">
-        <div class="ftip" style="height:20px;transform:rotate(-10deg);transform-origin:bottom center;border-radius:5px 5px 0 0;"></div>
+      <div class="finger thumb" class:active={isSpace} style="--fc:var(--accent-yellow)">
+        <div class="ftip" style="height:28px;transform:rotate(-10deg);transform-origin:bottom center;border-radius:5px 5px 0 0;"></div>
         <div class="fbase"></div>
       </div>
       {#each RIGHT as [f, h]}
@@ -68,19 +70,19 @@
 <style>
   @keyframes fglow { 0%,100%{opacity:.7} 50%{opacity:1} }
 
-  .hand-hints { display:flex; justify-content:space-between; align-items:flex-end; padding:0 4px; margin-bottom:8px; }
-  .hand { display:flex; flex-direction:column; align-items:center; gap:3px; }
-  .hlabel { font-size:8px; color:var(--text-muted); letter-spacing:1px; margin-bottom:2px; }
-  .fingers { display:flex; gap:2px; align-items:flex-end; }
+  .hand-hints { display:flex; justify-content:space-between; align-items:flex-end; padding:0 8px; margin-bottom:12px; }
+  .hand { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
+  .hlabel { font-size:12px; color:var(--text-muted); letter-spacing:1px; margin-bottom:2px; }
+  .fingers { display:flex; gap:5px; align-items:flex-end; }
   .finger { display:flex; flex-direction:column; justify-content:flex-end; }
-  .ftip { width:9px; border-radius:3px 3px 0 0; background:var(--fc); opacity:.3; }
-  .fbase { width:9px; height:6px; background:var(--fc); opacity:.3; }
+  .ftip { width:18px; border-radius:5px 5px 0 0; background:var(--fc); opacity:.3; }
+  .fbase { width:18px; height:12px; background:var(--fc); opacity:.3; }
   .finger.active .ftip,
-  .finger.active .fbase { opacity:1; box-shadow:0 0 8px var(--fc); animation:fglow .9s ease-in-out infinite; }
-  .palm { width:50px; height:8px; border-radius:0 0 4px 4px; opacity:.2; }
+  .finger.active .fbase { opacity:1; box-shadow:0 0 12px var(--fc); animation:fglow .9s ease-in-out infinite; }
+  .palm { width:96px; height:14px; border-radius:0 0 6px 6px; opacity:.2; }
 
-  .hint-centre { text-align:center; padding:0 6px; }
-  .hint-title  { font-size:8px; color:var(--text-muted); letter-spacing:1px; margin-bottom:3px; }
-  .hint-finger { font-size:10px; font-weight:bold; letter-spacing:1px; line-height:1.4; }
-  .hint-key    { font-size:18px; font-weight:bold; margin-top:2px; }
+  .hint-centre { flex:1; text-align:center; padding:0 24px; }
+  .hint-title  { font-size:11px; color:var(--text-muted); letter-spacing:2px; margin-bottom:8px; }
+  .hint-finger { font-size:20px; font-weight:bold; letter-spacing:2px; line-height:1.3; }
+  .hint-key    { font-size:48px; font-weight:bold; margin-top:4px; line-height:1; }
 </style>
