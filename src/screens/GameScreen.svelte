@@ -11,7 +11,7 @@
 
   // ── Constants ───────────────────────────────────────────────
   const NUM_LANES   = 5
-  const BASE_SPEED  = 5         // % of container width per second at speed_factor 1.0
+  const BASE_SPEED  = 4         // % of container width per second at speed_factor 1.0
   const MAX_SPEED   = 3.0
   const EDGE_WARN   = 2         // pad-widths from edge triggers flash
   const NEAR_BANK   = -1        // chick lane index when on near (start) bank
@@ -19,7 +19,7 @@
 
   // ── Game state (Svelte 5 runes) ─────────────────────────────
   let showIntro    = $state(true)
-  let losing       = false    // guard: prevents loseLife() firing twice in one frame
+  let losing       = $state(false)   // guard: prevents loseLife() firing twice in one frame
   let lives        = $state(3)
   let score        = $state(0)
   let combo        = $state(0)
@@ -65,9 +65,7 @@
   }))
 
   // ── Derived: glowing pad ─────────────────────────────────────
-  // NOTE: $derived takes an expression, not a thunk. Use an IIFE to keep
-  // multi-statement logic readable while satisfying Svelte 5 syntax.
-  const glowingPadId = $derived((() => {
+  const glowingPadId = $derived.by(() => {
     // On the last lane, target is nestWord — no pad glows
     if (chickenLane === NUM_LANES - 1 && chickenPadId !== null) return null
     const nextLane = chickenLane + 1
@@ -89,7 +87,7 @@
       return ca < cb ? a : b
     })
     return best.id
-  })())
+  })
 
   // ── Derived: speed bar colour ────────────────────────────────
   const speedColour = $derived(
@@ -106,6 +104,7 @@
   // ── Game loop ────────────────────────────────────────────────
   let animId
   let lastTime = 0
+  let endGameTimer = null
 
   function updatePads(dt) {
     const GAP = 8  // minimum gap between pads, in % units
@@ -178,7 +177,8 @@
 
   function handleKey(e) {
     if (e.key === 'Escape') { togglePause(); return }
-    if (gamePhase !== 'playing' || showIntro) return
+    if (showIntro) { if (e.key === ' ') { e.preventDefault(); showIntro = false } return }
+    if (gamePhase !== 'playing') return
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return
 
     // On the final lane, typing targets the nest word
@@ -287,7 +287,7 @@
     }
     gameResults.set({ score, crossings, groupId, profileName: p?.name ?? '?', prevBest })
     // Show SPLASH overlay for 2s, then go to results
-    setTimeout(() => goTo('results'), 2000)
+    endGameTimer = setTimeout(() => goTo('results'), 2000)
   }
 
   $effect(() => {
@@ -331,7 +331,7 @@
     </div>
     <div class="hud-btns">
       <button class="pause-btn" on:click={togglePause}>{$t('arcade.pause')}</button>
-      <button class="pause-btn pause-btn--exit" on:click={() => goTo('lessons')}>{$t('arcade.exit')}</button>
+      <button class="pause-btn pause-btn--exit" on:click={() => { clearTimeout(endGameTimer); goTo('lessons') }}>{$t('arcade.exit')}</button>
     </div>
   </div>
 
@@ -436,7 +436,7 @@
           {$t('arcade.resume')}
         </button>
         <div class="pause-divider"></div>
-        <button class="pause-action-btn pause-action-btn--exit" on:click={() => goTo('lessons')}>
+        <button class="pause-action-btn pause-action-btn--exit" on:click={() => { clearTimeout(endGameTimer); goTo('lessons') }}>
           {$t('arcade.exit')}
         </button>
       </div>

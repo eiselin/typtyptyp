@@ -1,15 +1,12 @@
 <script>
-  import { FINGER_MAP } from '../lessons/index.js'
+  import { FINGER_MAP, FINGER_VARS } from '../lessons/index.js'
 
   export let sequence = ''
   export let cursor = 0
 
   const CHARS_PER_LINE = 14
 
-  const FV = {
-    lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
-    ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
-  }
+  const FV = FINGER_VARS
 
   // Split sequence into word-wrapped lines: {start, end} char ranges
   $: lineRanges = (() => {

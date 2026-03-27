@@ -38,3 +38,8 @@ export function getLearnedKeys(lessonId) {
 export function getFingerForKey(key) {
   return FINGER_MAP[key.toLowerCase()] ?? null
 }
+
+export const FINGER_VARS = {
+  lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
+  ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
+}

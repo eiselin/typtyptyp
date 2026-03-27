@@ -1,5 +1,5 @@
 <script>
-  import { FINGER_MAP } from '../lessons/index.js'
+  import { FINGER_MAP, FINGER_VARS } from '../lessons/index.js'
   import { t } from '../i18n/index.js'
 
   export let activeKey = null
@@ -14,10 +14,6 @@
     ['z','x','c','v','b','n','m',',','.','/'],
   ]
 
-  const FINGER_VARS = {
-    lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
-    ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
-  }
 
   function colour(key) {
     return FINGER_VARS[FINGER_MAP[key]] ?? 'var(--text-muted)'

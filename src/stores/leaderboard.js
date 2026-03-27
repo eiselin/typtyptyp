@@ -26,7 +26,3 @@ export function submitScore(profileName, score, groupId) {
   save(updated)
   return updated
 }
-
-export function clearLeaderboard() {
-  try { localStorage.removeItem(STORAGE_KEY) } catch {}
-}

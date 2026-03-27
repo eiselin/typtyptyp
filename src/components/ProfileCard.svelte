@@ -1,6 +1,7 @@
 <script>
   import { t } from '../i18n/index.js'
   import { renameProfile, deleteProfile } from '../stores/profiles.js'
+  import { LESSONS } from '../lessons/index.js'
   export let profile = null   // null → "new profile" card
   export let active = false
   export let onSelect = () => {}
@@ -47,7 +48,7 @@
         <div class="info">
           <div class="name">{profile.name.toUpperCase()}</div>
           <div class="meta">
-            <span class="lcount">{$t('profile.lesson')} {lessonCount}/20</span>
+            <span class="lcount">{$t('profile.lesson')} {lessonCount}/{LESSONS.length}</span>
             <span class="stars">{'★'.repeat(topStars)}{'☆'.repeat(Math.max(0, 3 - topStars))}</span>
           </div>
           <div class="pbar"><div class="pfill" style="width:{(lessonCount/20)*100}%"></div></div>

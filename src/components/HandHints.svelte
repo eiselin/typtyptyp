@@ -1,18 +1,14 @@
 <script>
-  import { get } from 'svelte/store'
   import { t } from '../i18n/index.js'
-  import { getFingerForKey } from '../lessons/index.js'
+  import { getFingerForKey, FINGER_VARS } from '../lessons/index.js'
 
   export let activeKey = null
 
   $: isSpace      = activeKey === ' '
   $: activeFinger = isSpace ? 'thumb' : (activeKey ? getFingerForKey(activeKey) : null)
-  $: fingerLabel  = activeFinger ? get(t)(`finger.${activeFinger}`) : ''
+  $: fingerLabel  = activeFinger ? $t(`finger.${activeFinger}`) : ''
 
-  const C = {
-    lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
-    ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
-  }
+  const C = FINGER_VARS
 
   // [finger-id, tip-height-px]
   const LEFT  = [['lp',55],['lr',70],['lm',80],['li',65]]
@@ -22,7 +18,7 @@
 <div class="hand-hints">
   <!-- Left hand -->
   <div class="hand">
-    <div class="hlabel">{get(t)('hand.left')}</div>
+    <div class="hlabel">{$t('hand.left')}</div>
     <div class="fingers">
       {#each LEFT as [f, h]}
         <div class="finger" class:active={f === activeFinger} style="--fc:{C[f]}">
@@ -40,7 +36,7 @@
 
   <!-- Centre label -->
   <div class="hint-centre">
-    <div class="hint-title">{get(t)('exercise.nextFinger')}</div>
+    <div class="hint-title">{$t('exercise.nextFinger')}</div>
     {#if activeFinger}
       {@const hintColor = isSpace ? 'var(--accent-yellow)' : C[activeFinger]}
       <div class="hint-finger" style="color:{hintColor};text-shadow:0 0 8px {hintColor}">{fingerLabel}</div>
@@ -50,7 +46,7 @@
 
   <!-- Right hand -->
   <div class="hand">
-    <div class="hlabel">{get(t)('hand.right')}</div>
+    <div class="hlabel">{$t('hand.right')}</div>
     <div class="fingers">
       <div class="finger thumb" class:active={isSpace} style="--fc:var(--accent-yellow)">
         <div class="ftip" style="height:28px;transform:rotate(-10deg);transform-origin:bottom center;border-radius:5px 5px 0 0;"></div>

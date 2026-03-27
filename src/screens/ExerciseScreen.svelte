@@ -1,7 +1,8 @@
+<svelte:options runes={true} />
+
 <script>
-  import { get } from 'svelte/store'
   import { t } from '../i18n/index.js'
-  import { LESSONS, getLearnedKeys, getFingerForKey } from '../lessons/index.js'
+  import { LESSONS, getLearnedKeys, getFingerForKey, FINGER_VARS } from '../lessons/index.js'
   import { buildExerciseSequence, WORD_LISTS } from '../words/index.js'
   import { lang } from '../i18n/index.js'
   import { activeProfile, updateProgress } from '../stores/profiles.js'
@@ -14,10 +15,6 @@
   import { onMount, onDestroy } from 'svelte'
   import { wipe, WIPE_MS } from '../transitions.js'
 
-  const FINGER_VARS = {
-    lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
-    ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',
-  }
 
   let chick = $state()
   let cursor = $state(0)
