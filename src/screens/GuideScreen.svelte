@@ -89,39 +89,39 @@
 </div>
 
 <style>
-  .screen.guide { max-width: 520px; margin: 0 auto; }
+  .screen.guide { max-width: 640px; margin: 0 auto; }
 
   .topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px 0; }
-  .back-btn { font-family: inherit; font-size: 12px; color: var(--text); background: none; border: none; cursor: pointer; letter-spacing: 1px; }
-  .title { font-size: 13px; color: var(--text); letter-spacing: 2px; }
+  .back-btn { font-family: inherit; font-size: 13px; color: var(--text); background: none; border: none; cursor: pointer; letter-spacing: 1px; }
+  .title { font-size: 14px; color: var(--text); letter-spacing: 2px; }
 
   .inner { padding: 14px 18px 32px; }
-  .section-title { font-size: 11px; color: var(--accent-cyan); letter-spacing: 3px; font-weight: bold; margin-bottom: 12px; margin-top: 4px; text-shadow: 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent); }
-  .body-text { font-size: 12px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.8; margin-top: 10px; }
+  .section-title { font-size: 13px; color: var(--accent-cyan); letter-spacing: 3px; font-weight: bold; margin-bottom: 12px; margin-top: 4px; text-shadow: 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent); }
+  .body-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.8; margin-top: 10px; }
   .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
   /* ── Home row ── */
   .home-row-block { background: var(--bg-sunken); border-radius: 6px; padding: 12px 10px 8px; }
-  .home-row-keys { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .home-row-keys { display: flex; gap: 2px; justify-content: center; margin-bottom: 8px; }
   .gap { color: var(--border); align-self: flex-start; padding: 8px 2px 0; font-size: 14px; }
-  .key { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .key { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 48px; overflow: hidden; }
   .key-char {
-    padding: 5px 7px; border-radius: 4px; font-size: 13px; font-weight: bold;
+    padding: 6px 0; border-radius: 4px; font-size: 15px; font-weight: bold;
     color: var(--kc); border: 1px solid var(--kc);
-    min-width: 26px; text-align: center; font-family: 'Courier New', monospace;
+    width: 36px; text-align: center; font-family: 'Courier New', monospace; flex-shrink: 0;
   }
   .key.bump .key-char { border-bottom-width: 3px; }
   .key.dim { opacity: 0.3; }
-  .key-finger { font-size: 8px; color: var(--kc); letter-spacing: 0.5px; opacity: 0.8; text-align: center; max-width: 38px; line-height: 1.3; }
-  .hand-labels { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-muted); letter-spacing: 1px; padding: 0 2px; }
+  .key-finger { font-size: 8px; color: var(--kc); letter-spacing: 0px; opacity: 0.8; text-align: center; width: 48px; line-height: 1.3; word-break: break-word; }
+  .hand-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; padding: 0 2px; }
 
   /* ── Keyboard zones ── */
   .kbd-block { background: var(--bg-sunken); border-radius: 6px; padding: 10px 12px 8px; }
-  .kbd-row { display: flex; gap: 3px; justify-content: center; margin-bottom: 3px; }
+  .kbd-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; }
   .kbd-key {
-    padding: 4px 4px; border-radius: 3px; font-size: 10px; font-weight: bold;
+    padding: 5px 4px; border-radius: 3px; font-size: 12px; font-weight: bold;
     color: var(--kc); border: 1px solid var(--kc);
-    min-width: 22px; text-align: center; font-family: 'Courier New', monospace;
+    min-width: 26px; text-align: center; font-family: 'Courier New', monospace;
   }
-  .kbd-space { text-align: center; font-size: 10px; color: var(--text-muted); letter-spacing: 2px; margin-top: 6px; }
+  .kbd-space { text-align: center; font-size: 11px; color: var(--text-muted); letter-spacing: 2px; margin-top: 6px; }
 </style>
