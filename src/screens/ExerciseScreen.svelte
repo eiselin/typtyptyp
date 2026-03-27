@@ -11,6 +11,7 @@
   import HandHints from '../components/HandHints.svelte'
   import LetterTiles from '../components/LetterTiles.svelte'
   import { onMount, onDestroy } from 'svelte'
+  import { wipe, WIPE_MS } from '../transitions.js'
 
   const FINGER_VARS = {
     lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
@@ -38,7 +39,7 @@
   $effect(() => {
     if (lesson) {
       sequence = buildExerciseSequence(learnedKeys, newKeys)
-      cursor = 0; errors = 0; startTime = null
+      cursor = 0; errors = 0; startTime = null; scaleMeasured = false
     }
   })
 
@@ -86,11 +87,13 @@
   let scaleWrap = $state()
   let naturalH = $state(0)
   let verticalPad = $state(0)
+  let scaleMeasured = $state(false)
 
   function measureAndScale() {
     if (!scaleWrap) return
     naturalH = scaleWrap.offsetHeight
     updateScale()
+    scaleMeasured = true
   }
 
   function updateScale() {
@@ -101,7 +104,7 @@
   }
 
   $effect(() => {
-    if (!showIntro && scaleWrap) measureAndScale()
+    if (!showIntro && scaleWrap) setTimeout(measureAndScale, WIPE_MS * 2 + 50)
   })
 
   onMount(() => {
@@ -120,7 +123,7 @@
 <div style="padding:{verticalPad}px 0; width:100%">
 <div
   bind:this={scaleWrap}
-  style="transform:scale({scale}); transform-origin:top center; margin-bottom:{(scale-1)*naturalH}px; width:100%"
+  style="transform:scale({scale}); transform-origin:top center; margin-bottom:{(scale-1)*naturalH}px; width:100%; opacity:{scaleMeasured || showIntro ? 1 : 0}"
 >
 <div class="screen exercise">
   <div class="topbar">
@@ -129,7 +132,7 @@
   </div>
 
   {#if showIntro}
-    <div class="intro">
+    <div class="intro" out:wipe>
       <div class="intro-chick"><PixelChick size={90} state="happy" /></div>
       <div class="intro-title">{$t('exercise.newKeys')}</div>
       <div class="intro-desc">{$t('exercise.newKeysDesc')}</div>
@@ -146,7 +149,7 @@
       <button class="btn-begin" onclick={() => introDismissedForLesson = lesson.id}>{$t('exercise.begin')}</button>
     </div>
   {:else}
-  <div class="inner">
+  <div class="inner" in:wipe={{delay:WIPE_MS}}>
     <div class="prog-row">
       <span>{$t('exercise.progress')}</span>
       <span>{cursor} / {sequence.length}</span>
