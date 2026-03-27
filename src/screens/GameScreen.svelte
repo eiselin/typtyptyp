@@ -64,6 +64,10 @@
   // NOTE: $derived takes an expression, not a thunk. Use an IIFE to keep
   // multi-statement logic readable while satisfying Svelte 5 syntax.
   const glowingPadId = $derived((() => {
+    // On the last lane, the target is the pad we're riding (typing it completes the crossing)
+    if (chickenLane === NUM_LANES - 1 && chickenPadId !== null) {
+      return chickenPadId
+    }
     const nextLane = chickenLane + 1
     if (nextLane >= NUM_LANES) return null
     const lane = lanes[nextLane]
@@ -139,9 +143,11 @@
 
   // ── Input handling ───────────────────────────────────────────
   function getGlowingPad() {
-    const nextLane = chickenLane + 1
-    if (nextLane >= NUM_LANES || !glowingPadId) return null
-    return lanes[nextLane]?.pads.find(p => p.id === glowingPadId) ?? null
+    if (!glowingPadId) return null
+    // On the last lane, the glowing pad is in the current lane (final hop to far bank)
+    const laneIndex = chickenLane === NUM_LANES - 1 ? chickenLane : chickenLane + 1
+    if (laneIndex >= NUM_LANES) return null
+    return lanes[laneIndex]?.pads.find(p => p.id === glowingPadId) ?? null
   }
 
   function handleKey(e) {
@@ -243,6 +249,12 @@
     return () => window.removeEventListener('keydown', handleKey)
   })
 
+  // Reset typed input when glowing pad changes
+  $effect(() => {
+    glowingPadId  // track changes
+    typedSoFar = ''
+  })
+
 </script>
 
 <div class="screen game">
@@ -285,7 +297,7 @@
   <div class="river">
     <!-- Far bank -->
     <div class="bank bank--far">
-      <span class="bank-label">NEST ★</span>
+      <span class="bank-label">{$t('arcade.bank.far')}</span>
       {#if chickenLane === FAR_BANK}
         <div class="bank-chick">
           <PixelChick size={36} state={chickState} />
@@ -320,7 +332,7 @@
 
     <!-- Near bank -->
     <div class="bank bank--near">
-      <span class="bank-label">START</span>
+      <span class="bank-label">{$t('arcade.bank.near')}</span>
       {#if chickenLane === NEAR_BANK}
         <div class="bank-chick">
           <PixelChick size={36} state={chickState} />
@@ -346,7 +358,7 @@
         </div>
       {/if}
     {:else}
-      <div class="input-label" style="color: var(--text-muted)">WAITING FOR PAD...</div>
+      <div class="input-label" style="color: var(--text-muted)">{$t('arcade.waitingForPad')}</div>
     {/if}
   </div>
 

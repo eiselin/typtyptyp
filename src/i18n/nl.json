@@ -76,5 +76,8 @@
   "arcade.backToLessons": "← LESSEN",
   "arcade.crossings": "OVERSTEEKJES",
   "arcade.leaderboard": "TOPLIJST",
-  "arcade.typePrompt": "TYP HET GLANZENDE PAD"
+  "arcade.typePrompt": "TYP HET GLANZENDE PAD",
+  "arcade.waitingForPad": "WACHTEN OP PAD...",
+  "arcade.bank.far": "NEST ★",
+  "arcade.bank.near": "START"
 }
