@@ -37,9 +37,9 @@
       </div>
     {:else if confirming}
       <div class="action-row">
-        <span class="confirm-lbl">DELETE?</span>
-        <button class="act act--danger" on:click={() => deleteProfile(profile.id)}>YES</button>
-        <button class="act act--dim"    on:click={() => confirming = false}>NO</button>
+        <span class="confirm-lbl">{$t('profile.confirmDelete')}</span>
+        <button class="act act--danger" on:click={() => deleteProfile(profile.id)}>{$t('profile.confirmYes')}</button>
+        <button class="act act--dim"    on:click={() => confirming = false}>{$t('profile.confirmNo')}</button>
       </div>
     {:else}
       <button class="card-body" on:click={onSelect}>
@@ -74,7 +74,8 @@
   /* Normal state */
   .card-body { flex:1; background:none; border:none; cursor:pointer; font-family:inherit;
     display:flex; align-items:center; gap:10px; padding:10px 12px; text-align:left; }
-  .card-actions { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:6px 8px 6px 0; border-left: 1px solid var(--border); margin-left: 0; }
+  .card-actions { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:6px 8px 6px 0; border-left: 1px solid var(--border); margin-left: 0; opacity:0; transition:opacity 0.15s; }
+  .card:hover .card-actions { opacity:1; }
 
   .avatar { width:32px; height:32px; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Courier New',monospace; font-size:13px; font-weight:bold; background:color-mix(in srgb,var(--pc) 20%,var(--bg)); color:var(--pc); border:1px solid color-mix(in srgb,var(--pc) 40%,transparent); }
   .info { flex:1; min-width:0; }
