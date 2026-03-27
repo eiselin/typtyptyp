@@ -42,3 +42,11 @@ describe('submitScore', () => {
     expect(getLeaderboard().some(e => e.profileName === 'NewKid')).toBe(true)
   })
 })
+
+describe('clearLeaderboard', () => {
+  it('empties the leaderboard', () => {
+    submitScore('Emma', 1000, 'home')
+    clearLeaderboard()
+    expect(getLeaderboard()).toEqual([])
+  })
+})
