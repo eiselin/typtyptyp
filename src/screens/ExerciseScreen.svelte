@@ -23,6 +23,7 @@
   let startTime = $state(null)
   let sequence  = $state('')
   let introDismissedForLesson = $state(null)
+  let showExitModal = $state(false)
 
   const lesson      = $derived(LESSONS.find(l => l.id === $selectedLesson))
   const learnedKeys = $derived(lesson ? getLearnedKeys(lesson.id) : [])
@@ -46,6 +47,7 @@
   const accuracy  = $derived(cursor > 0 ? Math.round(((cursor - errors) / cursor) * 100) : 100)
 
   function handleKeydown(e) {
+    if (showExitModal) { if (e.key === 'Escape') showExitModal = false; return }
     if (showIntro) return
     if (!sequence || cursor >= sequence.length) return
     if (e.metaKey || e.ctrlKey || e.altKey) return
@@ -65,7 +67,8 @@
   }
 
   function confirmExit() {
-    if (cursor === 0 || confirm($t('exercise.confirmExit'))) goTo('lessons')
+    if (cursor === 0) goTo('lessons')
+    else showExitModal = true
   }
 
   function finish() {
@@ -166,12 +169,25 @@
     </div>
   </div>
   {/if}
+
+  {#if showExitModal}
+    <div class="modal-backdrop" onclick={() => showExitModal = false}>
+      <div class="modal" onclick={(e) => e.stopPropagation()}>
+        <div class="modal-title">{$t('exercise.confirmTitle')}</div>
+        <div class="modal-desc">{$t('exercise.confirmDesc')}</div>
+        <div class="modal-btns">
+          <button class="modal-btn modal-btn--cancel" onclick={() => showExitModal = false}>{$t('exercise.confirmCancel')}</button>
+          <button class="modal-btn modal-btn--leave" onclick={() => goTo('lessons')}>{$t('exercise.confirmLeave')}</button>
+        </div>
+      </div>
+    </div>
+  {/if}
 </div>
 </div>
 </div>
 
 <style>
-  .screen.exercise { max-width:1400px; width:100%; margin:0 auto; }
+  .screen.exercise { max-width:1400px; width:100%; margin:0 auto; position:relative; }
   .topbar { display:flex; justify-content:space-between; align-items:center; padding:20px 36px 0; }
   .back-btn { font-family:inherit; font-size:13px; color:var(--text); background:none; border:none; cursor:pointer; }
   .lesson-lbl { font-size:13px; color:var(--text); letter-spacing:1px; }
@@ -206,4 +222,30 @@
     background:var(--accent-cyan); color:var(--bg); border-radius:4px; border:none; cursor:pointer;
     font-family:inherit; box-shadow:0 0 24px color-mix(in srgb,var(--accent-cyan) 40%,transparent);
   }
+
+  /* ── Exit modal ── */
+  .modal-backdrop {
+    position:absolute; inset:0; border-radius:inherit;
+    background:color-mix(in srgb,var(--bg) 70%,transparent);
+    backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:100;
+  }
+  .modal {
+    background:var(--bg-raised); border:2px solid var(--accent-cyan);
+    border-radius:8px; padding:32px 36px; text-align:center;
+    box-shadow:0 0 40px color-mix(in srgb,var(--accent-cyan) 25%,transparent);
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+  }
+  .modal-title { font-size:20px; font-weight:bold; letter-spacing:4px; color:var(--accent-cyan); text-shadow:0 0 12px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
+  .modal-desc  { font-size:13px; color:var(--text-muted); letter-spacing:1px; }
+  .modal-btns  { display:flex; gap:12px; margin-top:8px; }
+  .modal-btn {
+    padding:10px 28px; font-size:14px; font-weight:bold; letter-spacing:2px;
+    border-radius:4px; border:2px solid; cursor:pointer; font-family:inherit;
+  }
+  .modal-btn--cancel { background:transparent; color:var(--text-muted); border-color:var(--border); }
+  .modal-btn--cancel:hover { border-color:var(--text-muted); color:var(--text); }
+  .modal-btn--leave  { background:transparent; color:var(--accent-red,#ff4455); border-color:var(--accent-red,#ff4455); box-shadow:0 0 12px color-mix(in srgb,#ff4455 25%,transparent); }
+  .modal-btn--leave:hover { background:color-mix(in srgb,#ff4455 15%,transparent); }
 </style>
