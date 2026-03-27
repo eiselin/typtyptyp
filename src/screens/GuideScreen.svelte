@@ -89,30 +89,38 @@
 </div>
 
 <style>
-  .screen.guide { max-width: 900px; margin: 0 auto; }
+  .screen.guide {
+    /* Min width = keyboard row (can't shrink); expands up to viewport if needed */
+    width: min-content;
+    max-width: calc(100vw - 16px); /* 8px body padding each side */
+    /* Fill viewport height; inner area scrolls only if truly too tall */
+    height: calc(100dvh - 32px);   /* 16px body padding each side */
+    display: flex;
+    flex-direction: column;
+  }
 
-  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 0; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0; flex-shrink: 0; }
   .back-btn { font-family: inherit; font-size: 13px; color: var(--text); background: none; border: none; cursor: pointer; letter-spacing: 1px; }
   .title { font-size: 14px; color: var(--text); letter-spacing: 2px; }
 
-  .inner { padding: 16px 24px 40px; }
-  .section-title { font-size: 13px; color: var(--accent-cyan); letter-spacing: 3px; font-weight: bold; margin-bottom: 14px; margin-top: 4px; text-shadow: 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent); }
-  .body-text { font-size: 14px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.8; margin-top: 10px; }
-  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+  .inner { padding: 16px 20px 32px; flex: 1; overflow-y: auto; }
+  .section-title { font-size: 15px; color: var(--accent-cyan); letter-spacing: 3px; font-weight: bold; margin-bottom: 14px; margin-top: 4px; text-shadow: 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent); }
+  .body-text { font-size: 16px; color: var(--text-muted); letter-spacing: 0.5px; line-height: 1.9; margin-top: 10px; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
   /* ── Home row ── */
-  .home-row-block { background: var(--bg-sunken); border-radius: 8px; padding: 18px 14px 12px; }
-  .home-row-keys { display: flex; gap: 4px; justify-content: center; margin-bottom: 10px; }
-  .gap { color: var(--border); align-self: flex-start; padding: 12px 4px 0; font-size: 16px; }
-  .key { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 76px; overflow: hidden; }
+  .home-row-block { background: var(--bg-sunken); border-radius: 8px; padding: 16px 12px 10px; }
+  .home-row-keys { display: flex; gap: 2px; justify-content: center; margin-bottom: 10px; }
+  .gap { color: var(--border); align-self: flex-start; padding: 10px 2px 0; font-size: 14px; }
+  .key { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 96px; overflow: hidden; }
   .key-char {
     padding: 12px 0; border-radius: 6px; font-size: 26px; font-weight: bold;
     color: var(--kc); border: 1px solid var(--kc);
-    width: 60px; text-align: center; font-family: 'Courier New', monospace; flex-shrink: 0;
+    width: 72px; text-align: center; font-family: 'Courier New', monospace; flex-shrink: 0;
   }
   .key.bump .key-char { border-bottom-width: 3px; }
   .key.dim { opacity: 0.3; }
-  .key-finger { font-size: 10px; color: var(--kc); letter-spacing: 0px; opacity: 0.8; text-align: center; width: 76px; line-height: 1.3; word-break: break-word; }
+  .key-finger { font-size: 8px; color: var(--kc); opacity: 0.8; text-align: center; width: 96px; white-space: nowrap; overflow: hidden; line-height: 1.3; }
   .hand-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); letter-spacing: 1px; padding: 0 2px; }
 
   /* ── Keyboard zones ── */
