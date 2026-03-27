@@ -6,6 +6,7 @@
   import LessonSelectScreen from './screens/LessonSelectScreen.svelte'
   import ExerciseScreen     from './screens/ExerciseScreen.svelte'
   import ResultsScreen      from './screens/ResultsScreen.svelte'
+  import GuideScreen        from './screens/GuideScreen.svelte'
 
   let storageOk = true
   try { localStorage.setItem('_t','1'); localStorage.removeItem('_t') } catch { storageOk = false }
@@ -32,6 +33,10 @@
     {:else if $screen === 'results'}
       <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
         <ResultsScreen />
+      </div>
+    {:else if $screen === 'guide'}
+      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
+        <GuideScreen />
       </div>
     {/if}
   </div>

@@ -22,6 +22,10 @@
     <span class="sub">{$t('lessons.title')}</span>
   </div>
   <div class="inner">
+    <button class="guide-btn" on:click={() => goTo('guide')}>
+      <span class="guide-btn-title">{$t('lessons.guide')}</span>
+      <span class="guide-btn-action">{$t('lessons.guideAction')}</span>
+    </button>
     {#each GROUPS as group}
       <div class="group-lbl">{$t(`lessons.group.${group}`)}</div>
       <div class="grid">
@@ -66,4 +70,14 @@
   .lstars { color:#ffcc00; font-size:13px; letter-spacing:1px; }
   .lplay  { font-size:10px; color:var(--accent-cyan); letter-spacing:1px; }
   .llock  { font-size:14px; }
+  .guide-btn {
+    display: block; width: 100%; text-align: left;
+    background: var(--bg-raised); border: 2px solid var(--accent-cyan);
+    border-radius: 6px; padding: 10px 14px; margin-bottom: 14px;
+    cursor: pointer; font-family: inherit;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent-cyan) 12%, transparent);
+    white-space: nowrap;
+  }
+  .guide-btn-title { display: block; font-size: 12px; font-weight: bold; color: var(--accent-cyan); letter-spacing: 2px; }
+  .guide-btn-action { display: block; font-size: 10px; color: var(--accent-cyan); letter-spacing: 2px; opacity: 0.6; margin-top: 3px; }
 </style>
