@@ -118,3 +118,4 @@ describe('updateProgress', () => {
     expect(get(profiles)[0].lessonProgress[1].stars).toBe(3)
   })
 })
+
