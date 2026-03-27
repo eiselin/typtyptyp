@@ -82,6 +82,7 @@
   let scale = $state(1)
   let scaleWrap = $state()
   let naturalH = $state(0)
+  let verticalPad = $state(0)
 
   function measureAndScale() {
     if (!scaleWrap) return
@@ -91,7 +92,9 @@
 
   function updateScale() {
     if (!naturalH) return
-    scale = Math.min(1, (window.innerHeight - 32) / naturalH)
+    const available = window.innerHeight - 32
+    scale = Math.min(1, available / naturalH)
+    verticalPad = Math.max(0, Math.floor((available - scale * naturalH) / 2))
   }
 
   $effect(() => {
@@ -107,7 +110,7 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div style="min-height:calc(100dvh - 32px); display:flex; align-items:center; justify-content:center; width:100%">
+<div style="padding:{verticalPad}px 0; width:100%">
 <div
   bind:this={scaleWrap}
   style="transform:scale({scale}); transform-origin:top center; margin-bottom:{(scale-1)*naturalH}px; width:100%"
