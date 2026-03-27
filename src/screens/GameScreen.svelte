@@ -248,15 +248,6 @@
     return () => window.removeEventListener('keydown', handleKey)
   })
 
-  // ── Chick position helpers ───────────────────────────────────
-  function chickX() {
-    if (chickenPadId === null) return 50 // centre of bank
-    for (const lane of lanes) {
-      const pad = lane.pads.find(p => p.id === chickenPadId)
-      if (pad) return pad.x + pad.width / 2
-    }
-    return 50
-  }
 </script>
 
 <div class="screen game" on:keydown|preventDefault>
