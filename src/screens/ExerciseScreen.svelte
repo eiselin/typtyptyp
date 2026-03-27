@@ -2,7 +2,8 @@
   import { get } from 'svelte/store'
   import { t } from '../i18n/index.js'
   import { LESSONS, getLearnedKeys, getFingerForKey } from '../lessons/index.js'
-  import { buildExerciseSequence } from '../words/index.js'
+  import { buildExerciseSequence, WORD_LISTS } from '../words/index.js'
+  import { lang } from '../i18n/index.js'
   import { activeProfile, updateProgress } from '../stores/profiles.js'
   import { selectedLesson, goTo } from '../stores/screen.js'
   import { setResults } from '../stores/results.js'
@@ -38,7 +39,7 @@
 
   $effect(() => {
     if (lesson) {
-      sequence = buildExerciseSequence(learnedKeys, newKeys)
+      sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
       cursor = 0; errors = 0; startTime = null; scaleMeasured = false
     }
   })
@@ -128,7 +129,7 @@
 <div class="screen exercise">
   <div class="topbar">
     <button class="back-btn" onclick={confirmExit}>{$t('nav.back')}</button>
-    <span class="lesson-lbl">{lesson?.label ?? ''}</span>
+    <span class="lesson-lbl">{lesson ? (lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label) : ''}</span>
   </div>
 
   {#if showIntro}

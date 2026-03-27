@@ -22,7 +22,7 @@ export const LESSONS = [
   { id:12, group:'onderrij', keys:['c',','],         label:'C' },
   { id:13, group:'onderrij', keys:['x','.'],         label:'X' },
   { id:14, group:'onderrij', keys:['z','/'],         label:'Z' },
-  { id:15, group:'volledig', keys:Object.keys(FINGER_MAP).filter(k => !'1234567890'.includes(k)), label:'VOLLEDIG' },
+  { id:15, group:'volledig', keys:Object.keys(FINGER_MAP).filter(k => !'1234567890'.includes(k)), label:'VOLLEDIG', labelKey:'lessons.label.volledig' },
 ]
 
 /** Returns all keys introduced in lessons 1..lessonId (cumulative, deduped). */

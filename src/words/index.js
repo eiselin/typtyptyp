@@ -1,14 +1,17 @@
-import wordList from './nl.json'
+import nlWords from './nl.json'
+import enWords from './en.json'
+
+export const WORD_LISTS = { nl: nlWords, en: enWords }
 
 const POOL_THRESHOLD = 10
 
-export function getWordPool(learnedKeys) {
+export function getWordPool(learnedKeys, wordList = nlWords) {
   const keySet = new Set(learnedKeys.map(k => k.toLowerCase()))
   return wordList.filter(word => [...word].every(c => keySet.has(c)))
 }
 
-export function hasEnoughWords(learnedKeys) {
-  return getWordPool(learnedKeys).length >= POOL_THRESHOLD
+export function hasEnoughWords(learnedKeys, wordList = nlWords) {
+  return getWordPool(learnedKeys, wordList).length >= POOL_THRESHOLD
 }
 
 const PATTERNS = [
@@ -48,8 +51,8 @@ function makeCycler(arr) {
   }
 }
 
-export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 200) {
-  const pool = getWordPool(learnedKeys)
+export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 200, wordList = nlWords) {
+  const pool = getWordPool(learnedKeys, wordList)
   const useWords = pool.length >= POOL_THRESHOLD
 
   let allWords, newKeyWords

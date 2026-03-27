@@ -179,5 +179,62 @@
     "speelkaart", "playmobil", "duplo", "mechano",
     "vliegertje", "bubbels", "slinky", "yoyo",
     "toverkubus", "kendama", "diabolo"
+  ],
+  "vormen": [
+    "bol", "rug", "boog", "golf", "hart", "hoek", "kubus", "lijn", "punt",
+    "ring", "ruit", "ster", "vlak", "cirkel", "kegel", "kruis", "ovaal",
+    "pijl", "tegel", "spiraal", "cilinder", "driehoek", "piramide",
+    "vierkant", "zeshoek", "pentagon", "octagon", "ellips", "rechthoek",
+    "trapezium", "veelhoek"
+  ],
+  "gevoelens": [
+    "blij", "bang", "boos", "moe", "trots", "angst", "hoop", "kalm",
+    "lief", "sterk", "zwak", "vrees", "spijt", "schrik", "triest",
+    "somber", "dapper", "rustig", "vrolijk", "liefde", "aardig", "gemeen",
+    "zeker", "bezorgd", "eenzaam", "jaloers", "nerveus", "grappig",
+    "serieus", "onzeker", "verdriet", "verlegen", "gelukkig", "verrast",
+    "dankbaar", "opgewekt", "verwonderd", "verdrietig", "opgewonden"
+  ],
+  "plaatsen": [
+    "stad", "dorp", "park", "kerk", "brug", "toren", "haven", "paleis",
+    "plein", "straat", "markt", "hotel", "molen", "winkel", "jungle",
+    "woestijn", "camping", "station", "museum", "theater", "kasteel",
+    "bioscoop", "pretpark", "speeltuin", "boerderij", "vliegveld",
+    "restaurant", "supermarkt", "ziekenhuis", "dierentuin", "dorpsplein"
+  ],
+  "planten": [
+    "mos", "eik", "den", "berk", "wilg", "roos", "tulp", "munt", "tijm",
+    "salie", "iris", "brem", "vlier", "braam", "hulst", "heide", "distel",
+    "varen", "klimop", "bamboe", "cactus", "lelie", "narcis", "orchidee",
+    "palm", "aloe", "sering", "lavendel", "hyacint", "hortensia",
+    "basilicum", "zonnebloem", "appelboom", "perenboom", "brandnetel",
+    "denneappel", "rozemarijn"
+  ],
+  "ruimte": [
+    "mars", "zon", "maan", "ster", "orbit", "aarde", "venus", "raket",
+    "komeet", "uranus", "ruimte", "heelal", "nebula", "galaxie", "krater",
+    "melkweg", "jupiter", "saturnus", "mercurius", "telescoop", "astronaut",
+    "satelliet", "meteoriet", "asteroide", "atmosfeer", "maankrater"
+  ],
+  "gebouwen": [
+    "flat", "hut", "tent", "fort", "abdij", "villa", "kapel", "toren",
+    "brug", "molen", "kerk", "schuur", "iglo", "bunker", "fabriek",
+    "garage", "haven", "kazerne", "moskee", "tempel", "kantoor", "paleis",
+    "kasteel", "klooster", "basiliek", "sporthal", "restaurant",
+    "vuurtoren", "gevangenis", "kathedraal"
+  ],
+  "sprookjes": [
+    "fee", "elf", "reus", "heks", "trol", "spook", "prins", "kroon",
+    "magie", "zwaard", "schild", "schat", "spreuk", "feniks", "dwerg",
+    "fabel", "legende", "vampier", "kabouter", "koningin", "tovenaar",
+    "eenhoorn", "betoverd", "griffioen", "weerwolf", "toverstaf",
+    "zeemeermin", "goochelaar"
+  ],
+  "zeeleven": [
+    "krab", "kwal", "rif", "orca", "paling", "mossel", "oester", "haring",
+    "tonijn", "koraal", "manta", "garnaal", "inktvis", "zeekat", "zeewier",
+    "kreeft", "zeester", "zeebaars", "zeehond", "platvis", "zeepaard",
+    "zeeslak", "barracuda", "kabeljauw", "makreel", "zeewolf", "murene",
+    "zeeanemoon"
   ]
 }

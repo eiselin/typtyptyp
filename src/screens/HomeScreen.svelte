@@ -1,6 +1,6 @@
 <script>
   import { get } from 'svelte/store'
-  import { t, setLanguage } from '../i18n/index.js'
+  import { t, setLanguage, lang } from '../i18n/index.js'
   import { profiles, activeProfile, createProfile, selectProfile } from '../stores/profiles.js'
   import { goTo } from '../stores/screen.js'
   import ProfileCard from '../components/ProfileCard.svelte'
@@ -53,20 +53,24 @@
 
     <div class="lang-row">
       <span class="lang-lbl">{$t('home.language')}</span>
-      <button class="lang-btn lang-btn--on" on:click={() => setLanguage('nl')}>
+      <button class="lang-btn" class:lang-btn--on={$lang === 'nl'} on:click={() => setLanguage('nl')}>
         <svg width="18" height="12" viewBox="0 0 9 6" style="image-rendering:pixelated;vertical-align:middle;margin-right:5px">
           <rect width="9" height="2" fill="#AE1C28"/>
           <rect y="2" width="9" height="2" fill="#fff"/>
           <rect y="4" width="9" height="2" fill="#21468B"/>
         </svg>Nederlands
       </button>
-      <button class="lang-btn" disabled>
-        <svg width="18" height="12" viewBox="0 0 9 6" style="image-rendering:pixelated;vertical-align:middle;margin-right:5px">
-          <rect width="9" height="6" fill="#012169"/>
-          <rect x="4" width="1" height="6" fill="#fff"/>
-          <rect y="2" width="9" height="2" fill="#fff"/>
-          <rect x="4" width="1" height="6" fill="#C8102E"/>
-          <rect y="2.5" width="9" height="1" fill="#C8102E"/>
+      <button class="lang-btn" class:lang-btn--on={$lang === 'en'} on:click={() => setLanguage('en')}>
+        <svg width="20" height="12" viewBox="0 0 20 12" style="vertical-align:middle;margin-right:5px">
+          <rect width="20" height="12" fill="#012169"/>
+          <polygon points="0,0 2.5,0 20,10.5 20,12 17.5,12 0,1.5" fill="#fff"/>
+          <polygon points="20,0 17.5,0 0,10.5 0,12 2.5,12 20,1.5" fill="#fff"/>
+          <line x1="0" y1="0" x2="20" y2="12" stroke="#C8102E" stroke-width="1.2"/>
+          <line x1="20" y1="0" x2="0" y2="12" stroke="#C8102E" stroke-width="1.2"/>
+          <rect x="8" width="4" height="12" fill="#fff"/>
+          <rect y="4" width="20" height="4" fill="#fff"/>
+          <rect x="9" width="2" height="12" fill="#C8102E"/>
+          <rect y="5" width="20" height="2" fill="#C8102E"/>
         </svg>English
       </button>
     </div>

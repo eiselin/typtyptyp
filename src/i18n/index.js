@@ -1,9 +1,12 @@
 import { readable } from 'svelte/store'
 import nl from './nl.json'
+import en from './en.json'
 
-const LANGUAGES = { nl }
-let currentLang = 'nl'
-let _set = null
+const LANGUAGES = { nl, en }
+const STORAGE_KEY = 'typtyptyp_lang'
+let currentLang = (typeof localStorage !== 'undefined' && LANGUAGES[localStorage.getItem(STORAGE_KEY)]) ? localStorage.getItem(STORAGE_KEY) : 'nl'
+let _tSet = null
+let _langSet = null
 
 function translate(key, vars = {}) {
   const strings = LANGUAGES[currentLang] ?? LANGUAGES.nl
@@ -14,10 +17,13 @@ function translate(key, vars = {}) {
   return str
 }
 
-export const t = readable(translate, (set) => { _set = set })
+export const t = readable(translate, (set) => { _tSet = set })
+export const lang = readable(currentLang, (set) => { _langSet = set })
 
-export function setLanguage(lang) {
-  if (!LANGUAGES[lang]) return
-  currentLang = lang
-  if (_set) _set(translate)
+export function setLanguage(l) {
+  if (!LANGUAGES[l]) return
+  currentLang = l
+  if (typeof localStorage !== 'undefined') localStorage.setItem(STORAGE_KEY, l)
+  if (_tSet) _tSet(translate)
+  if (_langSet) _langSet(l)
 }

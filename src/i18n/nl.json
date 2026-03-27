@@ -43,5 +43,10 @@
   "finger.rp": "RECHTER PINK",
   "hand.left":            "LINKERHAND",
   "hand.right":           "RECHTERHAND",
-  "noSave.banner":        "Voortgang wordt niet opgeslagen (privémodus)"
+  "noSave.banner":        "Voortgang wordt niet opgeslagen (privémodus)",
+  "keyboard.space":       "⎵ SPATIEBALK",
+  "profile.new":          "+ NIEUW PROFIEL",
+  "profile.lesson":       "Les",
+  "profile.active":       "▶ ACTIEF",
+  "lessons.label.volledig": "VOLLEDIG"
 }

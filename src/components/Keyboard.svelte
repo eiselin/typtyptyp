@@ -1,5 +1,6 @@
 <script>
   import { FINGER_MAP } from '../lessons/index.js'
+  import { t } from '../i18n/index.js'
 
   export let activeKey = null
 
@@ -43,7 +44,7 @@
     <span class="key key--space"
       class:key--active={activeKey === ' '}
       style="--kc:var(--accent-yellow)"
-    >⎵ SPATIEBALK</span>
+    >{$t('keyboard.space')}</span>
   </div>
 </div>
 

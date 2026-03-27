@@ -30,7 +30,7 @@
           {@const stars = progress[lesson.id]?.stars ?? 0}
           <button class="lcard lcard--{s}" disabled={s === 'locked'}
             on:click={() => s !== 'locked' && selectLesson(lesson.id)}>
-            <div class="lkeys">{lesson.label}</div>
+            <div class="lkeys">{lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label}</div>
             {#if s === 'done'}
               <div class="lstars">{'★'.repeat(stars)}{'☆'.repeat(3-stars)}</div>
             {:else if s === 'available'}

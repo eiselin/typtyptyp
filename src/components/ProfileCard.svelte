@@ -1,4 +1,5 @@
 <script>
+  import { t } from '../i18n/index.js'
   export let profile = null   // null → "new profile" card
   export let active = false
   export let onSelect = () => {}
@@ -9,19 +10,19 @@
 </script>
 
 {#if profile === null}
-  <button class="card card--new" on:click={onSelect}>+ NIEUW PROFIEL</button>
+  <button class="card card--new" on:click={onSelect}>{$t('profile.new')}</button>
 {:else}
   <button class="card" class:card--active={active} on:click={onSelect} style="--pc:{profile.colour}">
     <div class="avatar">{initials}</div>
     <div class="info">
       <div class="name">{profile.name.toUpperCase()}</div>
       <div class="meta">
-        <span class="lcount">Les {lessonCount}/20</span>
+        <span class="lcount">{$t('profile.lesson')} {lessonCount}/20</span>
         <span class="stars">{'★'.repeat(topStars)}{'☆'.repeat(Math.max(0, 3 - topStars))}</span>
       </div>
       <div class="pbar"><div class="pfill" style="width:{(lessonCount/20)*100}%"></div></div>
     </div>
-    {#if active}<span class="badge">▶ ACTIEF</span>{/if}
+    {#if active}<span class="badge">{$t('profile.active')}</span>{/if}
   </button>
 {/if}
 
