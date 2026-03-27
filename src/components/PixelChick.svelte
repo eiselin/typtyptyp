@@ -1,5 +1,5 @@
 <script>
-  export let state = 'idle'  // 'idle' | 'happy' | 'error'
+  export let state = 'idle'  // 'idle' | 'happy' | 'error' | 'hop' | 'splash' | 'wobble'
   export let size = 60
 
   let timer = null
@@ -7,11 +7,12 @@
   export function trigger(newState) {
     state = newState
     clearTimeout(timer)
-    timer = setTimeout(() => { state = 'idle' }, 600)
+    const duration = newState === 'splash' ? 1200 : 600
+    timer = setTimeout(() => { state = 'idle' }, duration)
   }
 </script>
 
-{#if state === 'idle' || state === 'happy'}
+{#if state === 'idle' || state === 'happy' || state === 'hop' || state === 'splash' || state === 'wobble'}
   <svg width={size} height={Math.round(size * 1.08)} viewBox="0 0 12 13"
     style="image-rendering:pixelated;image-rendering:crisp-edges;display:block;"
     class="chick chick--{state}">
@@ -82,4 +83,12 @@
   .chick--idle  { animation: bob      2s    ease-in-out infinite; }
   .chick--happy { animation: bob-fast 0.4s  ease-in-out infinite; }
   .chick--error { animation: shake    0.15s ease-in-out 4; }
+
+  @keyframes hop    { 0%{transform:translateY(0)} 30%{transform:translateY(-14px)} 60%{transform:translateY(-8px)} 100%{transform:translateY(0)} }
+  @keyframes splash { 0%{transform:translateY(0) rotate(0)} 20%{transform:translateY(6px) rotate(-20deg)} 50%{transform:translateY(12px) rotate(15deg)} 80%{transform:translateX(30px) translateY(8px)} 100%{transform:translateX(60px) translateY(4px) rotate(0)} }
+  @keyframes wobble { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(15deg)} 60%{transform:rotate(-12deg)} 80%{transform:rotate(10deg)} }
+
+  .chick--hop    { animation: hop    0.4s ease-out both; }
+  .chick--splash { animation: splash 1.0s ease-in  both; }
+  .chick--wobble { animation: wobble 0.4s ease-in-out 1; }
 </style>
