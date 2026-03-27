@@ -49,7 +49,7 @@
     requestAnimationFrame(() => {
       if (!outerEl) return
       const rows = outerEl.querySelectorAll('.tile-row')
-      const row = rows[idx]
+      const row = rows[Math.max(0, idx - 1)]
       if (row) outerEl.scrollTo({ top: Math.max(0, row.offsetTop - 12), behavior: 'smooth' })
     })
   }

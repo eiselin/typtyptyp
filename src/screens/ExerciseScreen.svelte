@@ -131,7 +131,7 @@
       <div class="intro-title">{$t('exercise.newKeys')}</div>
       <div class="intro-desc">{$t('exercise.newKeysDesc')}</div>
       <div class="intro-key-grid">
-        {#each newKeys as key}
+        {#each newKeys.filter(k => /^[a-z]$/i.test(k)) as key}
           {@const finger = getFingerForKey(key)}
           {@const color  = finger ? FINGER_VARS[finger] : 'var(--text)'}
           <div class="intro-key-card" style="--kc:{color}">

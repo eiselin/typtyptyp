@@ -31,6 +31,23 @@ export function generateNonsense(keySet, count) {
   })
 }
 
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function makeCycler(arr) {
+  let pool = []
+  return () => {
+    if (pool.length === 0) pool = shuffle([...arr])
+    return pool.pop()
+  }
+}
+
 export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 200) {
   const pool = getWordPool(learnedKeys)
   const useWords = pool.length >= POOL_THRESHOLD
@@ -39,33 +56,35 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
 
   if (useWords) {
     allWords = pool
-    const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => k !== ' '))
+    const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k)))
     newKeyWords = newKeySet.size > 0
       ? pool.filter(w => [...w].some(c => newKeySet.has(c)))
       : []
   } else {
     allWords = generateNonsense(learnedKeys, 40)
-    const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => k !== ' '))
+    const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k)))
     newKeyWords = newKeySet.size > 0
       ? generateNonsense([...newKeySet, ...learnedKeys.filter(k => !newKeySet.has(k))].slice(0, 6), 20)
       : []
   }
 
+  const nextAll = makeCycler(allWords)
+  const nextNew = newKeyWords.length > 0 ? makeCycler(newKeyWords) : null
+
   const result = []
   let len = 0
   let newKeyWordCount = 0
-  const targetNewKeyRatio = newKeyWords.length > 0 ? 0.5 : 0
+  const targetNewKeyRatio = nextNew ? 0.5 : 0
 
   while (len < targetLength) {
     const currentRatio = result.length > 0 ? newKeyWordCount / result.length : 0
-    const useNewKeyWord = newKeyWords.length > 0 && currentRatio < targetNewKeyRatio
+    const useNewKeyWord = nextNew && currentRatio < targetNewKeyRatio
 
-    const source = useNewKeyWord ? newKeyWords : allWords
-    const word = source[Math.floor(Math.random() * source.length)]
+    const word = useNewKeyWord ? nextNew() : nextAll()
     result.push(word)
     if (useNewKeyWord) newKeyWordCount++
     len += word.length + 1
   }
 
-  return result.join(' ').slice(0, targetLength).trimEnd()
+  return result.join(' ')
 }
