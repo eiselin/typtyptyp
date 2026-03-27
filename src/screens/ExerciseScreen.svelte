@@ -10,6 +10,7 @@
   import Keyboard from '../components/Keyboard.svelte'
   import HandHints from '../components/HandHints.svelte'
   import LetterTiles from '../components/LetterTiles.svelte'
+  import { onMount, onDestroy } from 'svelte'
 
   const FINGER_VARS = {
     lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
@@ -77,10 +78,39 @@
     setResults({ accuracy: acc, wpm, stars, lessonId: lesson.id })
     goTo('results')
   }
+
+  let scale = $state(1)
+  let scaleWrap = $state()
+  let naturalH = $state(0)
+
+  function measureAndScale() {
+    if (!scaleWrap) return
+    naturalH = scaleWrap.offsetHeight
+    updateScale()
+  }
+
+  function updateScale() {
+    if (!naturalH) return
+    scale = Math.min(1, (window.innerHeight - 32) / naturalH)
+  }
+
+  $effect(() => {
+    if (!showIntro && scaleWrap) measureAndScale()
+  })
+
+  onMount(() => {
+    window.addEventListener('resize', updateScale)
+  })
+
+  onDestroy(() => window.removeEventListener('resize', updateScale))
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
+<div
+  bind:this={scaleWrap}
+  style="transform:scale({scale}); transform-origin:top center; margin-bottom:{(scale-1)*naturalH}px; width:100%"
+>
 <div class="screen exercise">
   <div class="topbar">
     <button class="back-btn" onclick={confirmExit}>{$t('nav.back')}</button>
@@ -128,6 +158,7 @@
     </div>
   </div>
   {/if}
+</div>
 </div>
 
 <style>
