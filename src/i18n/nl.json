@@ -48,5 +48,16 @@
   "profile.new":          "+ NIEUW PROFIEL",
   "profile.lesson":       "Les",
   "profile.active":       "▶ ACTIEF",
-  "lessons.label.volledig": "VOLLEDIG"
+  "lessons.label.volledig": "VOLLEDIG",
+  "lessons.guide":         "HOE BLIND TYPEN",
+  "lessons.guideAction":   "GIDS →",
+  "guide.title":           "GIDS",
+  "guide.homeRow.title":   "THUISRIJ",
+  "guide.homeRow.body":    "Leg je vingers hier neer voor je begint. Voel de kleine bubbeltjes op F en J — die helpen je de juiste plek te vinden zonder te kijken. Keer na elk woord terug.",
+  "guide.zones.title":     "VINGERZONES",
+  "guide.zones.body":      "Elke toets heeft één vinger die hem bedient — aangegeven door kleur. Je wijsvingers zijn het drukst bezig: elk dekt twee kolommen. Strek nooit één vinger naar een toets die een andere vinger toebehoort.",
+  "guide.eyes.title":      "KIJK OP HET SCHERM",
+  "guide.eyes.body":       "Kijk naar de letters op het scherm — niet naar je handen. Het voelt eerst vreemd, maar dit is wat blind typen mogelijk maakt. De app laat zien welke vinger je moet gebruiken als je vastzit.",
+  "guide.slow.title":      "BEGIN LANGZAAM",
+  "guide.slow.body":       "Typ langzaam en nauwkeurig. Snelheid komt vanzelf — fouten maken je alleen maar langzamer. Drie sterren betekent 95% nauwkeurigheid, niet de snelste tijd."
 }

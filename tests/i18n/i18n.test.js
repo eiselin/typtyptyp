@@ -13,4 +13,25 @@ describe('i18n', () => {
   it('supports interpolation with uppercased value', () => {
     expect(get(t)('home.continueAs', { name: 'Fleur' })).toBe('▶ VERDER ALS FLEUR')
   })
+
+  it('guide keys exist in Dutch', () => {
+    setLanguage('nl')
+    const translate = get(t)
+    expect(translate('lessons.guide')).not.toBe('lessons.guide')
+    expect(translate('guide.homeRow.title')).not.toBe('guide.homeRow.title')
+    expect(translate('guide.zones.title')).not.toBe('guide.zones.title')
+    expect(translate('guide.eyes.title')).not.toBe('guide.eyes.title')
+    expect(translate('guide.slow.title')).not.toBe('guide.slow.title')
+  })
+
+  it('guide keys exist in English', () => {
+    setLanguage('en')
+    const translate = get(t)
+    expect(translate('lessons.guide')).not.toBe('lessons.guide')
+    expect(translate('guide.homeRow.title')).not.toBe('guide.homeRow.title')
+    expect(translate('guide.zones.title')).not.toBe('guide.zones.title')
+    expect(translate('guide.eyes.title')).not.toBe('guide.eyes.title')
+    expect(translate('guide.slow.title')).not.toBe('guide.slow.title')
+    setLanguage('nl') // reset to default
+  })
 })

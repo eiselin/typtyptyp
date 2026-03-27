@@ -48,5 +48,16 @@
   "profile.new":          "+ NEW PROFILE",
   "profile.lesson":       "Lesson",
   "profile.active":       "▶ ACTIVE",
-  "lessons.label.volledig": "FULL"
+  "lessons.label.volledig": "FULL",
+  "lessons.guide":         "HOW TO TOUCH TYPE",
+  "lessons.guideAction":   "GUIDE →",
+  "guide.title":           "GUIDE",
+  "guide.homeRow.title":   "HOME ROW",
+  "guide.homeRow.body":    "Place your fingers here before you start. Feel the small bumps on F and J — those help you find the right spot without looking. After every word, come back here.",
+  "guide.zones.title":     "FINGER ZONES",
+  "guide.zones.body":      "Every key has one finger responsible for it — shown by color. Your index fingers are the busiest, each covering two columns. Never stretch one finger to reach a key that belongs to another.",
+  "guide.eyes.title":      "EYES ON SCREEN",
+  "guide.eyes.body":       "Look at the letters on screen — not your hands. It feels strange at first, but this is what makes touch typing work. The app shows you which finger to use if you get stuck.",
+  "guide.slow.title":      "START SLOW",
+  "guide.slow.body":       "Type slowly and correctly. Speed builds on its own — mistakes just slow you down in the long run. Three stars means 95% accuracy, not fastest time."
 }
