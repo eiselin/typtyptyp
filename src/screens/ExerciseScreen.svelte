@@ -102,10 +102,14 @@
   })
 
   onMount(() => {
+    document.body.style.overflow = 'hidden'
     window.addEventListener('resize', updateScale)
   })
 
-  onDestroy(() => window.removeEventListener('resize', updateScale))
+  onDestroy(() => {
+    document.body.style.overflow = ''
+    window.removeEventListener('resize', updateScale)
+  })
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
