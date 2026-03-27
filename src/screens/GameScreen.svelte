@@ -2,12 +2,10 @@
   import { get } from 'svelte/store'
   import { t } from '../i18n/index.js'
   import { selectedGroup, goTo } from '../stores/screen.js'
-  import { activeProfile } from '../stores/profiles.js'
+  import { activeProfile, updateArcadeProgress } from '../stores/profiles.js'
   import { gameResults } from '../stores/game.js'
-  import { updateArcadeProgress } from '../stores/profiles.js'
   import { submitScore } from '../stores/leaderboard.js'
-  import { getArcadeWordCycler } from '../words/index.js'
-  import { WORD_LISTS } from '../words/index.js'
+  import { getArcadeWordCycler, WORD_LISTS } from '../words/index.js'
   import { lang } from '../i18n/index.js'
   import PixelChick from '../components/PixelChick.svelte'
 
@@ -219,15 +217,12 @@
 
     // Freeze river, reset chick to last safe bank
     gamePhase = 'frozen'
-    cancelAnimationFrame(animId)
     setTimeout(() => {
       chickenLane = NEAR_BANK
       chickenPadId = null
       chickState = 'idle'
-      gamePhase = 'playing'
       losing = false
-      lastTime = performance.now()
-      animId = requestAnimationFrame(gameLoop)
+      gamePhase = 'playing'  // $effect handles RAF restart
     }, 1200)
   }
 
@@ -250,7 +245,7 @@
 
 </script>
 
-<div class="screen game" on:keydown|preventDefault>
+<div class="screen game">
 
   <!-- HUD -->
   <div class="hud">
@@ -291,6 +286,11 @@
     <!-- Far bank -->
     <div class="bank bank--far">
       <span class="bank-label">NEST ★</span>
+      {#if chickenLane === FAR_BANK}
+        <div class="bank-chick">
+          <PixelChick size={36} state={chickState} />
+        </div>
+      {/if}
     </div>
 
     <!-- Lanes (rendered top to bottom = lane 4 first) -->
@@ -334,7 +334,7 @@
     {#if glowingPadId}
       {@const pad = getGlowingPad()}
       {#if pad}
-        <div class="input-label">TYPE THE GLOWING PAD</div>
+        <div class="input-label">{$t('arcade.typePrompt')}</div>
         <div class="word-tiles">
           {#each [...pad.word] as char, i}
             <div class="tile"

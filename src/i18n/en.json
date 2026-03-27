@@ -75,5 +75,6 @@
   "arcade.playAgain": "↺ PLAY AGAIN",
   "arcade.backToLessons": "← LESSONS",
   "arcade.crossings": "CROSSINGS",
-  "arcade.leaderboard": "LEADERBOARD"
+  "arcade.leaderboard": "LEADERBOARD",
+  "arcade.typePrompt": "TYPE THE GLOWING PAD"
 }
