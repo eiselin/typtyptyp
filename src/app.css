@@ -4,15 +4,15 @@
   --bg-sunken: #1a0e35;
   --border:    #1e0f40;
 
-  /* Finger colours */
-  --f-lp: #ff4488;
-  --f-lr: #ff8844;
-  --f-lm: #ffcc00;
-  --f-li: #44ff88;
-  --f-ri: #00ffee;
-  --f-rm: #4488ff;
-  --f-rr: #aa44ff;
-  --f-rp: #ff44ff;
+  /* Finger colours — alternating warm/cool, neon retro */
+  --f-lp: #ff0055;   /* neon crimson — warm */
+  --f-lr: #00aaff;   /* neon sky     — cool */
+  --f-lm: #ffcc00;   /* neon yellow  — warm */
+  --f-li: #00ff66;   /* neon green   — cool */
+  --f-ri: #ff6600;   /* neon orange  — warm */
+  --f-rm: #00ccff;   /* neon cyan    — cool */
+  --f-rr: #cc00ff;   /* neon violet  — cool */
+  --f-rp: #aaff00;   /* neon lime    — warm */
 
   /* UI accents */
   --accent-cyan:   #00ffee;

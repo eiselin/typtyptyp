@@ -51,17 +51,20 @@
       {/if}
     </div>
 
+    <button class="btn-start" disabled={!$activeProfile} on:click={() => goTo('lessons')}>
+      {$activeProfile ? $t('home.continueAs', { name: $activeProfile.name }) : $t('nav.start')}
+    </button>
+
     <div class="lang-row">
-      <span class="lang-lbl">{$t('home.language')}</span>
       <button class="lang-btn" class:lang-btn--on={$lang === 'nl'} on:click={() => setLanguage('nl')}>
-        <svg width="18" height="12" viewBox="0 0 9 6" style="image-rendering:pixelated;vertical-align:middle;margin-right:5px">
+        <svg width="24" height="16" viewBox="0 0 9 6" style="image-rendering:pixelated;display:block">
           <rect width="9" height="2" fill="#AE1C28"/>
           <rect y="2" width="9" height="2" fill="#fff"/>
           <rect y="4" width="9" height="2" fill="#21468B"/>
-        </svg>Nederlands
+        </svg>
       </button>
       <button class="lang-btn" class:lang-btn--on={$lang === 'en'} on:click={() => setLanguage('en')}>
-        <svg width="20" height="12" viewBox="0 0 20 12" style="vertical-align:middle;margin-right:5px">
+        <svg width="28" height="16" viewBox="0 0 20 12" style="display:block">
           <rect width="20" height="12" fill="#012169"/>
           <polygon points="0,0 2.5,0 20,10.5 20,12 17.5,12 0,1.5" fill="#fff"/>
           <polygon points="20,0 17.5,0 0,10.5 0,12 2.5,12 20,1.5" fill="#fff"/>
@@ -71,37 +74,33 @@
           <rect y="4" width="20" height="4" fill="#fff"/>
           <rect x="9" width="2" height="12" fill="#C8102E"/>
           <rect y="5" width="20" height="2" fill="#C8102E"/>
-        </svg>English
+        </svg>
       </button>
     </div>
-
-    <button class="btn-start" disabled={!$activeProfile} on:click={() => goTo('lessons')}>
-      {$activeProfile ? $t('home.continueAs', { name: $activeProfile.name }) : $t('nav.start')}
-    </button>
   </div>
 </div>
 
 <style>
-  .home { max-width:680px; margin:0 auto; }
-  .inner { padding:36px 32px 42px; }
+  .home { max-width:820px; margin:0 auto; }
+  .inner { padding:48px 48px 56px; }
   .logo { font-size:40px; font-weight:bold; letter-spacing:6px; text-align:center; margin-bottom:4px; }
   .c1 { color:var(--accent-cyan);   text-shadow:0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
   .c2 { color:var(--accent-green);  text-shadow:0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
   .c3 { color:var(--accent-yellow); text-shadow:0 0 18px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
-  .tagline { font-size:13px; color:var(--text); letter-spacing:4px; text-align:center; margin-bottom:24px; }
-  .chick-wrap { display:flex; justify-content:center; margin-bottom:28px; }
-  .section-label { font-size:13px; color:var(--text); letter-spacing:2px; margin-bottom:12px; }
-  .profile-list { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; }
+  .tagline { font-size:13px; color:var(--text); letter-spacing:4px; text-align:center; margin-bottom:32px; }
+  .chick-wrap { display:flex; justify-content:center; margin-bottom:40px; }
+  .section-label { font-size:13px; color:var(--text); letter-spacing:2px; margin-bottom:16px; }
+  .profile-list { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
   .new-input-row { display:flex; gap:10px; align-items:center; }
   .new-input-row input { flex:1; background:var(--bg-raised); border:2px solid var(--accent-cyan); border-radius:4px; padding:12px 16px; color:var(--accent-cyan); font-family:inherit; font-size:16px; }
   .new-input-row input::placeholder { color:var(--text); opacity:.6; }
   .err { font-size:13px; color:#ff4455; }
   .btn-ok { background:var(--accent-cyan); color:var(--bg); border-radius:4px; padding:12px 18px; font-weight:bold; font-size:15px; letter-spacing:1px; }
-  .lang-row { display:flex; gap:10px; align-items:center; margin-bottom:24px; }
-  .lang-lbl { font-size:13px; color:var(--text); letter-spacing:1px; }
-  .lang-btn { background:var(--bg-raised); border:2px solid var(--border); border-radius:4px; padding:7px 14px; font-size:14px; font-family:inherit; color:var(--text); cursor:pointer; display:flex; align-items:center; }
-  .lang-btn--on { border-color:var(--accent-cyan); color:var(--accent-cyan); }
-  .lang-btn:disabled { opacity:.4; cursor:not-allowed; }
+  .lang-row { display:flex; gap:8px; justify-content:center; margin-top:28px; opacity:0.55; }
+  .lang-row:hover { opacity:0.75; }
+  .lang-btn { background:none; border:2px solid transparent; border-radius:4px; padding:4px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.15s; }
+  .lang-btn--on { border-color:var(--text-muted); opacity:1; }
+  .lang-btn:not(.lang-btn--on) { opacity:0.5; }
   .btn-start { width:100%; padding:18px; font-size:20px; font-weight:bold; letter-spacing:3px; background:var(--accent-green); color:var(--bg); border-radius:4px; box-shadow:0 0 24px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; }
   .btn-start:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
 </style>

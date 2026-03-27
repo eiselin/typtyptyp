@@ -33,7 +33,7 @@
     display:flex; align-items:center; gap:10px; text-align:left;
   }
   .card--active { border-color:var(--pc,var(--accent-cyan)); box-shadow:0 0 12px color-mix(in srgb,var(--pc,var(--accent-cyan)) 25%,transparent); }
-  .card--new { border-style:dashed; border-color:var(--accent-cyan); justify-content:center; font-family:'Courier New',monospace; font-size:15px; color:var(--accent-cyan); letter-spacing:2px; padding:16px 12px; }
+  .card--new { border-style:dashed; border-color:var(--text-muted); justify-content:center; font-family:'Courier New',monospace; font-size:15px; color:var(--text-muted); letter-spacing:2px; padding:16px 12px; }
   .avatar { width:32px; height:32px; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'Courier New',monospace; font-size:13px; font-weight:bold; background:color-mix(in srgb,var(--pc) 20%,var(--bg)); color:var(--pc); border:1px solid color-mix(in srgb,var(--pc) 40%,transparent); }
   .info { flex:1; min-width:0; }
   .name { font-family:'Courier New',monospace; font-size:13px; font-weight:bold; color:var(--text); }
