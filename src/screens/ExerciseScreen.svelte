@@ -107,6 +107,7 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
+<div style="min-height:calc(100dvh - 32px); display:flex; align-items:center; justify-content:center; width:100%">
 <div
   bind:this={scaleWrap}
   style="transform:scale({scale}); transform-origin:top center; margin-bottom:{(scale-1)*naturalH}px; width:100%"
@@ -158,6 +159,7 @@
     </div>
   </div>
   {/if}
+</div>
 </div>
 </div>
 
