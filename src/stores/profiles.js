@@ -52,6 +52,19 @@ export function selectProfile(id) {
   try { if (profile) sessionStorage.setItem(SESSION_KEY, id) } catch {}
 }
 
+export function renameProfile(id, newName) {
+  const trimmed = newName?.trim() ?? ''
+  if (!trimmed) throw new Error('empty')
+  const ps = get(profiles)
+  if (ps.some(p => p.id !== id && p.name.toLowerCase() === trimmed.toLowerCase())) throw new Error('duplicate')
+  profiles.update(ps => ps.map(p => {
+    if (p.id !== id) return p
+    const updated = { ...p, name: trimmed }
+    if (get(activeProfile)?.id === id) activeProfile.set(updated)
+    return updated
+  }))
+}
+
 export function deleteProfile(id) {
   profiles.update(ps => ps.filter(p => p.id !== id))
   if (get(activeProfile)?.id === id) activeProfile.set(null)

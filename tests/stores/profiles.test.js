@@ -1,5 +1,5 @@
 import { get } from 'svelte/store'
-import { profiles, activeProfile, createProfile, selectProfile, deleteProfile, updateProgress, PROFILE_COLOURS } from '../../src/stores/profiles.js'
+import { profiles, activeProfile, createProfile, selectProfile, deleteProfile, renameProfile, updateProgress, PROFILE_COLOURS } from '../../src/stores/profiles.js'
 
 const storageMock = (() => {
   let store = {}
@@ -54,6 +54,38 @@ describe('selectProfile', () => {
     const id = get(profiles)[0].id
     selectProfile(id)
     expect(get(activeProfile)?.name).toBe('Fleur')
+  })
+})
+
+describe('renameProfile', () => {
+  beforeEach(() => { storageMock.clear(); profiles.set([]); activeProfile.set(null) })
+
+  it('renames the profile', () => {
+    createProfile('Fleur')
+    const id = get(profiles)[0].id
+    renameProfile(id, 'Rosa')
+    expect(get(profiles)[0].name).toBe('Rosa')
+  })
+
+  it('rejects empty name', () => {
+    createProfile('Fleur')
+    const id = get(profiles)[0].id
+    expect(() => renameProfile(id, '')).toThrow('empty')
+  })
+
+  it('rejects duplicate name', () => {
+    createProfile('Fleur')
+    createProfile('Rosa')
+    const id = get(profiles)[0].id
+    expect(() => renameProfile(id, 'rosa')).toThrow('duplicate')
+  })
+
+  it('updates activeProfile when renaming the active profile', () => {
+    createProfile('Fleur')
+    const id = get(profiles)[0].id
+    selectProfile(id)
+    renameProfile(id, 'Rosa')
+    expect(get(activeProfile)?.name).toBe('Rosa')
   })
 })
 
