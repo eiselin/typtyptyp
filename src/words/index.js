@@ -1,5 +1,6 @@
 import nlWords from './nl.json'
 import enWords from './en.json'
+import { getLearnedKeys } from '../lessons/index.js'
 
 export const WORD_LISTS = { nl: nlWords, en: enWords }
 
@@ -43,7 +44,7 @@ function shuffle(arr) {
   return a
 }
 
-function makeCycler(arr) {
+export function makeCycler(arr) {
   let pool = []
   return () => {
     if (pool.length === 0) pool = shuffle([...arr])
@@ -92,4 +93,19 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
   }
 
   return result.join(' ')
+}
+
+// Maps arcade group IDs to the last lesson in that group (determines learned keys)
+const GROUP_LAST_LESSON = { home: 5, top: 10, bottom: 14, all: 15 }
+
+/**
+ * Returns a word cycler function for the given arcade group.
+ * Call next() repeatedly to get the next word (shuffled, no repeats until pool exhausted).
+ */
+export function getArcadeWordCycler(groupId, wordList = nlWords) {
+  const lastLesson = GROUP_LAST_LESSON[groupId] ?? 5
+  const learnedKeys = getLearnedKeys(lastLesson)
+  const pool = getWordPool(learnedKeys, wordList)
+  const words = pool.length >= POOL_THRESHOLD ? pool : generateNonsense(learnedKeys, 40)
+  return makeCycler(words)
 }
