@@ -2,7 +2,7 @@
   import { t } from '../i18n/index.js'
   import { LESSONS } from '../lessons/index.js'
   import { activeProfile } from '../stores/profiles.js'
-  import { goTo, selectLesson } from '../stores/screen.js'
+  import { goTo, selectLesson, startArcade } from '../stores/screen.js'
 
   $: progress = $activeProfile?.lessonProgress ?? {}
 
@@ -13,6 +13,25 @@
   }
 
   const GROUPS = ['thuisrij','bovenrij','onderrij','volledig']
+
+  const GROUP_IDS = {
+    thuisrij: 'home',
+    bovenrij: 'top',
+    onderrij: 'bottom',
+    volledig:  'all',
+  }
+
+  const GROUP_LESSON_IDS = {
+    home:   [1, 2, 3, 4, 5],
+    top:    [6, 7, 8, 9, 10],
+    bottom: [11, 12, 13, 14],
+    all:    [15],
+  }
+
+  function isArcadeUnlocked(groupId) {
+    const ids = GROUP_LESSON_IDS[groupId] ?? []
+    return ids.every(id => (progress[id]?.stars ?? 0) >= 1)
+  }
 </script>
 
 <div class="screen lessons">
@@ -27,6 +46,8 @@
       <span class="guide-btn-action">{$t('lessons.guideAction')}</span>
     </button>
     {#each GROUPS as group}
+      {@const groupId = GROUP_IDS[group]}
+      {@const unlocked = isArcadeUnlocked(groupId)}
       <div class="group-lbl">{$t(`lessons.group.${group}`)}</div>
       <div class="grid">
         {#each LESSONS.filter(l => l.group === group) as lesson}
@@ -45,6 +66,14 @@
           </button>
         {/each}
       </div>
+      <button
+        class="arcade-btn"
+        class:arcade-btn--unlocked={unlocked}
+        disabled={!unlocked}
+        on:click={() => unlocked && startArcade(groupId)}
+      >
+        {unlocked ? $t('arcade.button') : $t('arcade.locked')}
+      </button>
     {/each}
   </div>
 </div>
@@ -80,4 +109,23 @@
   }
   .guide-btn-title { display: block; font-size: 12px; font-weight: bold; color: var(--accent-cyan); letter-spacing: 2px; }
   .guide-btn-action { display: block; font-size: 10px; color: var(--accent-cyan); letter-spacing: 2px; opacity: 0.6; margin-top: 3px; }
+
+  /* Arcade button */
+  .arcade-btn {
+    display: block; width: 100%; margin-top: 8px; margin-bottom: 4px;
+    padding: 9px 14px; border-radius: 6px; font-family: inherit;
+    font-size: 12px; font-weight: bold; letter-spacing: 2px;
+    border: 2px solid var(--border); background: var(--bg-sunken);
+    color: var(--text-muted); cursor: not-allowed;
+  }
+  .arcade-btn--unlocked {
+    border-color: #ff8800;
+    color: #ff8800;
+    background: var(--bg-raised);
+    cursor: pointer;
+    box-shadow: 0 0 10px color-mix(in srgb, #ff8800 20%, transparent);
+  }
+  .arcade-btn--unlocked:hover {
+    box-shadow: 0 0 18px color-mix(in srgb, #ff8800 40%, transparent);
+  }
 </style>
