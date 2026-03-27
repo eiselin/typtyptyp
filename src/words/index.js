@@ -74,7 +74,9 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
   const result = []
   let len = 0
   let newKeyWordCount = 0
-  const targetNewKeyRatio = nextNew ? 0.5 : 0
+  // Scale ratio down for tiny new-key pools to avoid a single word dominating.
+  // 1 word → ~1 in 6, 2 words → ~1 in 4, 4+ words → 1 in 2.
+  const targetNewKeyRatio = nextNew ? Math.min(0.5, newKeyWords.length / 8) : 0
 
   while (len < targetLength) {
     const currentRatio = result.length > 0 ? newKeyWordCount / result.length : 0
