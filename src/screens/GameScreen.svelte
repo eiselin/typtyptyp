@@ -11,13 +11,14 @@
 
   // ── Constants ───────────────────────────────────────────────
   const NUM_LANES   = 5
-  const BASE_SPEED  = 8         // % of container width per second at speed_factor 1.0
+  const BASE_SPEED  = 5         // % of container width per second at speed_factor 1.0
   const MAX_SPEED   = 3.0
   const EDGE_WARN   = 2         // pad-widths from edge triggers flash
   const NEAR_BANK   = -1        // chick lane index when on near (start) bank
   const FAR_BANK    = NUM_LANES // chick lane index when on far (goal) bank
 
   // ── Game state (Svelte 5 runes) ─────────────────────────────
+  let showIntro    = $state(true)
   let losing       = false    // guard: prevents loseLife() firing twice in one frame
   let lives        = $state(3)
   let score        = $state(0)
@@ -37,6 +38,9 @@
   // ── Word cycler ──────────────────────────────────────────────
   const wordList = WORD_LISTS[get(lang)] ?? WORD_LISTS.nl
   const nextWord = getArcadeWordCycler(groupId, wordList)
+
+  // ── Nest word (dedicated word to hop into the nest from final lane) ──
+  let nestWord = $state(nextWord())
 
   // ── Pad data ─────────────────────────────────────────────────
   function makePadWidth(word) {
@@ -64,10 +68,8 @@
   // NOTE: $derived takes an expression, not a thunk. Use an IIFE to keep
   // multi-statement logic readable while satisfying Svelte 5 syntax.
   const glowingPadId = $derived((() => {
-    // On the last lane, the target is the pad we're riding (typing it completes the crossing)
-    if (chickenLane === NUM_LANES - 1 && chickenPadId !== null) {
-      return chickenPadId
-    }
+    // On the last lane, target is nestWord — no pad glows
+    if (chickenLane === NUM_LANES - 1 && chickenPadId !== null) return null
     const nextLane = chickenLane + 1
     if (nextLane >= NUM_LANES) return null
     const lane = lanes[nextLane]
@@ -98,13 +100,18 @@
   // ── Multiplier ───────────────────────────────────────────────
   const multiplier = $derived(Math.min(Math.floor(combo / 5) + 1, 10))
 
+  // ── Final lane flag ──────────────────────────────────────────
+  const onFinalLane = $derived(chickenLane === NUM_LANES - 1 && chickenPadId !== null)
+
   // ── Game loop ────────────────────────────────────────────────
   let animId
   let lastTime = 0
 
   function updatePads(dt) {
+    const GAP = 8  // minimum gap between pads, in % units
     lanes = lanes.map(lane => {
       const speed = BASE_SPEED * speedFactor * lane.direction
+      // First pass: move all pads
       const pads = lane.pads.map(pad => {
         let nx = pad.x + speed * dt
         // Check if chick loses life: chick is on this pad and it exits
@@ -112,15 +119,29 @@
           if (lane.direction > 0 && nx > 100) { loseLife(); nx = pad.x }
           if (lane.direction < 0 && nx + pad.width < 0) { loseLife(); nx = pad.x }
         }
-        // Pad exited screen — wrap and assign new word
-        if (lane.direction > 0 && nx > 100 + pad.width) {
-          return makePad(-pad.width - 2)
-        }
-        if (lane.direction < 0 && nx + pad.width < -2) {
-          return makePad(100 + 2)
-        }
         return { ...pad, x: nx }
       })
+      // Second pass: wrap exited pads, placing each behind all existing pads
+      for (let i = 0; i < pads.length; i++) {
+        const pad = pads[i]
+        const rightExit = lane.direction > 0 && pad.x > 100 + pad.width
+        const leftExit  = lane.direction < 0 && pad.x + pad.width < -2
+        if (!rightExit && !leftExit) continue
+        const word = nextWord()
+        const width = makePadWidth(word)
+        const others = pads.filter((_, j) => j !== i)
+        let x
+        if (lane.direction > 0) {
+          // Entry from left — place behind the leftmost other pad
+          const leftmost = others.length > 0 ? Math.min(...others.map(p => p.x)) : 0
+          x = Math.min(-width - GAP, leftmost - width - GAP)
+        } else {
+          // Entry from right — place behind the rightmost other pad
+          const rightmost = others.length > 0 ? Math.max(...others.map(p => p.x + p.width)) : 100
+          x = Math.max(100 + GAP, rightmost + GAP)
+        }
+        pads[i] = { id: ++padIdCounter, word, x, width }
+      }
       return { ...lane, pads }
     })
   }
@@ -134,7 +155,7 @@
   }
 
   $effect(() => {
-    if (gamePhase === 'playing') {
+    if (gamePhase === 'playing' && !showIntro) {
       lastTime = performance.now()
       animId = requestAnimationFrame(gameLoop)
     }
@@ -150,9 +171,38 @@
     return lanes[laneIndex]?.pads.find(p => p.id === glowingPadId) ?? null
   }
 
+  function togglePause() {
+    if (gamePhase === 'playing') gamePhase = 'paused'
+    else if (gamePhase === 'paused') gamePhase = 'playing'
+  }
+
   function handleKey(e) {
-    if (gamePhase !== 'playing') return
+    if (e.key === 'Escape') { togglePause(); return }
+    if (gamePhase !== 'playing' || showIntro) return
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return
+
+    // On the final lane, typing targets the nest word
+    if (onFinalLane) {
+      const expected = nestWord[typedSoFar.length]
+      if (!expected) return
+      if (e.key === expected) {
+        combo += 1
+        const newTyped = typedSoFar + e.key
+        if (newTyped === nestWord) {
+          score += Math.round(nestWord.length * multiplier * speedFactor)
+          typedSoFar = ''
+          hopToNest()
+        } else {
+          typedSoFar = newTyped
+        }
+      } else {
+        combo = 0
+        typedSoFar = ''
+        chickState = 'wobble'
+        setTimeout(() => { if (chickState === 'wobble') chickState = 'idle' }, 500)
+      }
+      return
+    }
 
     const pad = getGlowingPad()
     if (!pad) return
@@ -164,9 +214,7 @@
       combo += 1
       const newTyped = typedSoFar + e.key
       if (newTyped === pad.word) {
-        // Word complete — hop!
-        const wordScore = Math.round(pad.word.length * multiplier * speedFactor)
-        score += wordScore
+        score += Math.round(pad.word.length * multiplier * speedFactor)
         typedSoFar = ''
         hopToNextLane(pad)
       } else {
@@ -181,30 +229,28 @@
   }
 
   function hopToNextLane(targetPad) {
-    const nextLane = chickenLane + 1
     chickState = 'hop'
     setTimeout(() => { if (chickState === 'hop') chickState = 'idle' }, 450)
+    chickenLane = chickenLane + 1
+    chickenPadId = targetPad.id
+  }
 
-    if (nextLane >= NUM_LANES) {
-      // Reached far bank!
-      chickenLane = FAR_BANK
-      chickenPadId = null
-      const bonus = Math.round(500 * speedFactor)
-      score += bonus
-      crossings += 1
-      speedFactor = Math.min(+(speedFactor + 0.1).toFixed(1), MAX_SPEED)
-      // Reset for next round
-      setTimeout(startNewRound, 800)
-    } else {
-      chickenLane = nextLane
-      chickenPadId = targetPad.id
-    }
+  function hopToNest() {
+    chickState = 'hop'
+    setTimeout(() => { if (chickState === 'hop') chickState = 'idle' }, 450)
+    chickenLane = FAR_BANK
+    chickenPadId = null
+    score += Math.round(500 * speedFactor)
+    crossings += 1
+    speedFactor = Math.min(+(speedFactor + 0.1).toFixed(1), MAX_SPEED)
+    setTimeout(startNewRound, 800)
   }
 
   function startNewRound() {
     chickenLane = NEAR_BANK
     chickenPadId = null
     typedSoFar = ''
+    nestWord = nextWord()
   }
 
   function loseLife() {
@@ -268,7 +314,7 @@
     <div class="hud-block">
       <div class="hud-label">{$t('arcade.hud.combo')}</div>
       <div class="hud-val combo" style="color: {combo > 0 ? '#ff8800' : 'var(--text-muted)'}">
-        x{multiplier}{combo >= 5 ? ' 🔥' : ''}
+        x{multiplier}{combo >= 5 ? ' !!!' : ''}
       </div>
     </div>
     <div class="hud-block">
@@ -281,7 +327,11 @@
     </div>
     <div class="hud-block">
       <div class="hud-label">{$t('arcade.hud.best')}</div>
-      <div class="hud-val" style="color: var(--text-muted); font-size:13px">{String(prevBest).padStart(5, '0')}</div>
+      <div class="hud-val" style="color: var(--text-muted); font-size:22px">{String(prevBest).padStart(5, '0')}</div>
+    </div>
+    <div class="hud-btns">
+      <button class="pause-btn" on:click={togglePause}>{$t('arcade.pause')}</button>
+      <button class="pause-btn pause-btn--exit" on:click={() => goTo('lessons')}>{$t('arcade.exit')}</button>
     </div>
   </div>
 
@@ -295,14 +345,18 @@
 
   <!-- River -->
   <div class="river">
-    <!-- Far bank -->
+    <!-- Far bank / nest -->
     <div class="bank bank--far">
       <span class="bank-label">{$t('arcade.bank.far')}</span>
-      {#if chickenLane === FAR_BANK}
-        <div class="bank-chick">
-          <PixelChick size={36} state={chickState} />
+      <div class="nest">
+        <div class="nest-target" class:nest-target--active={onFinalLane}>{nestWord}</div>
+        <div class="nest-chick">
+          {#if chickenLane === FAR_BANK}
+            <PixelChick size={36} state={chickState} />
+          {/if}
         </div>
-      {/if}
+        <div class="nest-bowl"></div>
+      </div>
     </div>
 
     <!-- Lanes (rendered top to bottom = lane 4 first) -->
@@ -343,7 +397,18 @@
 
   <!-- Word input strip -->
   <div class="input-area">
-    {#if glowingPadId}
+    {#if onFinalLane}
+      <div class="input-label input-label--final">{$t('arcade.reachNest')}</div>
+      <div class="word-tiles">
+        {#each [...nestWord] as char, i}
+          <div class="tile"
+            class:tile--typed={i < typedSoFar.length}
+            class:tile--current={i === typedSoFar.length}
+            class:tile--pending={i > typedSoFar.length}
+          >{char}</div>
+        {/each}
+      </div>
+    {:else if glowingPadId}
       {@const pad = getGlowingPad()}
       {#if pad}
         <div class="input-label">{$t('arcade.typePrompt')}</div>
@@ -362,6 +427,39 @@
     {/if}
   </div>
 
+  <!-- Pause overlay -->
+  {#if gamePhase === 'paused'}
+    <div class="pause-overlay">
+      <div class="pause-box">
+        <div class="pause-title">{$t('arcade.paused')}</div>
+        <button class="pause-action-btn pause-action-btn--resume" on:click={togglePause}>
+          {$t('arcade.resume')}
+        </button>
+        <div class="pause-divider"></div>
+        <button class="pause-action-btn pause-action-btn--exit" on:click={() => goTo('lessons')}>
+          {$t('arcade.exit')}
+        </button>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Intro modal -->
+  {#if showIntro}
+    <div class="intro-overlay">
+      <div class="intro-box">
+        <div class="intro-title">{$t('arcade.intro.title')}</div>
+        <ul class="intro-steps">
+          <li>{$t('arcade.intro.step1')}</li>
+          <li>{$t('arcade.intro.step2')}</li>
+          <li>{$t('arcade.intro.step3')}</li>
+        </ul>
+        <button class="intro-btn" on:click={() => showIntro = false}>
+          {$t('arcade.intro.start')}
+        </button>
+      </div>
+    </div>
+  {/if}
+
   <!-- SPLASH overlay -->
   {#if gamePhase === 'done'}
     <div class="splash-overlay">
@@ -375,7 +473,6 @@
 
 <style>
   .screen.game {
-    max-width: 520px; margin: 0 auto;
     display: flex; flex-direction: column;
     min-height: calc(100dvh - 32px);
     position: relative;
@@ -388,9 +485,9 @@
     border-bottom: 1px solid var(--border);
   }
   .hud-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .hud-label { font-size: 8px; color: var(--text-muted); letter-spacing: 2px; }
-  .hud-val { font-size: 16px; font-weight: bold; color: #ffcc00; text-shadow: 0 0 8px #ffcc0066; font-family: monospace; }
-  .hud-val.combo { font-size: 14px; }
+  .hud-label { font-size: 16px; color: var(--text-muted); letter-spacing: 2px; }
+  .hud-val { font-size: 32px; font-weight: bold; color: #ffcc00; text-shadow: 0 0 8px #ffcc0066; font-family: monospace; }
+  .hud-val.combo { font-size: 30px; }
   .hearts { display: flex; gap: 4px; align-items: center; }
   .heart {
     width: 14px; height: 14px;
@@ -402,31 +499,83 @@
 
   /* Speed bar */
   .speed-bar-wrap { padding: 4px 16px 6px; background: var(--bg-sunken); }
-  .speed-label { font-size: 8px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 3px; }
+  .speed-label { font-size: 16px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 3px; }
   .speed-bar { height: 3px; background: var(--bg-raised); border-radius: 2px; }
   .speed-fill { height: 3px; border-radius: 2px; transition: width 0.5s, background 0.5s; }
 
   /* River */
-  .river { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .river { flex: 1; display: flex; flex-direction: column; }
 
   .bank {
-    height: 36px; display: flex; align-items: center; padding: 0 14px; gap: 10px;
+    display: flex; align-items: center; padding: 0 14px; gap: 10px;
     position: relative;
   }
-  .bank--far  { background: #0a1a0a; border-bottom: 1px solid #005533; justify-content: flex-end; }
-  .bank--near { background: #0a1a0a; border-top: 1px solid #005533; }
-  .bank-label { font-size: 9px; color: #00ff88; letter-spacing: 2px; font-family: monospace; }
-  .bank-chick { position: absolute; left: 50%; transform: translateX(-50%); bottom: 4px; }
+  .bank--far {
+    height: 72px;
+    background: linear-gradient(to bottom, #071a07, #0e2509);
+    border-bottom: 2px solid #00aa44;
+    box-shadow: inset 0 -3px 14px rgba(0,180,80,.12);
+    justify-content: flex-end;
+  }
+  .bank--near { height: 36px; background: #0a1a0a; border-top: 1px solid #005533; }
+  .bank-label { font-size: 16px; color: #00ff88; letter-spacing: 2px; font-family: monospace; }
+
+  /* Nest */
+  .nest {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: 4px; width: 54px;
+  }
+  .nest-bowl {
+    width: 54px; height: 22px;
+    background-color: #3d1800;
+    background-image:
+      repeating-linear-gradient(68deg, transparent, transparent 2px, rgba(160,90,10,.6) 2px, rgba(160,90,10,.6) 3px),
+      repeating-linear-gradient(-68deg, transparent, transparent 3px, rgba(210,130,20,.4) 3px, rgba(210,130,20,.4) 4px);
+    border: 2px solid #a05010;
+    border-top: 3px solid #d07828;
+    border-radius: 0 0 50% 50%;
+    box-shadow: 0 3px 10px rgba(0,0,0,.7), 0 0 12px rgba(180,100,20,.25), inset 0 -4px 8px rgba(0,0,0,.5);
+  }
+  .nest-bowl::before, .nest-bowl::after {
+    content: ''; position: absolute; top: -5px; height: 3px; width: 12px;
+    background: #c87028; border-radius: 1px;
+  }
+  .nest-bowl::before { left: -2px; transform: rotate(-22deg); }
+  .nest-bowl::after  { right: -2px; transform: rotate(22deg); }
+  .nest-target {
+    text-align: center; font-size: 17px; font-weight: bold; font-family: monospace;
+    letter-spacing: 1px; color: #ffcc00aa; margin-bottom: 2px;
+    transition: color 0.2s, text-shadow 0.2s;
+  }
+  .nest-target--active {
+    color: #00ffcc; text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc88;
+  }
+  .nest-chick {
+    display: flex; justify-content: center;
+    margin-bottom: 2px;
+  }
 
   .lane {
-    flex: 1; position: relative; overflow: hidden;
-    background: #04111e;
-    border-top: 1px solid #0a2030;
-    /* scanline shimmer — reuse project pattern */
-    background-image: repeating-linear-gradient(
-      0deg, transparent, transparent 3px,
-      rgba(0, 180, 255, 0.03) 3px, rgba(0, 180, 255, 0.03) 4px
-    );
+    flex: 1; position: relative; overflow-x: clip; overflow-y: visible;
+    background-color: #021828;
+    border-top: 1px solid #0a3050;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent, transparent 5px,
+        rgba(0, 160, 255, 0.07) 5px, rgba(0, 160, 255, 0.07) 6px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent, transparent 11px,
+        rgba(0, 100, 200, 0.05) 11px, rgba(0, 100, 200, 0.05) 12px
+      );
+    background-size: 100% 12px;
+    animation: water-drift 2.4s linear infinite;
+  }
+  @keyframes water-drift {
+    from { background-position: 0 0; }
+    to   { background-position: 0 12px; }
   }
 
   .pad {
@@ -437,8 +586,9 @@
   }
   .pad--glow {
     border-color: #00ffcc;
-    box-shadow: 0 0 12px #00ffcc66;
-    background: #0a3a1a;
+    border-width: 2px;
+    box-shadow: 0 0 18px #00ffccaa, 0 0 36px #00ffcc44, inset 0 0 10px #00ffcc22;
+    background: #0d4020;
   }
   .pad--chick {
     border-color: #ffcc00;
@@ -455,7 +605,7 @@
     to   { border-color: #ff000088; }
   }
   .pad-word {
-    font-size: 12px; font-weight: bold; font-family: monospace;
+    font-size: 17px; font-weight: bold; font-family: monospace;
     color: #00ff88; letter-spacing: 1px; white-space: nowrap;
   }
   .pad--glow .pad-word { color: #00ffcc; }
@@ -467,11 +617,12 @@
     padding: 10px 16px 14px; background: var(--bg-sunken);
     border-top: 2px solid var(--border); min-height: 72px;
   }
-  .input-label { font-size: 8px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 6px; }
-  .word-tiles { display: flex; gap: 4px; flex-wrap: wrap; }
+  .input-label { font-size: 17px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 6px; }
+  .input-label--final { color: #00ffcc; font-size: 17px; text-shadow: 0 0 8px #00ffcc88; }
+  .word-tiles { display: flex; gap: 6px; flex-wrap: wrap; }
   .tile {
-    width: 24px; height: 28px; display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: bold; font-family: monospace;
+    width: 36px; height: 44px; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: bold; font-family: monospace;
     border-radius: 3px; border: 1px solid var(--border);
     background: var(--bg-raised); color: var(--text-muted);
   }
@@ -500,4 +651,97 @@
     font-size: 28px; font-family: monospace; color: #ffcc00;
     text-shadow: 0 0 10px #ffcc0088;
   }
+
+  /* Pause button in HUD */
+  .hud-btns { display: flex; flex-direction: column; gap: 5px; align-self: center; }
+  .pause-btn {
+    font-size: 12px; font-weight: bold; font-family: monospace; letter-spacing: 1px;
+    color: var(--text-muted); background: var(--bg-raised);
+    border: 1px solid var(--border); border-radius: 3px;
+    padding: 4px 8px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .pause-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+  .pause-btn--exit:hover { color: #ff4466; border-color: #ff4466; }
+
+  /* Pause overlay */
+  .pause-overlay {
+    position: absolute; inset: 0; z-index: 20;
+    background: rgba(10, 6, 24, 0.88);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pause-box {
+    background: var(--bg-sunken);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 6px;
+    box-shadow: 0 0 32px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+    padding: 32px 40px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .pause-divider {
+    width: 100%; height: 1px; background: var(--border); margin: 4px 0;
+  }
+  .pause-title {
+    font-size: 26px; font-weight: bold; font-family: monospace; letter-spacing: 4px;
+    color: var(--accent-cyan); text-shadow: 0 0 12px var(--accent-cyan);
+    margin-bottom: 8px;
+  }
+  .pause-action-btn {
+    width: 200px; padding: 12px;
+    font-size: 16px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    border-radius: 4px; transition: box-shadow 0.15s, transform 0.1s;
+  }
+  .pause-action-btn:hover { transform: scale(1.04); }
+  .pause-action-btn:active { transform: scale(0.97); }
+  .pause-action-btn--resume {
+    color: var(--bg); background: var(--accent-cyan);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+  }
+  .pause-action-btn--resume:hover { box-shadow: 0 0 28px var(--accent-cyan); }
+  .pause-action-btn--exit {
+    color: var(--text-muted); background: var(--bg-raised);
+    border: 1px solid var(--border);
+  }
+  .pause-action-btn--exit:hover { color: #ff4466; border-color: #ff4466; box-shadow: 0 0 12px #ff446644; }
+
+  /* Intro modal */
+  .intro-overlay {
+    position: absolute; inset: 0; z-index: 20;
+    background: rgba(10, 6, 24, 0.88);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .intro-box {
+    background: var(--bg-sunken);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 6px;
+    box-shadow: 0 0 32px color-mix(in srgb, var(--accent-cyan) 20%, transparent);
+    padding: 28px 24px 24px;
+    max-width: 420px; width: 100%;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .intro-title {
+    font-size: 22px; font-weight: bold; font-family: monospace;
+    color: var(--accent-cyan); letter-spacing: 3px;
+    text-shadow: 0 0 12px var(--accent-cyan);
+  }
+  .intro-steps {
+    list-style: none; display: flex; flex-direction: column; gap: 12px; width: 100%;
+  }
+  .intro-steps li {
+    font-size: 15px; font-family: monospace; color: var(--text);
+    line-height: 1.5; padding: 10px 12px;
+    background: var(--bg-raised); border-radius: 4px;
+    border-left: 3px solid var(--accent-cyan);
+  }
+  .intro-btn {
+    margin-top: 4px; padding: 12px 32px;
+    font-size: 18px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    color: var(--bg); background: var(--accent-cyan);
+    border-radius: 4px;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+    transition: box-shadow 0.15s, transform 0.1s;
+  }
+  .intro-btn:hover { box-shadow: 0 0 28px var(--accent-cyan); transform: scale(1.04); }
+  .intro-btn:active { transform: scale(0.97); }
 </style>

@@ -51,6 +51,16 @@ body {
   max-width: 560px;
 }
 
+.screen.game {
+  width: min(900px, calc(100vw - 16px));
+  max-width: none;
+}
+
+.screen.lessons {
+  width: min(760px, calc(100vw - 16px));
+  max-width: none;
+}
+
 /* Scanline overlay on all .screen elements */
 .screen::after {
   content: '';

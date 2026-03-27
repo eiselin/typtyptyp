@@ -63,8 +63,8 @@
   "guide.eyes.body": "Look at the letters on screen — not your hands. It feels strange at first, but this is what makes touch typing work. The app shows you which finger to use if you get stuck.",
   "guide.slow.title": "START SLOW",
   "guide.slow.body": "Type slowly and correctly. Speed builds on its own — mistakes just slow you down in the long run. Three stars means 95% accuracy, not fastest time.",
-  "arcade.button": "🕹 ARCADE",
-  "arcade.locked": "🔒 ARCADE",
+  "arcade.button": ">> ARCADE",
+  "arcade.locked": "-- ARCADE",
   "arcade.hud.score": "SCORE",
   "arcade.hud.combo": "COMBO",
   "arcade.hud.lives": "LIVES",
@@ -79,5 +79,15 @@
   "arcade.typePrompt": "TYPE THE GLOWING PAD",
   "arcade.waitingForPad": "WAITING FOR PAD...",
   "arcade.bank.far": "NEST ★",
-  "arcade.bank.near": "START"
+  "arcade.bank.near": "START",
+  "arcade.reachNest": "★ REACH THE NEST! TYPE:",
+  "arcade.intro.title": "HOW TO PLAY",
+  "arcade.intro.step1": "Type the glowing word to hop to the next lily pad",
+  "arcade.intro.step2": "Reach the nest and type its word to score a crossing",
+  "arcade.intro.step3": "Don't let the current carry you off the screen!",
+  "arcade.intro.start": "▶ LET'S GO",
+  "arcade.pause": "PAUSE",
+  "arcade.paused": "PAUSED",
+  "arcade.resume": "▶ RESUME",
+  "arcade.exit": "← EXIT TO LESSONS"
 }

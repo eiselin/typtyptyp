@@ -49,7 +49,7 @@
 
 <style>
   main { width:100%; }
-  .screens { display:grid; width:100%; align-items:start; min-height:calc(100dvh - 32px); }
-  .sw { grid-area:1/1; }
+  .screens { display:grid; grid-template-columns:1fr; width:100%; align-items:start; min-height:calc(100dvh - 32px); }
+  .sw { grid-area:1/1; width:100%; }
   .no-save { position:fixed; top:0; left:0; right:0; background:#ff4455; color:#fff; text-align:center; padding:6px; font-size:12px; font-family:monospace; letter-spacing:1px; z-index:100; }
 </style>

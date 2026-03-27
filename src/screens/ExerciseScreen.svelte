@@ -49,8 +49,15 @@
   const accuracy  = $derived(cursor > 0 ? Math.round(((cursor - errors) / cursor) * 100) : 100)
 
   function handleKeydown(e) {
-    if (showExitModal) { if (e.key === 'Escape') showExitModal = false; return }
-    if (showIntro) return
+    if (showExitModal) {
+      if (e.key === 'Escape') showExitModal = false
+      if (e.key === 'Enter') goTo('lessons')
+      return
+    }
+    if (showIntro) {
+      if (e.key === ' ') { e.preventDefault(); introDismissedForLesson = lesson.id }
+      return
+    }
     if (!sequence || cursor >= sequence.length) return
     if (e.metaKey || e.ctrlKey || e.altKey) return
     if (e.key === 'Escape') { confirmExit(); return }
