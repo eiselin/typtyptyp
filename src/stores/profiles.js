@@ -89,3 +89,20 @@ export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestW
     return updated
   }))
 }
+
+export function updateArcadeProgress(profileId, groupId, score) {
+  profiles.update(ps => ps.map(p => {
+    if (p.id !== profileId) return p
+    const prev = p.arcadeProgress?.[groupId] ?? { highScore: 0, achievedAt: null }
+    if (score <= prev.highScore) return p
+    const updated = {
+      ...p,
+      arcadeProgress: {
+        ...(p.arcadeProgress ?? {}),
+        [groupId]: { highScore: score, achievedAt: Date.now() },
+      },
+    }
+    if (get(activeProfile)?.id === profileId) activeProfile.set(updated)
+    return updated
+  }))
+}
