@@ -6,6 +6,9 @@
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
   import { getLeaderboard } from '../stores/leaderboard.js'
   import PixelChick from '../components/PixelChick.svelte'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let screenEl
 
   // ── Practice mode ───────────────────────────────────────────
   $: r = $results ?? { stars:0, accuracy:0, wpm:0, lessonId:1 }
@@ -26,9 +29,12 @@
   }))
 </script>
 
-<svelte:window on:keydown={e => { if (e.key === 'Escape') { if (gr) gameResults.set(null); goTo('lessons') } }} />
+<svelte:window on:keydown={e => {
+  if (e.key === 'Escape') { if (gr) gameResults.set(null); goTo('lessons') }
+  else if (screenEl) arrowNav(e, screenEl)
+}} />
 
-<div class="screen results">
+<div class="screen results" bind:this={screenEl}>
   {#if gr}
     <!-- ── ARCADE RESULTS ── -->
     <div class="confetti-layer" aria-hidden="true">

@@ -2,6 +2,9 @@
   import { t } from '../i18n/index.js'
   import { goTo } from '../stores/screen.js'
   import { FINGER_MAP } from '../lessons/index.js'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let screenEl
 
   // Home row keys with metadata. null = visual gap between hands.
   const HOME_ROW = [
@@ -25,9 +28,9 @@
   ]
 </script>
 
-<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons') }} />
+<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons'); else if (screenEl) arrowNav(e, screenEl) }} />
 
-<div class="screen guide">
+<div class="screen guide" bind:this={screenEl}>
   <div class="topbar">
     <button class="back-btn" on:click={() => goTo('lessons')}>{$t('nav.back')}</button>
     <span class="title">{$t('guide.title')}</span>

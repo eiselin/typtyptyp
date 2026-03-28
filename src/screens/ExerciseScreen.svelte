@@ -54,7 +54,8 @@
       return
     }
     if (showIntro) {
-      if (e.key === ' ') { e.preventDefault(); introDismissedForLesson = lesson.id }
+      if (e.key === 'Escape') { goTo('lessons'); return }
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); introDismissedForLesson = lesson.id }
       return
     }
     if (!sequence || cursor >= sequence.length) return

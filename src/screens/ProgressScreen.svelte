@@ -4,6 +4,9 @@
   import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys } from '../lessons/index.js'
   import { selectLesson, goTo } from '../stores/screen.js'
   import ProfessorChick from '../components/ProfessorChick.svelte'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let screenEl
 
   const KEYBOARD_ROWS = [
     ['q','w','e','r','t','y','u','i','o','p'],
@@ -81,9 +84,9 @@
     : null
 </script>
 
-<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons') }} />
+<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons'); else if (screenEl) arrowNav(e, screenEl) }} />
 
-<div class="screen progress">
+<div class="screen progress" bind:this={screenEl}>
   <div class="topbar">
     <button class="back-btn" on:click={() => goTo('lessons')}>{$t('nav.back')}</button>
     <span class="title">{$t('progress.title')}</span>

@@ -5,6 +5,9 @@
   import { goTo } from '../stores/screen.js'
   import ProfileCard from '../components/ProfileCard.svelte'
   import PixelChick from '../components/PixelChick.svelte'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let screenEl
 
   let showInput = false
   let newName = ''
@@ -25,7 +28,9 @@
   }
 </script>
 
-<div class="screen home">
+<svelte:window on:keydown={e => { if (screenEl) arrowNav(e, screenEl) }} />
+
+<div class="screen home" bind:this={screenEl}>
   <div class="inner">
     <div class="logo">
       <span class="c1">TYP</span><span class="c2">TYP</span><span class="c3">TYP</span>

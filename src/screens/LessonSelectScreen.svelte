@@ -3,6 +3,9 @@
   import { LESSONS } from '../lessons/index.js'
   import { activeProfile } from '../stores/profiles.js'
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let screenEl
 
   $: progress = $activeProfile?.lessonProgress ?? {}
 
@@ -42,9 +45,9 @@
   }
 </script>
 
-<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home') }} />
+<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home'); else if (screenEl) arrowNav(e, screenEl) }} />
 
-<div class="screen lessons">
+<div class="screen lessons" bind:this={screenEl}>
   <div class="topbar">
     <button class="back-btn" on:click={() => goTo('home')}>{$t('nav.back')}</button>
     <span class="title"><span class="c1">TYP</span><span class="c2">TYP</span><span class="c3">TYP</span></span>
