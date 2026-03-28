@@ -75,7 +75,7 @@
     return $t('progress.coach.tip', {
       key: worstKey.key.toUpperCase(),
       finger: fingerName,
-      wrong: (worstKey.topWrong ?? '?').toUpperCase(),
+      wrong: (!worstKey.topWrong || worstKey.topWrong === ' ') ? $t('keyboard.space') : worstKey.topWrong.toUpperCase(),
     })
   })()
 
