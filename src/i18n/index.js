@@ -4,7 +4,9 @@ import en from './en.json'
 
 const LANGUAGES = { nl, en }
 const STORAGE_KEY = 'typtyptyp_lang'
-let currentLang = (typeof localStorage !== 'undefined' && LANGUAGES[localStorage.getItem(STORAGE_KEY)]) ? localStorage.getItem(STORAGE_KEY) : 'nl'
+const stored = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null
+const detected = (typeof navigator !== 'undefined' && navigator.language?.startsWith('nl')) ? 'nl' : 'en'
+let currentLang = (stored && LANGUAGES[stored]) ? stored : detected
 let _tSet = null
 let _langSet = null
 
