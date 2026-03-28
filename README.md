@@ -1,8 +1,8 @@
 # typtyptyp
 
-Touch-typing trainer for kids. 15 lessons, one key group at a time, real Dutch words throughout.
+Touch-typing trainer for kids. 15 lessons, one key group at a time.
 
-**[typtyptyp.nl](https://typtyptyp.nl)** — designed by Nick Eiselin.
+**[typtyptyp.nl](https://typtyptyp.nl)**.
 
 ---
 
@@ -12,16 +12,16 @@ Touch-typing trainer for kids. 15 lessons, one key group at a time, real Dutch w
 
 | Group | Keys |
 |---|---|
-| Thuisrij (home row) | F J → D K → S L → A → full home row |
-| Bovenrij (top row) | R U → E I → W O → Q P → full top row |
-| Onderrij (bottom row) | V M → C → X → Z |
-| Volledig | All keys at once |
+| home row | F J → D K → S L → A → full home row |
+| top row | R U → E I → W O → Q P → full top row |
+| bottom row | V M → C → X → Z |
+| All keys at once |
 
 Each lesson unlocks after earning one star on the previous. Completing a group unlocks its arcade game.
 
 **Exercise flow:** intro screen (new keys + finger hints) → typing exercise → results (accuracy, WPM, 1–3 stars). Best results are saved per profile.
 
-**Word generation:** words are drawn from a Dutch word list filtered to the keys learned so far. If fewer than 10 words are available, synthetic patterns are used instead. New-key lessons weight ~50% of words toward those keys. Sequences run to ~200 characters.
+**Word generation:** words are drawn from a word list filtered to the keys learned so far. If fewer than 10 words are available, synthetic patterns are used instead. New-key lessons weight ~50% of words toward those keys. Sequences run to ~200 characters.
 
 **Scoring:** ★★★ ≥ 95% · ★★☆ ≥ 80% · ★☆☆ < 80% accuracy (non-space characters only).
 
