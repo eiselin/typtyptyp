@@ -5,6 +5,7 @@
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
   import { arrowNav2D } from '../utils/keyboard.js'
   import { onMount } from 'svelte'
+  import ProfessorChick from '../components/ProfessorChick.svelte'
 
   let screenEl
 
@@ -81,7 +82,7 @@
           <div class="util-tile-title">{$t('lessons.progress')}</div>
           <div class="util-tile-sub">{$t('lessons.progressSub')}</div>
         </div>
-        <span class="util-tile-arrow">→</span>
+        <span class="chick-wrap"><ProfessorChick height={52} /></span>
       </button>
     {/if}
 
@@ -179,7 +180,8 @@
   .guide-tile .util-tile-arrow { color: color-mix(in srgb,var(--accent-green) 50%,transparent); }
   .guide-tile:hover { border-color: var(--accent-green); }
 
-  .progress-tile { border-color: color-mix(in srgb,var(--accent-cyan) 20%,var(--border)); }
+  .progress-tile { border-color: color-mix(in srgb,var(--accent-cyan) 20%,var(--border)); overflow: visible; }
+  .chick-wrap { flex-shrink: 0; display: flex; align-items: center; }
   .progress-tile .util-tile-title { color: var(--accent-cyan); }
   .progress-tile .util-tile-arrow { color: color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
   .progress-tile:hover { border-color: var(--accent-cyan); }
