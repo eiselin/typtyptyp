@@ -19,6 +19,8 @@
   let chick = $state()
   let cursor = $state(0)
   let errors = $state(0)
+  let mistakeLog = $state([])
+  let keyLog = $state({})
   let startTime = $state(null)
   let sequence  = $state('')
   let introDismissedForLesson = $state(null)
@@ -37,7 +39,7 @@
   $effect(() => {
     if (lesson) {
       sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
-      cursor = 0; errors = 0; startTime = null; scaleMeasured = false
+      cursor = 0; errors = 0; mistakeLog = []; keyLog = {}; startTime = null; scaleMeasured = false
     }
   })
 
@@ -63,11 +65,18 @@
     if (!startTime) startTime = Date.now()
 
     if (e.key === sequence[cursor]) {
+      const k = sequence[cursor]
+      if (!keyLog[k]) keyLog[k] = []
+      keyLog[k].push(true)
       cursor++
       chick?.trigger('happy')
       if (cursor >= sequence.length) finish()
     } else {
+      const k = sequence[cursor]
+      if (!keyLog[k]) keyLog[k] = []
+      keyLog[k].push(false)
       errors++
+      mistakeLog = [...mistakeLog, { expected: k, typed: e.key }]
       chick?.trigger('error')
     }
   }
@@ -81,9 +90,16 @@
     const total = sequence.replace(/ /g, '').length
     const acc   = Math.round(((total - errors) / total) * 100)
     const mins  = Math.max((Date.now() - startTime) / 60000, 1/60)
-    const wpm   = Math.round(sequence.trim().split(' ').length / mins)
+    const wpm   = Math.round((sequence.length / 5) / mins)
     const stars = acc >= 95 ? 3 : acc >= 80 ? 2 : 1
-    if ($activeProfile) updateProgress($activeProfile.id, lesson.id, { stars, bestAccuracy: acc, bestWpm: wpm })
+    if ($activeProfile) {
+      const mistakes = {}
+      for (const { expected, typed } of mistakeLog) {
+        mistakes[expected] ??= {}
+        mistakes[expected][typed] = (mistakes[expected][typed] ?? 0) + 1
+      }
+      updateProgress($activeProfile.id, lesson.id, { stars, bestAccuracy: acc, bestWpm: wpm, mistakes, keyLog })
+    }
     setResults({ accuracy: acc, wpm, stars, lessonId: lesson.id })
     goTo('results')
   }
@@ -197,10 +213,10 @@
 <style>
   .screen.exercise { max-width:1400px; width:100%; margin:0 auto; position:relative; }
   .topbar { display:flex; justify-content:space-between; align-items:center; padding:20px 36px 0; }
-  .back-btn { font-family:inherit; font-size:13px; color:var(--text); background:none; border:none; cursor:pointer; }
-  .lesson-lbl { font-size:13px; color:var(--text); letter-spacing:1px; }
+  .back-btn { font-family:inherit; font-size:19px; color:var(--text); background:none; border:none; cursor:pointer; white-space:nowrap; }
+  .lesson-lbl { font-size:19px; color:var(--text); letter-spacing:1px; }
   .inner { padding:18px 36px 30px; }
-  .prog-row { display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; }
+  .prog-row { display:flex; justify-content:space-between; font-size:16px; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; }
   .pbar { height:6px; background:var(--bg-sunken); border-radius:3px; margin-bottom:26px; overflow:hidden; }
   .pfill { height:100%; background:linear-gradient(90deg,var(--accent-cyan),var(--accent-green)); border-radius:3px; transition:width .1s; }
   .main-row { display:flex; align-items:center; gap:32px; margin-bottom:28px; }
@@ -208,14 +224,14 @@
   .main-row .tiles-wrap { flex:1; min-width:0; }
   .kbd-block { background:var(--bg-raised); border-radius:8px; padding:22px 20px 18px; border:1px solid var(--border); }
   .divider { height:1px; background:var(--border); margin:14px 0; }
-  .stats-row { display:flex; gap:16px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border); font-size:13px; color:var(--text-muted); letter-spacing:1px; }
+  .stats-row { display:flex; gap:16px; margin-top:18px; padding-top:16px; border-top:1px solid var(--border); font-size:16px; color:var(--text-muted); letter-spacing:1px; }
   .stats-row strong { color:var(--accent-green); }
 
   /* ── Lesson intro ── */
   .intro { display:flex; flex-direction:column; align-items:center; padding:36px 26px 40px; gap:16px; }
   .intro-chick { margin-bottom:4px; }
   .intro-title { font-size:22px; font-weight:bold; letter-spacing:4px; color:var(--accent-cyan); text-shadow:0 0 16px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
-  .intro-desc  { font-size:13px; color:var(--text-muted); letter-spacing:1px; }
+  .intro-desc  { font-size:16px; color:var(--text-muted); letter-spacing:1px; }
   .intro-key-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin:16px 0 8px; }
   .intro-key-card {
     display:flex; flex-direction:column; align-items:center; gap:10px;
@@ -224,7 +240,7 @@
     box-shadow:0 0 18px color-mix(in srgb,var(--kc) 30%,transparent);
   }
   .intro-key-char   { font-size:56px; font-weight:bold; color:var(--kc); text-shadow:0 0 20px var(--kc); font-family:'Courier New',monospace; line-height:1; }
-  .intro-key-finger { font-size:12px; color:var(--kc); letter-spacing:2px; opacity:.8; }
+  .intro-key-finger { font-size:16px; color:var(--kc); letter-spacing:2px; opacity:.8; }
   .btn-begin {
     margin-top:8px; padding:16px 48px; font-size:18px; font-weight:bold; letter-spacing:3px;
     background:var(--accent-cyan); color:var(--bg); border-radius:4px; border:none; cursor:pointer;
@@ -245,11 +261,11 @@
     box-shadow:0 0 40px color-mix(in srgb,var(--accent-cyan) 25%,transparent);
     display:flex; flex-direction:column; align-items:center; gap:12px;
   }
-  .modal-title { font-size:20px; font-weight:bold; letter-spacing:4px; color:var(--accent-cyan); text-shadow:0 0 12px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
-  .modal-desc  { font-size:13px; color:var(--text-muted); letter-spacing:1px; }
+  .modal-title { font-size:22px; font-weight:bold; letter-spacing:4px; color:var(--accent-cyan); text-shadow:0 0 12px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
+  .modal-desc  { font-size:16px; color:var(--text-muted); letter-spacing:1px; }
   .modal-btns  { display:flex; gap:12px; margin-top:8px; }
   .modal-btn {
-    padding:10px 28px; font-size:14px; font-weight:bold; letter-spacing:2px;
+    padding:10px 28px; font-size:17px; font-weight:bold; letter-spacing:2px;
     border-radius:4px; border:2px solid; cursor:pointer; font-family:inherit;
   }
   .modal-btn--cancel { background:transparent; color:var(--text-muted); border-color:var(--border); }

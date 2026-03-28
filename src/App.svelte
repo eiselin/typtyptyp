@@ -8,6 +8,7 @@
   import ResultsScreen      from './screens/ResultsScreen.svelte'
   import GuideScreen        from './screens/GuideScreen.svelte'
   import GameScreen         from './screens/GameScreen.svelte'
+  import ProgressScreen     from './screens/ProgressScreen.svelte'
 
   let storageOk = true
   try { localStorage.setItem('_t','1'); localStorage.removeItem('_t') } catch { storageOk = false }
@@ -42,6 +43,10 @@
     {:else if $screen === 'game'}
       <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
         <GameScreen />
+      </div>
+    {:else if $screen === 'progress'}
+      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
+        <ProgressScreen />
       </div>
     {/if}
   </div>

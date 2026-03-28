@@ -42,6 +42,8 @@ export function createProfile(name) {
     colour: PROFILE_COLOURS[ps.length % PROFILE_COLOURS.length],
     createdAt: Date.now(),
     lessonProgress: {},
+    lessonMistakes: {},
+    keyStats: {},
   }
   profiles.update(ps => [...ps, profile])
 }
@@ -70,10 +72,29 @@ export function deleteProfile(id) {
   if (get(activeProfile)?.id === id) activeProfile.set(null)
 }
 
-export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestWpm }) {
+const KEY_WINDOW = 50
+
+export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestWpm, mistakes = {}, keyLog = {} }) {
   profiles.update(ps => ps.map(p => {
     if (p.id !== profileId) return p
     const prev = p.lessonProgress[lessonId] ?? { stars: 0, bestAccuracy: 0, bestWpm: 0 }
+
+    const prevMistakes = p.lessonMistakes?.[lessonId] ?? {}
+    const mergedMistakes = { ...prevMistakes }
+    for (const [expected, typedMap] of Object.entries(mistakes)) {
+      mergedMistakes[expected] ??= {}
+      for (const [typed, count] of Object.entries(typedMap)) {
+        mergedMistakes[expected][typed] = (mergedMistakes[expected][typed] ?? 0) + count
+      }
+    }
+
+    // Rolling window: append new results per key, keep last KEY_WINDOW entries
+    const prevKeyStats = p.keyStats ?? {}
+    const newKeyStats = { ...prevKeyStats }
+    for (const [key, results] of Object.entries(keyLog)) {
+      newKeyStats[key] = [...(newKeyStats[key] ?? []), ...results].slice(-KEY_WINDOW)
+    }
+
     const updated = {
       ...p,
       lessonProgress: {
@@ -84,6 +105,11 @@ export function updateProgress(profileId, lessonId, { stars, bestAccuracy, bestW
           bestWpm:      Math.max(prev.bestWpm,      bestWpm),
         },
       },
+      lessonMistakes: {
+        ...(p.lessonMistakes ?? {}),
+        [lessonId]: mergedMistakes,
+      },
+      keyStats: newKeyStats,
     }
     if (get(activeProfile)?.id === profileId) activeProfile.set(updated)
     return updated

@@ -485,7 +485,7 @@
     border-bottom: 1px solid var(--border);
   }
   .hud-block { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .hud-label { font-size: 16px; color: var(--text-muted); letter-spacing: 2px; }
+  .hud-label { font-size: 18px; color: var(--text-muted); letter-spacing: 2px; }
   .hud-val { font-size: 32px; font-weight: bold; color: #ffcc00; text-shadow: 0 0 8px #ffcc0066; font-family: monospace; }
   .hud-val.combo { font-size: 30px; }
   .hearts { display: flex; gap: 4px; align-items: center; }
@@ -499,7 +499,7 @@
 
   /* Speed bar */
   .speed-bar-wrap { padding: 4px 16px 6px; background: var(--bg-sunken); }
-  .speed-label { font-size: 16px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 3px; }
+  .speed-label { font-size: 18px; color: var(--text-muted); letter-spacing: 2px; margin-bottom: 3px; }
   .speed-bar { height: 3px; background: var(--bg-raised); border-radius: 2px; }
   .speed-fill { height: 3px; border-radius: 2px; transition: width 0.5s, background 0.5s; }
 
@@ -518,7 +518,7 @@
     justify-content: flex-end;
   }
   .bank--near { height: 36px; background: #0a1a0a; border-top: 1px solid #005533; }
-  .bank-label { font-size: 16px; color: #00ff88; letter-spacing: 2px; font-family: monospace; }
+  .bank-label { font-size: 18px; color: #00ff88; letter-spacing: 2px; font-family: monospace; }
 
   /* Nest */
   .nest {
@@ -655,7 +655,7 @@
   /* Pause button in HUD */
   .hud-btns { display: flex; flex-direction: column; gap: 5px; align-self: center; }
   .pause-btn {
-    font-size: 12px; font-weight: bold; font-family: monospace; letter-spacing: 1px;
+    font-size: 16px; font-weight: bold; font-family: monospace; letter-spacing: 1px;
     color: var(--text-muted); background: var(--bg-raised);
     border: 1px solid var(--border); border-radius: 3px;
     padding: 4px 8px;
@@ -688,7 +688,7 @@
   }
   .pause-action-btn {
     width: 200px; padding: 12px;
-    font-size: 16px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    font-size: 18px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
     border-radius: 4px; transition: box-shadow 0.15s, transform 0.1s;
   }
   .pause-action-btn:hover { transform: scale(1.04); }
@@ -729,14 +729,14 @@
     list-style: none; display: flex; flex-direction: column; gap: 12px; width: 100%;
   }
   .intro-steps li {
-    font-size: 15px; font-family: monospace; color: var(--text);
+    font-size: 17px; font-family: monospace; color: var(--text);
     line-height: 1.5; padding: 10px 12px;
     background: var(--bg-raised); border-radius: 4px;
     border-left: 3px solid var(--accent-cyan);
   }
   .intro-btn {
     margin-top: 4px; padding: 12px 32px;
-    font-size: 18px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    font-size: 19px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
     color: var(--bg); background: var(--accent-cyan);
     border-radius: 4px;
     box-shadow: 0 0 16px color-mix(in srgb, var(--accent-cyan) 40%, transparent);

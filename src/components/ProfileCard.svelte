@@ -23,6 +23,8 @@
   }
 </script>
 
+<svelte:window on:keydown={e => { if (e.key === 'Escape' && confirming) confirming = false }} />
+
 {#if profile === null}
   <button class="card card--new" on:click={onSelect}>{$t('profile.new')}</button>
 {:else}
@@ -53,7 +55,6 @@
           </div>
           <div class="pbar"><div class="pfill" style="width:{(lessonCount/20)*100}%"></div></div>
         </div>
-        {#if active}<span class="badge">{$t('profile.active')}</span>{/if}
       </button>
       <div class="card-actions">
         <button class="act act--dim" on:click={startEdit}>✎</button>

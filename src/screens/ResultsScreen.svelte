@@ -26,6 +26,8 @@
   }))
 </script>
 
+<svelte:window on:keydown={e => { if (e.key === 'Escape') { if (gr) gameResults.set(null); goTo('lessons') } }} />
+
 <div class="screen results">
   {#if gr}
     <!-- ── ARCADE RESULTS ── -->
@@ -116,9 +118,12 @@
         {#if nextLesson}
           <button class="btn-next" on:click={() => selectLesson(nextLesson.id)}>{$t('nav.nextLesson')}</button>
         {:else}
-          <button class="btn-next" on:click={() => goTo('lessons')}>{$t('nav.back')}</button>
+          <button class="btn-next" on:click={() => goTo('lessons')}>{$t('arcade.backToLessons')}</button>
         {/if}
       </div>
+      {#if nextLesson}
+        <button class="btn-lessons" on:click={() => goTo('lessons')}>{$t('arcade.backToLessons')}</button>
+      {/if}
     </div>
   {/if}
 </div>
@@ -136,13 +141,13 @@
   .chick-wrap { display:flex; justify-content:center; margin-bottom:10px; }
 
   /* Practice */
-  .stars-lbl { font-size:12px; color:var(--text-muted); letter-spacing:2px; margin-bottom:8px; }
+  .stars-lbl { font-size:16px; color:var(--text-muted); letter-spacing:2px; margin-bottom:8px; }
   .stars { display:flex; gap:8px; justify-content:center; margin-bottom:20px; }
   .star { animation:star-pop .4s ease-out both; }
 
   /* Arcade */
   .new-best {
-    font-size: 14px; font-weight: bold; letter-spacing: 3px;
+    font-size: 17px; font-weight: bold; letter-spacing: 3px;
     color: #ffcc00; text-shadow: 0 0 12px #ffcc0088;
     margin-bottom: 6px;
     animation: glow-pulse 0.8s ease-in-out infinite alternate;
@@ -156,20 +161,20 @@
     color: #00ffcc; text-shadow: 0 0 20px #00ffcc66;
     line-height: 1;
   }
-  .score-label { font-size: 9px; color: var(--text-muted); letter-spacing: 3px; margin-bottom: 16px; }
+  .score-label { font-size: 14px; color: var(--text-muted); letter-spacing: 3px; margin-bottom: 16px; }
 
   /* Leaderboard */
-  .lb-title { font-size: 9px; color: var(--text-muted); letter-spacing: 3px; margin: 16px 0 8px; }
+  .lb-title { font-size: 14px; color: var(--text-muted); letter-spacing: 3px; margin: 16px 0 8px; }
   .lb { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
   .lb-row {
     display: flex; align-items: center; gap: 10px;
-    padding: 6px 12px; font-size: 12px; font-family: monospace;
+    padding: 6px 12px; font-size: 16px; font-family: monospace;
     border-bottom: 1px solid var(--border);
     background: var(--bg-sunken);
   }
   .lb-row:last-child { border-bottom: none; }
   .lb-row--me { background: #1a0a3a; border-color: #ff8800; }
-  .lb-rank  { width: 24px; color: var(--text-muted); font-size: 10px; }
+  .lb-rank  { width: 24px; color: var(--text-muted); font-size: 14px; }
   .lb-name  { flex: 1; color: var(--text); }
   .lb-score { color: #ffcc00; font-weight: bold; }
   .lb-row--me .lb-name { color: #ff8800; }
@@ -179,8 +184,10 @@
   .stat-cards { display:flex; gap:16px; justify-content:center; margin-bottom:16px; }
   .stat-card { background:var(--bg-raised); border:1px solid var(--border); border-radius:6px; padding:10px 20px; }
   .sv { font-size:22px; font-weight:bold; }
-  .sl { font-size:11px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
+  .sl { font-size:15px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
   .btn-row { display:flex; gap:10px; }
-  .btn-retry { flex:1; padding:11px; background:var(--bg-sunken); border:1px solid var(--border); border-radius:4px; font-size:13px; font-weight:bold; letter-spacing:2px; color:var(--text); font-family:inherit; cursor:pointer; }
-  .btn-next  { flex:2; padding:11px; background:var(--accent-green); color:var(--bg); border-radius:4px; font-size:14px; font-weight:bold; letter-spacing:2px; box-shadow:0 0 18px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; border:none; }
+  .btn-retry   { flex:1; padding:11px; background:var(--bg-sunken); border:1px solid var(--border); border-radius:4px; font-size:19px; font-weight:bold; letter-spacing:2px; color:var(--text); font-family:inherit; cursor:pointer; }
+  .btn-next    { flex:2; padding:11px; background:var(--accent-green); color:var(--bg); border-radius:4px; font-size:19px; font-weight:bold; letter-spacing:2px; box-shadow:0 0 18px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; border:none; }
+  .btn-lessons { width:100%; margin-top:8px; padding:11px; background:transparent; border:1px solid var(--border); border-radius:4px; font-size:16px; font-weight:bold; letter-spacing:2px; color:var(--text-muted); font-family:inherit; cursor:pointer; }
+  .btn-lessons:hover { border-color:var(--text-muted); color:var(--text); }
 </style>
