@@ -52,7 +52,7 @@
   </div>
 </main>
 
-<footer>designed by Nick Eiselin</footer>
+<footer>by Nick Eiselin</footer>
 
 <style>
   main { width:100%; }
