@@ -57,7 +57,11 @@
   <div class="topbar">
     <button class="back-btn" on:click={() => goTo('home')}>{$t('nav.back')}</button>
     <span class="title"><span class="c1">TYP</span><span class="c2">TYP</span><span class="c3">TYP</span></span>
-    <span class="topbar-right"></span>
+    <span class="topbar-right">
+      {#if $activeProfile}
+        <span class="player-name" style="--pc:{$activeProfile.colour}">{$activeProfile.name.toUpperCase()}</span>
+      {/if}
+    </span>
   </div>
 
   <div class="inner">
@@ -141,7 +145,12 @@
   .c1 { color: var(--accent-cyan);   text-shadow: 0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
   .c2 { color: var(--accent-green);  text-shadow: 0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
   .c3 { color: var(--accent-yellow); text-shadow: 0 0 18px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
-  .topbar-right { flex: 1; }
+  .topbar-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
+  .player-name {
+    font-size: 17px; font-weight: bold; letter-spacing: 2px;
+    color: var(--pc, var(--accent-cyan));
+    text-shadow: 0 0 10px color-mix(in srgb, var(--pc, var(--accent-cyan)) 70%, transparent);
+  }
 
   .inner { padding: 0 22px 32px; }
 

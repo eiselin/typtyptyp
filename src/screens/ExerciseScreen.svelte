@@ -12,11 +12,14 @@
   import Keyboard from '../components/Keyboard.svelte'
   import HandHints from '../components/HandHints.svelte'
   import LetterTiles from '../components/LetterTiles.svelte'
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, tick } from 'svelte'
   import { wipe, WIPE_MS } from '../transitions.js'
+  import { arrowNav } from '../utils/keyboard.js'
 
 
   let chick = $state()
+  let modalEl = $state()
+  let cancelBtn = $state()
   let cursor = $state(0)
   let errors = $state(0)
   let mistakeLog = $state([])
@@ -25,6 +28,7 @@
   let sequence  = $state('')
   let introDismissedForLesson = $state(null)
   let showExitModal = $state(false)
+  $effect(() => { if (showExitModal) tick().then(() => cancelBtn?.focus()) })
 
   const lesson      = $derived(LESSONS.find(l => l.id === $selectedLesson))
   const learnedKeys = $derived(lesson ? getLearnedKeys(lesson.id) : [])
@@ -50,7 +54,7 @@
   function handleKeydown(e) {
     if (showExitModal) {
       if (e.key === 'Escape') showExitModal = false
-      if (e.key === 'Enter') goTo('lessons')
+      else if (modalEl) arrowNav(e, modalEl)
       return
     }
     if (showIntro) {
@@ -197,11 +201,11 @@
 
   {#if showExitModal}
     <div class="modal-backdrop" onclick={() => showExitModal = false}>
-      <div class="modal" onclick={(e) => e.stopPropagation()}>
+      <div class="modal" bind:this={modalEl} onclick={(e) => e.stopPropagation()}>
         <div class="modal-title">{$t('exercise.confirmTitle')}</div>
         <div class="modal-desc">{$t('exercise.confirmDesc')}</div>
         <div class="modal-btns">
-          <button class="modal-btn modal-btn--cancel" onclick={() => showExitModal = false}>{$t('exercise.confirmCancel')}</button>
+          <button class="modal-btn modal-btn--cancel" bind:this={cancelBtn} onclick={() => showExitModal = false}>{$t('exercise.confirmCancel')}</button>
           <button class="modal-btn modal-btn--leave" onclick={() => goTo('lessons')}>{$t('exercise.confirmLeave')}</button>
         </div>
       </div>
