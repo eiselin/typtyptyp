@@ -122,19 +122,34 @@
     padding: 12px 0; border-radius: 6px; font-size: 26px; font-weight: bold;
     color: var(--kc); border: 1px solid var(--kc);
     width: 96px; text-align: center; font-family: 'Courier New', monospace; flex-shrink: 0;
+    position: relative;
   }
-  .key.bump .key-char { border-bottom-width: 3px; }
+  .key.bump .key-char::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 4px;
+    background: var(--kc);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--kc);
+  }
   .key.dim { opacity: 0.3; }
-  .key-finger { font-size: 14px; color: var(--kc); opacity: 0.8; text-align: center; width: 96px; white-space: normal; line-height: 1.3; }
+  .key-finger { font-size: 14px; color: var(--kc); text-align: center; width: 96px; white-space: normal; line-height: 1.3; text-shadow: 0 0 8px var(--kc); font-weight: bold; }
   .hand-labels { display: flex; justify-content: space-between; font-size: 15px; color: var(--text-muted); letter-spacing: 1px; padding: 0 2px; }
 
   /* ── Keyboard zones ── */
-  .kbd-block { background: var(--bg-sunken); border-radius: 6px; padding: 10px 12px 8px; }
-  .kbd-row { display: flex; gap: 4px; justify-content: center; margin-bottom: 4px; }
+  .kbd-block { background: var(--bg-sunken); border-radius: 6px; padding: 14px 16px 12px; }
+  .kbd-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 6px; }
   .kbd-key {
-    padding: 5px 4px; border-radius: 3px; font-size: 16px; font-weight: bold;
+    padding: 8px 6px; border-radius: 4px; font-size: 17px; font-weight: bold;
     color: var(--kc); border: 1px solid var(--kc);
-    min-width: 26px; text-align: center; font-family: 'Courier New', monospace;
+    min-width: 36px; text-align: center; font-family: 'Courier New', monospace;
+    text-shadow: 0 0 8px var(--kc);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--kc) 30%, transparent);
+    background: color-mix(in srgb, var(--kc) 8%, var(--bg-raised));
   }
-  .kbd-space { text-align: center; font-size: 15px; color: var(--text-muted); letter-spacing: 2px; margin-top: 6px; }
+  .kbd-space { text-align: center; font-size: 15px; color: var(--text-muted); letter-spacing: 2px; margin-top: 8px; }
 </style>
