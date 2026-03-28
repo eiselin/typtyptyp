@@ -45,7 +45,7 @@
         <button class="act act--dim"    on:click={() => confirming = false}>{$t('profile.confirmNo')}</button>
       </div>
     {:else}
-      <button class="card-body" on:click={onSelect}>
+      <button class="card-body" data-profile-card on:click={onSelect} on:focus={onSelect}>
         <div class="avatar">{initials}</div>
         <div class="info">
           <div class="name">{profile.name.toUpperCase()}</div>
@@ -57,8 +57,8 @@
         </div>
       </button>
       <div class="card-actions">
-        <button class="act act--dim" on:click={startEdit}>✎</button>
-        <button class="act act--dim" on:click={() => confirming = true}>✕</button>
+        <button class="act act--dim" tabindex="-1" on:click={startEdit}>✎</button>
+        <button class="act act--dim" tabindex="-1" on:click={() => confirming = true}>✕</button>
       </div>
     {/if}
   </div>
@@ -76,6 +76,7 @@
   /* Normal state */
   .card-body { flex:1; background:none; border:none; cursor:pointer; font-family:inherit;
     display:flex; align-items:center; gap:10px; padding:10px 12px; text-align:left; }
+  .card-body:focus-visible { outline: none; box-shadow: none; }
   .card-actions { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:6px 8px 6px 0; border-left: 1px solid var(--border); margin-left: 0; opacity:0; transition:opacity 0.15s; }
   .card:hover .card-actions { opacity:1; }
 

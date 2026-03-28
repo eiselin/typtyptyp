@@ -139,15 +139,15 @@
   .back-btn { font-family:inherit; font-size:19px; color:var(--text); background:none; border:none; cursor:pointer; letter-spacing:1px; white-space:nowrap; }
   .title { font-size:22px; color:var(--text); letter-spacing:3px; font-weight:bold; }
 
-  .inner { padding:20px 22px 36px; }
+  .inner { padding:28px 28px 44px; }
 
   /* Keyboard heatmap */
-  .heatmap { display:flex; flex-direction:column; gap:6px; }
-  .hmap-row { display:flex; gap:6px; }
+  .heatmap { display:flex; flex-direction:column; gap:8px; }
+  .hmap-row { display:flex; gap:8px; }
   .hmap-key {
-    width:52px; height:52px;
+    width:60px; height:60px;
     display:flex; align-items:center; justify-content:center;
-    font-family:'Courier New',monospace; font-size:20px; font-weight:bold;
+    font-family:'Courier New',monospace; font-size:22px; font-weight:bold;
     border-radius:6px; border:2px solid;
   }
   .hmap-key--locked  { color:var(--text-muted); border-color:var(--border); background:var(--bg-sunken); opacity:0.3; }
@@ -171,7 +171,7 @@
   }
 
   /* Legend */
-  .legend { display:flex; gap:24px; margin-top:12px; margin-bottom:28px; }
+  .legend { display:flex; gap:24px; margin-top:18px; margin-bottom:36px; }
   .legend-item { display:flex; align-items:center; gap:8px; font-size:16px; color:var(--text-muted); letter-spacing:1px; }
   .dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
   .dot--green  { background:var(--accent-green);  box-shadow:0 0 6px var(--accent-green); }
@@ -206,7 +206,7 @@
 
   /* Practice CTA */
   .practice-btn {
-    display:block; width:100%; margin-top:18px;
+    display:block; width:100%; margin-top:28px;
     padding:18px; font-family:inherit; font-size:19px; font-weight:bold; letter-spacing:3px;
     background:var(--accent-green); color:var(--bg);
     border:none; border-radius:6px; cursor:pointer;

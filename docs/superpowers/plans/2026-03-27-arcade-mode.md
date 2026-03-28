@@ -66,8 +66,8 @@ volledig (all):   lesson 15,    last lesson id = 15
 Add after the last entry (before the closing `}`):
 
 ```json
-  "arcade.button": "🕹 ARCADE",
-  "arcade.locked": "🔒 ARCADE",
+  "arcade.button": "🕹 GAME",
+  "arcade.locked": "🔒 GAME",
   "arcade.hud.score": "SCORE",
   "arcade.hud.combo": "COMBO",
   "arcade.hud.lives": "LEVENS",
@@ -84,8 +84,8 @@ Add after the last entry (before the closing `}`):
 - [ ] **Add arcade strings to `src/i18n/en.json`**
 
 ```json
-  "arcade.button": "🕹 ARCADE",
-  "arcade.locked": "🔒 ARCADE",
+  "arcade.button": "🕹 GAME",
+  "arcade.locked": "🔒 GAME",
   "arcade.hud.score": "SCORE",
   "arcade.hud.combo": "COMBO",
   "arcade.hud.lives": "LIVES",

@@ -115,7 +115,7 @@
 
   /* ── Home row ── */
   .home-row-block { background: var(--bg-sunken); border-radius: 8px; padding: 16px 12px 10px; }
-  .home-row-keys { display: flex; gap: 2px; justify-content: center; margin-bottom: 10px; }
+  .home-row-keys { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
   .gap { color: var(--border); align-self: flex-start; padding: 10px 2px 0; font-size: 17px; }
   .key { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 96px; }
   .key-char {

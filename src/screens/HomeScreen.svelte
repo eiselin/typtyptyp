@@ -6,8 +6,12 @@
   import ProfileCard from '../components/ProfileCard.svelte'
   import PixelChick from '../components/PixelChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
+  import { onMount } from 'svelte'
 
   let screenEl
+  let startBtn
+
+  onMount(() => { startBtn?.focus() })
 
   let showInput = false
   let newName = ''
@@ -28,7 +32,14 @@
   }
 </script>
 
-<svelte:window on:keydown={e => { if (screenEl) arrowNav(e, screenEl) }} />
+<svelte:window on:keydown={e => {
+  if ((e.key === ' ' || e.key === 'Enter') && document.activeElement?.dataset.profileCard !== undefined && $activeProfile) {
+    e.preventDefault()
+    goTo('lessons')
+  } else if (screenEl) {
+    arrowNav(e, screenEl)
+  }
+}} />
 
 <div class="screen home" bind:this={screenEl}>
   <div class="inner">
@@ -56,8 +67,8 @@
       {/if}
     </div>
 
-    <button class="btn-start" disabled={!$activeProfile} on:click={() => goTo('lessons')}>
-      {$activeProfile ? $t('home.continueAs', { name: $activeProfile.name }) : $t('nav.start')}
+    <button class="btn-start" bind:this={startBtn} disabled={!$activeProfile} on:click={() => goTo('lessons')}>
+      {$t('nav.start')}
     </button>
 
     <div class="lang-row">

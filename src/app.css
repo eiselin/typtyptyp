@@ -51,6 +51,11 @@ body {
   max-width: 560px;
 }
 
+.screen.home {
+  width: min(605px, calc(100vw - 16px));
+  max-width: none;
+}
+
 .screen.game {
   width: min(900px, calc(100vw - 16px));
   max-width: none;

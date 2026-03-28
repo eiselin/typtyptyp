@@ -3,9 +3,15 @@
   import { LESSONS } from '../lessons/index.js'
   import { activeProfile } from '../stores/profiles.js'
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
-  import { arrowNav } from '../utils/keyboard.js'
+  import { arrowNav2D } from '../utils/keyboard.js'
+  import { onMount } from 'svelte'
 
   let screenEl
+
+  onMount(() => {
+    const first = screenEl?.querySelector('.ltile--available') ?? screenEl?.querySelector('button:not([disabled])')
+    first?.focus()
+  })
 
   $: progress = $activeProfile?.lessonProgress ?? {}
 
@@ -45,7 +51,7 @@
   }
 </script>
 
-<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home'); else if (screenEl) arrowNav(e, screenEl) }} />
+<svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home'); else if (screenEl) arrowNav2D(e, screenEl) }} />
 
 <div class="screen lessons" bind:this={screenEl}>
   <div class="topbar">

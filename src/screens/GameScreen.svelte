@@ -1,5 +1,6 @@
 <script>
   import { get } from 'svelte/store'
+  import { tick } from 'svelte'
   import { t } from '../i18n/index.js'
   import { selectedGroup, goTo } from '../stores/screen.js'
   import { activeProfile, updateArcadeProgress } from '../stores/profiles.js'
@@ -8,6 +9,11 @@
   import { getArcadeWordCycler, WORD_LISTS } from '../words/index.js'
   import { lang } from '../i18n/index.js'
   import PixelChick from '../components/PixelChick.svelte'
+  import { arrowNav } from '../utils/keyboard.js'
+
+  let pauseBoxEl = $state()
+  let resumeBtn = $state()
+  $effect(() => { if (gamePhase === 'paused') tick().then(() => resumeBtn?.focus()) })
 
   // ── Constants ───────────────────────────────────────────────
   const NUM_LANES   = 5
@@ -178,6 +184,7 @@
   function handleKey(e) {
     if (e.key === 'Escape') { togglePause(); return }
     if (showIntro) { if (e.key === ' ') { e.preventDefault(); showIntro = false } return }
+    if (gamePhase === 'paused') { if (pauseBoxEl) arrowNav(e, pauseBoxEl); return }
     if (gamePhase !== 'playing') return
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return
 
@@ -430,9 +437,9 @@
   <!-- Pause overlay -->
   {#if gamePhase === 'paused'}
     <div class="pause-overlay">
-      <div class="pause-box">
+      <div class="pause-box" bind:this={pauseBoxEl}>
         <div class="pause-title">{$t('arcade.paused')}</div>
-        <button class="pause-action-btn pause-action-btn--resume" on:click={togglePause}>
+        <button class="pause-action-btn pause-action-btn--resume" bind:this={resumeBtn} on:click={togglePause}>
           {$t('arcade.resume')}
         </button>
         <div class="pause-divider"></div>
