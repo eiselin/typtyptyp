@@ -230,5 +230,20 @@ describe('mergeProfiles', () => {
     const result = mergeProfiles(null)
     expect(result).toEqual({ added: 0, updated: 0 })
   })
+
+  it('sums lessonMistakes counts on merge', () => {
+    createProfile('Fleur')
+    const id = get(profiles)[0].id
+    updateProgress(id, 1, { stars: 1, bestAccuracy: 80, bestWpm: 15, mistakes: { f: { d: 3 } } })
+
+    const imported = [{
+      id, name: 'Fleur', colour: '#00ffee', createdAt: Date.now(),
+      lessonProgress: {}, lessonMistakes: { 1: { f: { d: 2, g: 1 } } }, keyStats: {},
+    }]
+    mergeProfiles(imported)
+    const mistakes = get(profiles)[0].lessonMistakes[1]
+    expect(mistakes.f.d).toBe(5) // 3 + 2
+    expect(mistakes.f.g).toBe(1) // new key from imported
+  })
 })
 
