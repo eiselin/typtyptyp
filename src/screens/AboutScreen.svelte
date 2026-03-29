@@ -25,9 +25,9 @@
 <style>
   .screen.about { max-width: 640px; margin: 0 auto; }
 
-  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px 0; }
-  .back-btn { font-family: inherit; font-size: 19px; color: var(--text); background: none; border: none; cursor: pointer; letter-spacing: 1px; white-space: nowrap; flex: 1; }
-  .title { font-size: 22px; color: var(--text); letter-spacing: 3px; font-weight: bold; }
+  .topbar { position: relative; display: flex; align-items: center; padding: 18px 22px 0; }
+  .back-btn { font-family: inherit; font-size: 19px; color: var(--text); background: none; border: none; cursor: pointer; letter-spacing: 1px; white-space: nowrap; }
+  .title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 22px; color: var(--text); letter-spacing: 3px; font-weight: bold; pointer-events: none; }
   .spacer { flex: 1; }
 
   .inner { padding: 32px 22px 48px; }

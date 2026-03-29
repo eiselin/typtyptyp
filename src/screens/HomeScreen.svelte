@@ -118,8 +118,8 @@
   .bottom-row { display:flex; align-items:center; justify-content:space-between; margin-top:28px; }
   .lang-row { display:flex; gap:8px; opacity:0.55; }
   .lang-row:hover { opacity:0.75; }
-  .about-btn { background:none; border:none; cursor:pointer; font-family:inherit; font-size:11px; color:var(--text-muted); opacity:0.4; letter-spacing:1px; padding:0; }
-  .about-btn:hover { opacity:0.8; }
+  .about-btn { background:none; border:1px solid var(--accent-yellow); border-radius:4px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--accent-yellow); letter-spacing:1px; padding:5px 10px; text-shadow:0 0 8px color-mix(in srgb,var(--accent-yellow) 70%,transparent); box-shadow:0 0 8px color-mix(in srgb,var(--accent-yellow) 30%,transparent); }
+  .about-btn:hover { text-shadow:0 0 12px var(--accent-yellow); box-shadow:0 0 16px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
   .lang-btn { background:none; border:2px solid transparent; border-radius:4px; padding:4px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.15s; }
   .lang-btn--on { border-color:var(--text-muted); opacity:1; }
   .lang-btn:not(.lang-btn--on) { opacity:0.5; }
