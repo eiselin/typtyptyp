@@ -1,7 +1,7 @@
 <script>
   import { get } from 'svelte/store'
   import { t, setLanguage, lang } from '../i18n/index.js'
-  import { profiles, activeProfile, createProfile, selectProfile } from '../stores/profiles.js'
+  import { profiles, activeProfile, createProfile, selectProfile, mergeProfiles } from '../stores/profiles.js'
   import { goTo } from '../stores/screen.js'
   import ProfileCard from '../components/ProfileCard.svelte'
   import PixelChick from '../components/PixelChick.svelte'
@@ -17,6 +17,13 @@
   let newName = ''
   let nameError = ''
 
+  let showBackup = false
+  let backupModalEl
+  let fileInput                // bound to hidden <input type="file">
+  let pendingImport = null     // Profile[] | null — parsed profiles awaiting confirm
+  let backupMsg = ''           // success or error message
+  let backupMsgIsError = false
+
   $: selectedId = $activeProfile?.id ?? null
 
   function handleNewProfile() { showInput = true; newName = ''; nameError = '' }
@@ -30,9 +37,73 @@
       nameError = e.message === 'duplicate' ? get(t)('home.nameTaken') : get(t)('home.nameEmpty')
     }
   }
+
+  function handleExport() {
+    const data = {
+      version: 1,
+      exportedAt: Date.now(),
+      lang: get(lang),
+      profiles: get(profiles),
+    }
+    const json = JSON.stringify(data, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `typtyptyp-backup-${new Date().toISOString().slice(0, 10)}.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  function handleImportFile(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result)
+        if (!Array.isArray(data?.profiles)) throw new Error('invalid')
+        const valid = data.profiles.filter(p => p?.id && p?.name && p?.lessonProgress)
+        if (valid.length === 0) throw new Error('invalid')
+        pendingImport = valid
+        backupMsg = ''
+        backupMsgIsError = false
+      } catch {
+        backupMsg = get(t)('backup.error')
+        backupMsgIsError = true
+        pendingImport = null
+      }
+    }
+    reader.readAsText(file)
+    e.target.value = ''
+  }
+
+  function handleConfirmImport() {
+    const { added, updated } = mergeProfiles(pendingImport)
+    pendingImport = null
+    backupMsg = get(t)('backup.success', { added, updated })
+    backupMsgIsError = false
+  }
+
+  function handleCancelImport() {
+    pendingImport = null
+    backupMsg = ''
+    backupMsgIsError = false
+  }
+
+  function closeBackup() {
+    showBackup = false
+    pendingImport = null
+    backupMsg = ''
+    backupMsgIsError = false
+  }
 </script>
 
 <svelte:window on:keydown={e => {
+  if (e.key === 'Escape' && showBackup) { closeBackup(); return }
+  if (showBackup) { if (backupModalEl) arrowNav(e, backupModalEl); return }
   if ((e.key === ' ' || e.key === 'Enter') && document.activeElement?.dataset.profileCard !== undefined && $activeProfile) {
     e.preventDefault()
     goTo('lessons')
@@ -94,8 +165,38 @@
         </svg>
       </button>
     </div>
+      <button class="backup-btn" tabindex="-1" on:click={() => showBackup = true}>{$t('home.backup')}</button>
       <button class="about-btn" tabindex="-1" on:click={() => goTo('about')}>{$t('about.title')}</button>
     </div>
+
+    {#if showBackup}
+      <div class="modal-overlay" on:click|self={closeBackup}>
+        <div class="modal" bind:this={backupModalEl}>
+          <button class="modal-close" on:click={closeBackup}>X</button>
+          <div class="modal-title">{$t('backup.title')}</div>
+
+          {#if pendingImport}
+            <p class="modal-desc">{$t('backup.confirmDesc')}</p>
+            <div class="modal-actions">
+              <button class="btn-confirm" on:click={handleConfirmImport}>{$t('backup.confirmYes')}</button>
+              <button class="btn-cancel" on:click={handleCancelImport}>{$t('backup.confirmNo')}</button>
+            </div>
+          {:else}
+            <p class="modal-desc">{$t('backup.saveDesc')}</p>
+            <button class="btn-save" on:click={handleExport}>{$t('backup.save')}</button>
+
+            <p class="modal-desc">{$t('backup.loadDesc')}</p>
+            <button class="btn-load" on:click={() => fileInput.click()}>{$t('backup.load')}</button>
+            <input bind:this={fileInput} type="file" accept=".json" style="display:none"
+              on:change={handleImportFile} />
+          {/if}
+
+          {#if backupMsg}
+            <p class="modal-msg" class:modal-msg--error={backupMsgIsError}>{backupMsg}</p>
+          {/if}
+        </div>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -125,4 +226,18 @@
   .lang-btn:not(.lang-btn--on) { opacity:0.5; }
   .btn-start { width:100%; padding:18px; font-size:22px; font-weight:bold; letter-spacing:3px; background:var(--accent-green); color:var(--bg); border-radius:4px; box-shadow:0 0 24px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; }
   .btn-start:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
+  .backup-btn { background:none; border:1px solid var(--accent-cyan); border-radius:4px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--accent-cyan); letter-spacing:1px; padding:5px 10px; text-shadow:0 0 8px color-mix(in srgb,var(--accent-cyan) 60%,transparent); box-shadow:0 0 6px color-mix(in srgb,var(--accent-cyan) 25%,transparent); }
+  .backup-btn:hover { box-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan) 55%,transparent); }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:50; }
+  .modal { position:relative; background:var(--bg-raised); border:2px solid var(--accent-cyan); border-radius:8px; padding:32px 28px 28px; max-width:480px; width:calc(100% - 48px); box-shadow:0 0 32px color-mix(in srgb,var(--accent-cyan) 25%,transparent); }
+  .modal-close { position:absolute; top:12px; right:14px; background:none; border:none; cursor:pointer; font-size:18px; color:var(--text-muted); font-family:inherit; }
+  .modal-close:hover { color:var(--text); }
+  .modal-title { font-size:20px; font-weight:bold; letter-spacing:3px; color:var(--accent-cyan); text-shadow:0 0 10px color-mix(in srgb,var(--accent-cyan) 50%,transparent); margin-bottom:20px; }
+  .modal-desc { font-size:15px; color:var(--text-muted); line-height:1.6; margin:0 0 12px; }
+  .modal-actions { display:flex; gap:10px; margin-bottom:8px; }
+  .btn-save, .btn-load, .btn-confirm { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; margin-bottom:20px; display:block; }
+  .btn-cancel { background:none; border:2px solid var(--text-muted); color:var(--text-muted); border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; }
+  .modal-msg { font-size:14px; margin:12px 0 0; letter-spacing:0.5px; }
+  .modal-msg--error { color:#ff4455; }
+  .modal-msg:not(.modal-msg--error) { color:var(--accent-green); }
 </style>
