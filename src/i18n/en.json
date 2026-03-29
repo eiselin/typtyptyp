@@ -44,7 +44,7 @@
   "hand.right": "RIGHT HAND",
   "about.title": "ABOUT",
   "about.body1": "This app was developed to introduce children to touch typing in a fun and accessible way. There are of course many packages and subscriptions available that achieve the same thing. I used this project as an opportunity to design an approach that precisely fits what I believe works best for my own children. Given their enthusiasm, that seems to have worked, and I am happy to share it with anyone who would like the same for their children.",
-  "about.body2": "From my own software development perspective, this has also been an interesting project. It is a proof of concept to see how AI-assisted development can bring a product from concept to working software in a short time. This project was made possible by Claude Code and the popular 'superpowers' plugin.",
+  "about.body2": "From my own software development perspective, this has also been an interesting project. It is a proof of concept to see how AI-assisted development can bring a product from concept to working software in a short time. This project was made possible by Claude Code.",
   "noSave.banner": "Progress not saved (private mode)",
   "keyboard.space": "⎵ SPACEBAR",
   "profile.new": "+ NEW PROFILE",
