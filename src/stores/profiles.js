@@ -148,7 +148,12 @@ export function mergeProfiles(importedProfiles) {
       const idx = result.findIndex(p => p.id === imp.id)
 
       if (idx === -1) {
-        result.push(imp)
+        // Trim keyStats of new profiles to KEY_WINDOW, same as merged profiles
+        const trimmedKeyStats = {}
+        for (const [key, results] of Object.entries(imp.keyStats ?? {})) {
+          trimmedKeyStats[key] = Array.isArray(results) ? results.slice(-KEY_WINDOW) : []
+        }
+        result.push({ ...imp, keyStats: trimmedKeyStats })
         added++
       } else {
         const loc = result[idx]
@@ -213,5 +218,7 @@ export function mergeProfiles(importedProfiles) {
     return result
   })
 
+  // Note: `updated` counts profiles where a matching ID was found in the import,
+  // regardless of whether any data values actually changed.
   return { added, updated }
 }
