@@ -132,3 +132,86 @@ export function updateArcadeProgress(profileId, groupId, score) {
     return updated
   }))
 }
+
+export function mergeProfiles(importedProfiles) {
+  if (!Array.isArray(importedProfiles)) return { added: 0, updated: 0 }
+
+  let added = 0
+  let updated = 0
+
+  profiles.update(local => {
+    const result = [...local]
+
+    for (const imp of importedProfiles) {
+      if (!imp?.id || !imp?.name || !imp?.lessonProgress) continue
+
+      const idx = result.findIndex(p => p.id === imp.id)
+
+      if (idx === -1) {
+        result.push(imp)
+        added++
+      } else {
+        const loc = result[idx]
+
+        // Merge lessonProgress — take max per metric
+        const mergedProgress = { ...loc.lessonProgress }
+        for (const [lessonId, impLp] of Object.entries(imp.lessonProgress ?? {})) {
+          const locLp = mergedProgress[lessonId] ?? { stars: 0, bestAccuracy: 0, bestWpm: 0 }
+          mergedProgress[lessonId] = {
+            stars:        Math.max(locLp.stars        ?? 0, impLp.stars        ?? 0),
+            bestAccuracy: Math.max(locLp.bestAccuracy ?? 0, impLp.bestAccuracy ?? 0),
+            bestWpm:      Math.max(locLp.bestWpm      ?? 0, impLp.bestWpm      ?? 0),
+          }
+        }
+
+        // Merge lessonMistakes — sum counts
+        const mergedMistakes = { ...(loc.lessonMistakes ?? {}) }
+        for (const [lessonId, impMistakes] of Object.entries(imp.lessonMistakes ?? {})) {
+          mergedMistakes[lessonId] ??= {}
+          for (const [expected, typedMap] of Object.entries(impMistakes)) {
+            mergedMistakes[lessonId][expected] ??= {}
+            for (const [typed, count] of Object.entries(typedMap)) {
+              mergedMistakes[lessonId][expected][typed] =
+                (mergedMistakes[lessonId][expected][typed] ?? 0) + count
+            }
+          }
+        }
+
+        // Merge keyStats — concatenate (local first), trim to KEY_WINDOW
+        const mergedKeyStats = { ...(loc.keyStats ?? {}) }
+        for (const [key, impResults] of Object.entries(imp.keyStats ?? {})) {
+          mergedKeyStats[key] = [...(mergedKeyStats[key] ?? []), ...impResults].slice(-KEY_WINDOW)
+        }
+
+        // Merge arcadeProgress — keep the higher highScore, achievedAt follows the winner
+        const mergedArcade = { ...(loc.arcadeProgress ?? {}) }
+        for (const [groupId, impArcade] of Object.entries(imp.arcadeProgress ?? {})) {
+          const locArcade = mergedArcade[groupId] ?? { highScore: 0, achievedAt: null }
+          if ((impArcade.highScore ?? 0) > (locArcade.highScore ?? 0)) {
+            mergedArcade[groupId] = { highScore: impArcade.highScore, achievedAt: impArcade.achievedAt }
+          }
+        }
+
+        result[idx] = {
+          ...loc,
+          lessonProgress: mergedProgress,
+          lessonMistakes: mergedMistakes,
+          keyStats:        mergedKeyStats,
+          arcadeProgress:  mergedArcade,
+        }
+        updated++
+      }
+    }
+
+    // Refresh activeProfile if its data changed
+    const activeId = get(activeProfile)?.id
+    if (activeId) {
+      const refreshed = result.find(p => p.id === activeId)
+      if (refreshed) activeProfile.set(refreshed)
+    }
+
+    return result
+  })
+
+  return { added, updated }
+}
