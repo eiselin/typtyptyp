@@ -10,7 +10,7 @@
 
 <div class="screen about" bind:this={screenEl}>
   <div class="topbar">
-    <button class="back-btn" on:click={() => goTo('home')}>← {$t('nav.back')}</button>
+    <button class="back-btn" on:click={() => goTo('home')}>{$t('nav.back')}</button>
     <span class="title">{$t('about.title')}</span>
     <span class="spacer"></span>
   </div>
