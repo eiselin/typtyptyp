@@ -1,8 +1,11 @@
 import nlWords from './nl.json'
 import enWords from './en.json'
+import nlSentences from '../lessons/zinnen/nl.json'
+import enSentences from '../lessons/zinnen/en.json'
 import { getLearnedKeys } from '../lessons/index.js'
 
 export const WORD_LISTS = { nl: nlWords, en: enWords }
+export const SENTENCE_LISTS = { nl: nlSentences, en: enSentences }
 
 const POOL_THRESHOLD = 10
 
@@ -96,7 +99,7 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
 }
 
 // Maps arcade group IDs to the last lesson in that group (determines learned keys)
-const GROUP_LAST_LESSON = { home: 5, top: 10, bottom: 14, all: 15 }
+const GROUP_LAST_LESSON = { home: 5, top: 10, bottom: 13 }
 
 /**
  * Returns a word cycler function for the given arcade group.
@@ -108,4 +111,19 @@ export function getArcadeWordCycler(groupId, wordList = nlWords) {
   const pool = getWordPool(learnedKeys, wordList)
   const words = pool.length >= POOL_THRESHOLD ? pool : generateNonsense(learnedKeys, 40)
   return makeCycler(words)
+}
+
+export function buildSentenceSequence(sentences, targetLength = 200) {
+  const pool = shuffle([...sentences])
+
+  const result = []
+  let len = 0
+  let idx = 0
+  while (len - 1 < targetLength) {
+    const sentence = pool[idx % pool.length]
+    result.push(sentence)
+    len += sentence.length + 1  // +1 for the space separator
+    idx++
+  }
+  return result.join(' ')
 }

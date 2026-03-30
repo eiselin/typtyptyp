@@ -2,8 +2,8 @@
 
 <script>
   import { t } from '../i18n/index.js'
-  import { LESSONS, getLearnedKeys, getFingerForKey, FINGER_VARS } from '../lessons/index.js'
-  import { buildExerciseSequence, WORD_LISTS } from '../words/index.js'
+  import { LESSONS, getLearnedKeys, getFingerForKey, getShiftSide, needsShift, FINGER_VARS } from '../lessons/index.js'
+  import { buildExerciseSequence, buildSentenceSequence, WORD_LISTS, SENTENCE_LISTS } from '../words/index.js'
   import { lang } from '../i18n/index.js'
   import { activeProfile, updateProgress } from '../stores/profiles.js'
   import { selectedLesson, goTo } from '../stores/screen.js'
@@ -42,7 +42,13 @@
 
   $effect(() => {
     if (lesson) {
-      sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
+      if (lesson.group === 'zinnen') {
+        const sentenceList = SENTENCE_LISTS[$lang] ?? SENTENCE_LISTS.nl
+        const sentences = sentenceList[String(lesson.id)] ?? []
+        sequence = buildSentenceSequence(sentences, 200)
+      } else {
+        sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
+      }
       cursor = 0; errors = 0; mistakeLog = []; keyLog = {}; startTime = null; scaleMeasured = false
     }
   })
@@ -154,7 +160,7 @@
 <div class="screen exercise">
   <div class="topbar">
     <button class="back-btn" onclick={confirmExit}>{$t('nav.back')}</button>
-    <span class="lesson-lbl">{lesson ? (lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label) : ''}</span>
+    <span class="lesson-lbl">{lesson ? lesson.label : ''}</span>
   </div>
 
   {#if showIntro}
@@ -163,13 +169,20 @@
       <div class="intro-title">{$t('exercise.newKeys')}</div>
       <div class="intro-desc">{$t('exercise.newKeysDesc')}</div>
       <div class="intro-key-grid">
-        {#each newKeys.filter(k => /^[a-z]$/i.test(k)) as key}
-          {@const finger = getFingerForKey(key)}
-          {@const color  = finger ? FINGER_VARS[finger] : 'var(--text)'}
-          <div class="intro-key-card" style="--kc:{color}">
-            <div class="intro-key-char">{key.toUpperCase()}</div>
-            <div class="intro-key-finger">{finger ? $t(`finger.${finger}`) : ''}</div>
-          </div>
+        {#each (lesson?.group === 'zinnen' ? newKeys : newKeys.filter(k => /^[a-z]$/i.test(k))) as key}
+          {#if key === 'shift'}
+            <div class="intro-key-card intro-key-card--wide" style="--kc:{FINGER_VARS.lp}">
+              <div class="intro-key-char" style="font-size:32px">SHIFT</div>
+              <div class="intro-key-finger">{$t('finger.lp')} / {$t('finger.rp')}</div>
+            </div>
+          {:else}
+            {@const finger = getFingerForKey(key)}
+            {@const color  = finger ? FINGER_VARS[finger] : 'var(--text)'}
+            <div class="intro-key-card" style="--kc:{color}">
+              <div class="intro-key-char">{key.toUpperCase()}</div>
+              <div class="intro-key-finger">{finger ? $t(`finger.${finger}`) : ''}</div>
+            </div>
+          {/if}
         {/each}
       </div>
       <button class="btn-begin" onclick={() => introDismissedForLesson = lesson.id}>{$t('exercise.begin')}</button>
@@ -246,6 +259,7 @@
   }
   .intro-key-char   { font-size:56px; font-weight:bold; color:var(--kc); text-shadow:0 0 20px var(--kc); font-family:'Courier New',monospace; line-height:1; }
   .intro-key-finger { font-size:16px; color:var(--kc); letter-spacing:2px; opacity:.8; }
+  .intro-key-card--wide { padding: 20px 48px; }
   .btn-begin {
     margin-top:8px; padding:16px 48px; font-size:18px; font-weight:bold; letter-spacing:3px;
     background:var(--accent-cyan); color:var(--bg); border-radius:4px; border:none; cursor:pointer;
