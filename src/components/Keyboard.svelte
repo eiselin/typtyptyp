@@ -1,32 +1,46 @@
 <script>
-  import { FINGER_MAP, FINGER_VARS } from '../lessons/index.js'
+  import { FINGER_MAP, FINGER_VARS, needsShift, getPhysicalKey, getShiftSide } from '../lessons/index.js'
   import { t } from '../i18n/index.js'
 
   export let activeKey = null
 
   // Row stagger offsets (px) — matches real ANSI keyboard proportions
-  const ROW_STAGGER = [0, 22, 36, 54]
+  // Bottom row (index 3) gets no stagger because shift keys flank it
+  const ROW_STAGGER = [0, 22, 36, 0]
 
   const ROWS = [
     ['1','2','3','4','5','6','7','8','9','0'],
     ['q','w','e','r','t','y','u','i','o','p'],
     ['a','s','d','f','g','h','j','k','l',';'],
-    ['z','x','c','v','b','n','m',',','.','/'],
+    ['z','x','c','v','b','n','m',',','.',"'",'/',],
   ]
-
 
   function colour(key) {
     return FINGER_VARS[FINGER_MAP[key]] ?? 'var(--text-muted)'
   }
 
+  $: physKey   = getPhysicalKey(activeKey)
+  $: shiftSide = getShiftSide(activeKey)   // 'shift_l', 'shift_r', or null
+
   function isActive(key) {
-    return key === activeKey?.toLowerCase()
+    return key === physKey
   }
+
+  const shiftColourL = FINGER_VARS[FINGER_MAP['shift_l']]  // lp
+  const shiftColourR = FINGER_VARS[FINGER_MAP['shift_r']]  // rp
 </script>
 
 <div class="keyboard">
   {#each ROWS as row, ri}
     <div class="kbd-row" style="padding-left:{ROW_STAGGER[ri]}px">
+      {#if ri === 3}
+        <span
+          class="key key--shift"
+          class:key--active={shiftSide === 'shift_l'}
+          style="--kc:{shiftColourL}"
+        >SHIFT</span>
+      {/if}
+
       {#each row as key}
         <span
           class="key"
@@ -34,6 +48,14 @@
           style="--kc:{colour(key)}"
         >{key.toUpperCase()}</span>
       {/each}
+
+      {#if ri === 3}
+        <span
+          class="key key--shift"
+          class:key--active={shiftSide === 'shift_r'}
+          style="--kc:{shiftColourR}"
+        >SHIFT</span>
+      {/if}
     </div>
   {/each}
   <div class="kbd-row kbd-row--space">
@@ -92,5 +114,8 @@
     color:var(--text-muted); border-color:color-mix(in srgb,var(--text-muted) 30%,transparent);
     border-bottom-color:color-mix(in srgb,var(--text-muted) 50%,transparent);
     text-shadow:none; letter-spacing:3px;
+  }
+  .key--shift {
+    width:auto; min-width:56px; padding:11px 10px; font-size:11px; letter-spacing:1px;
   }
 </style>
