@@ -14,6 +14,10 @@ export function getLeaderboard() {
   return load()
 }
 
+export function clearLeaderboard() {
+  save([])
+}
+
 export function submitScore(profileName, score, groupId) {
   const entries = load()
   if (entries.length >= MAX_ENTRIES && score <= entries[MAX_ENTRIES - 1].score) {

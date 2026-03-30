@@ -2,6 +2,8 @@ import { get } from 'svelte/store'
 import { t, setLanguage } from '../../src/i18n/index.js'
 
 describe('i18n', () => {
+  beforeEach(() => setLanguage('nl'))
+
   it('returns a Dutch string for a known key', () => {
     expect(get(t)('nav.start')).toBe('▶ START')
   })
