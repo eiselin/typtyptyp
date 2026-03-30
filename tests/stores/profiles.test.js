@@ -245,5 +245,24 @@ describe('mergeProfiles', () => {
     expect(mistakes.f.d).toBe(5) // 3 + 2
     expect(mistakes.f.g).toBe(1) // new key from imported
   })
+
+  it('concatenates keyStats (local first) and trims to 50', () => {
+    createProfile('Fleur')
+    const id = get(profiles)[0].id
+    profiles.update(ps => ps.map(p => p.id === id
+      ? { ...p, keyStats: { f: Array(40).fill(true) } }
+      : p))
+
+    const imported = [{
+      id, name: 'Fleur', colour: '#00ffee', createdAt: Date.now(),
+      lessonProgress: {}, lessonMistakes: {},
+      keyStats: { f: Array(20).fill(false) },
+    }]
+    mergeProfiles(imported)
+
+    const keyF = get(profiles)[0].keyStats.f
+    expect(keyF).toHaveLength(50)
+    expect(keyF[keyF.length - 1]).toBe(false) // imported entries at the end
+  })
 })
 

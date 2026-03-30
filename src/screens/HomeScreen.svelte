@@ -66,12 +66,12 @@
         const data = JSON.parse(ev.target.result)
         if (!Array.isArray(data?.profiles)) throw new Error('invalid')
         const valid = data.profiles.filter(p => p?.id && p?.name && p?.lessonProgress)
-        if (valid.length === 0) throw new Error('invalid')
+        if (valid.length === 0) throw new Error('noProfiles')
         pendingImport = valid
         backupMsg = ''
         backupMsgIsError = false
-      } catch {
-        backupMsg = get(t)('backup.error')
+      } catch (err) {
+        backupMsg = get(t)(err?.message === 'noProfiles' ? 'backup.noProfiles' : 'backup.error')
         backupMsgIsError = true
         pendingImport = null
       }
@@ -186,7 +186,7 @@
             <button class="btn-save" on:click={handleExport}>{$t('backup.save')}</button>
 
             <p class="modal-desc">{$t('backup.loadDesc')}</p>
-            <button class="btn-load" on:click={() => fileInput.click()}>{$t('backup.load')}</button>
+            <button class="btn-load" on:click={() => fileInput?.click()}>{$t('backup.load')}</button>
             <input bind:this={fileInput} type="file" accept=".json" style="display:none"
               on:change={handleImportFile} />
           {/if}
@@ -235,7 +235,8 @@
   .modal-title { font-size:20px; font-weight:bold; letter-spacing:3px; color:var(--accent-cyan); text-shadow:0 0 10px color-mix(in srgb,var(--accent-cyan) 50%,transparent); margin-bottom:20px; }
   .modal-desc { font-size:15px; color:var(--text-muted); line-height:1.6; margin:0 0 12px; }
   .modal-actions { display:flex; gap:10px; margin-bottom:8px; }
-  .btn-save, .btn-load, .btn-confirm { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; margin-bottom:20px; display:block; }
+  .btn-save, .btn-load { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; margin-bottom:20px; display:block; }
+  .btn-confirm { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; }
   .btn-cancel { background:none; border:2px solid var(--text-muted); color:var(--text-muted); border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; }
   .modal-msg { font-size:14px; margin:12px 0 0; letter-spacing:0.5px; }
   .modal-msg--error { color:#ff4455; }

@@ -11,6 +11,7 @@
   "home.enterName": "YOUR NAME",
   "home.nameTaken": "This name already exists",
   "home.nameEmpty": "Enter a name",
+  "home.backup": "BACKUP",
   "lessons.title": "LESSONS",
   "lessons.play": "▶ PLAY",
   "lessons.group.thuisrij": "HOME ROW",
@@ -104,5 +105,16 @@
   "arcade.pause": "PAUSE",
   "arcade.paused": "PAUSED",
   "arcade.resume": "▶ RESUME",
-  "arcade.exit": "← EXIT TO LESSONS"
+  "arcade.exit": "← EXIT TO LESSONS",
+  "backup.title": "BACKUP & RESTORE",
+  "backup.saveDesc": "Save your progress to a file on this device.",
+  "backup.save": "SAVE BACKUP",
+  "backup.loadDesc": "Restore from a previously saved file. New profiles are added; existing ones are updated with your best results.",
+  "backup.load": "LOAD BACKUP",
+  "backup.confirmDesc": "This will update existing profiles. Continue?",
+  "backup.confirmYes": "CONFIRM",
+  "backup.confirmNo": "CANCEL",
+  "backup.success": "Done! {added} added, {updated} updated.",
+  "backup.error": "Could not read backup file.",
+  "backup.noProfiles": "No valid profiles found in this file."
 }

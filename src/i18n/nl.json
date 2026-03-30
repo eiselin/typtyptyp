@@ -11,6 +11,7 @@
   "home.enterName": "JOUW NAAM",
   "home.nameTaken": "Deze naam bestaat al",
   "home.nameEmpty": "Voer een naam in",
+  "home.backup": "BACKUP",
   "lessons.title": "LESSEN",
   "lessons.play": "▶ SPELEN",
   "lessons.group.thuisrij": "THUISRIJ",
@@ -104,5 +105,16 @@
   "arcade.pause": "PAUZE",
   "arcade.paused": "GEPAUZEERD",
   "arcade.resume": "▶ DOORGAAN",
-  "arcade.exit": "← TERUG NAAR LESSEN"
+  "arcade.exit": "← TERUG NAAR LESSEN",
+  "backup.title": "BACKUP & HERSTEL",
+  "backup.saveDesc": "Sla je voortgang op als bestand op dit apparaat.",
+  "backup.save": "OPSLAAN",
+  "backup.loadDesc": "Herstel vanuit een eerder opgeslagen bestand. Nieuwe profielen worden toegevoegd; bestaande worden bijgewerkt met de beste resultaten.",
+  "backup.load": "LADEN",
+  "backup.confirmDesc": "Dit werkt bestaande profielen bij. Doorgaan?",
+  "backup.confirmYes": "BEVESTIGEN",
+  "backup.confirmNo": "ANNULEREN",
+  "backup.success": "Klaar! {added} toegevoegd, {updated} bijgewerkt.",
+  "backup.error": "Kon het back-upbestand niet lezen.",
+  "backup.noProfiles": "Geen geldige profielen gevonden in dit bestand."
 }
