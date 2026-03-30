@@ -31,14 +31,16 @@
     return '●'.repeat(stars) + '○'.repeat(3 - stars)
   }
 
-  const GROUPS = ['thuisrij','bovenrij','onderrij','volledig']
+  const GROUPS = ['thuisrij','bovenrij','onderrij','zinnen']
 
   const GROUP_IDS = {
     thuisrij: 'home',
     bovenrij: 'top',
     onderrij: 'bottom',
-    volledig:  'all',
+    zinnen:   'sentences',
   }
+
+  const NO_GAME_GROUPS = new Set(['zinnen'])
 </script>
 
 <svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home'); else if (screenEl) arrowNav2D(e, screenEl) }} />
@@ -91,7 +93,7 @@
             class:ltile--wide={wide}
             on:click={() => selectLesson(lesson.id)}
           >
-            <div class="lkeys">{lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label}</div>
+            <div class="lkeys">{lesson.label}</div>
             <div class="lstate">
               {#if s === 'completed'}{dots(stars)}
               {:else if s === 'recommended'}{$t('lessons.next')}
@@ -100,7 +102,8 @@
           </button>
         {/each}
 
-        <!-- Game tile: always available -->
+        <!-- Game tile: always available (except groups with no game) -->
+        {#if !NO_GAME_GROUPS.has(group)}
         <button
           class="game-tile game-tile--unlocked"
           on:click={() => startArcade(groupId)}
@@ -108,6 +111,7 @@
           <div class="game-icon">▶▶</div>
           <div class="game-lbl">GAME</div>
         </button>
+        {/if}
       </div>
     {/each}
   </div>
