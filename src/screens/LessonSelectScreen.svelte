@@ -1,6 +1,6 @@
 <script>
   import { t } from '../i18n/index.js'
-  import { LESSONS } from '../lessons/index.js'
+  import { LESSONS, getRecommendedLesson } from '../lessons/index.js'
   import { activeProfile } from '../stores/profiles.js'
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
   import { arrowNav2D } from '../utils/keyboard.js'
@@ -10,19 +10,21 @@
   let screenEl
 
   onMount(() => {
-    const first = screenEl?.querySelector('.ltile--available') ?? screenEl?.querySelector('button:not([disabled])')
+    const first = screenEl?.querySelector('.ltile--recommended')
+      ?? screenEl?.querySelector('.ltile--completed')
+      ?? screenEl?.querySelector('button:not([disabled])')
     first?.focus()
   })
 
+  const emptyProfile = { lessonProgress: {}, keyStats: {} }
+
   $: progress = $activeProfile?.lessonProgress ?? {}
+  $: recommendedId = getRecommendedLesson($activeProfile ?? emptyProfile, LESSONS)?.id
 
-  const unlockAll = import.meta.env.DEV && new URL(location.href).searchParams.has('unlock')
-
-  function state(lesson) {
-    if (unlockAll) return 'done'
-    if ((progress[lesson.id]?.stars ?? 0) > 0) return 'done'
-    if (lesson.id === 1 || (progress[lesson.id - 1]?.stars ?? 0) >= 1) return 'available'
-    return 'locked'
+  function tileState(lesson) {
+    if ((progress[lesson.id]?.stars ?? 0) >= 1) return 'completed'
+    if (lesson.id === recommendedId) return 'recommended'
+    return 'unplayed'
   }
 
   function dots(stars) {
@@ -36,19 +38,6 @@
     bovenrij: 'top',
     onderrij: 'bottom',
     volledig:  'all',
-  }
-
-  const GROUP_LESSON_IDS = {
-    home:   [1, 2, 3, 4, 5],
-    top:    [6, 7, 8, 9, 10],
-    bottom: [11, 12, 13, 14],
-    all:    [15],
-  }
-
-  function isArcadeUnlocked(groupId) {
-    if (unlockAll) return true
-    const ids = GROUP_LESSON_IDS[groupId] ?? []
-    return ids.every(id => (progress[id]?.stars ?? 0) >= 1)
   }
 </script>
 
@@ -88,37 +77,33 @@
 
     {#each GROUPS as group}
       {@const groupId = GROUP_IDS[group]}
-      {@const unlocked = isArcadeUnlocked(groupId)}
       {@const groupLessons = LESSONS.filter(l => l.group === group)}
 
       <div class="group-lbl">{$t(`lessons.group.${group}`)}</div>
 
       <div class="lesson-row">
         {#each groupLessons as lesson}
-          {@const s = state(lesson)}
+          {@const s = tileState(lesson)}
           {@const stars = progress[lesson.id]?.stars ?? 0}
           {@const wide = lesson.keys.length >= 8}
           <button
             class="ltile ltile--{s}"
             class:ltile--wide={wide}
-            disabled={s === 'locked'}
-            on:click={() => s !== 'locked' && selectLesson(lesson.id)}
+            on:click={() => selectLesson(lesson.id)}
           >
             <div class="lkeys">{lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label}</div>
             <div class="lstate">
-              {#if s === 'done'}{dots(stars)}
-              {:else if s === 'available'}▶
-              {:else}—{/if}
+              {#if s === 'completed'}{dots(stars)}
+              {:else if s === 'recommended'}NEXT
+              {:else}·{/if}
             </div>
           </button>
         {/each}
 
-        <!-- Game tile -->
+        <!-- Game tile: always available -->
         <button
-          class="game-tile"
-          class:game-tile--unlocked={unlocked}
-          disabled={!unlocked}
-          on:click={() => unlocked && startArcade(groupId)}
+          class="game-tile game-tile--unlocked"
+          on:click={() => startArcade(groupId)}
         >
           <div class="game-icon">▶▶</div>
           <div class="game-lbl">GAME</div>
@@ -220,25 +205,31 @@
   }
   .ltile--wide { flex: 2; }
 
-  .ltile--done      { border-color: color-mix(in srgb,var(--accent-green) 30%,var(--border)); }
-  .ltile--done .lkeys { color: var(--accent-green); }
-  .ltile--done .lstate { color: color-mix(in srgb,var(--accent-green) 40%,transparent); }
-
-  .ltile--available {
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 8px color-mix(in srgb,var(--accent-cyan) 15%,transparent);
+  .ltile--completed {
+    border-color: color-mix(in srgb,var(--accent-green) 30%,var(--border));
   }
-  .ltile--available .lkeys { color: var(--accent-cyan); }
-  .ltile--available .lstate { color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); }
+  .ltile--completed .lkeys  { color: var(--accent-green); }
+  .ltile--completed .lstate { color: color-mix(in srgb,var(--accent-green) 40%,transparent); }
 
-  .ltile--locked {
+  .ltile--recommended {
+    border-color: var(--accent-yellow);
+    box-shadow: 0 0 10px color-mix(in srgb,var(--accent-yellow) 30%,transparent);
+  }
+  .ltile--recommended .lkeys  { color: var(--accent-yellow); }
+  .ltile--recommended .lstate {
+    color: var(--accent-yellow);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px color-mix(in srgb,var(--accent-yellow) 60%,transparent);
+  }
+
+  .ltile--unplayed {
     border-color: var(--border);
-    background: var(--bg-sunken);
-    opacity: 0.4;
-    cursor: not-allowed;
+    opacity: 0.45;
   }
-  .ltile--locked .lkeys { color: var(--text-muted); }
-  .ltile--locked .lstate { color: var(--border); }
+  .ltile--unplayed .lkeys  { color: var(--text-muted); }
+  .ltile--unplayed .lstate { color: var(--border); }
 
   .lkeys  { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: var(--text); }
   .lstate { font-size: 15px; letter-spacing: 1px; }
@@ -259,21 +250,17 @@
     justify-content: center;
     gap: 5px;
     min-height: 58px;
-    cursor: not-allowed;
-    opacity: 0.35;
+    cursor: pointer;
   }
   .game-tile--unlocked {
     opacity: 1;
     border-color: color-mix(in srgb,var(--accent-yellow) 40%,var(--border));
-    cursor: pointer;
     box-shadow: 0 0 8px color-mix(in srgb,var(--accent-yellow) 10%,transparent);
   }
   .game-tile--unlocked:hover {
     border-color: var(--accent-yellow);
     box-shadow: 0 0 14px color-mix(in srgb,var(--accent-yellow) 25%,transparent);
   }
-  .game-icon { font-size: 17px; color: var(--text-muted); }
-  .game-tile--unlocked .game-icon { color: var(--accent-yellow); }
-  .game-lbl  { font-size: 14px; letter-spacing: 1px; color: var(--text-muted); }
-  .game-tile--unlocked .game-lbl { color: var(--accent-yellow); opacity: 0.7; }
+  .game-icon { font-size: 17px; color: var(--accent-yellow); }
+  .game-lbl  { font-size: 14px; letter-spacing: 1px; color: var(--accent-yellow); opacity: 0.7; }
 </style>

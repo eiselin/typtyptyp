@@ -39,6 +39,53 @@ export function getFingerForKey(key) {
   return FINGER_MAP[key.toLowerCase()] ?? null
 }
 
+/**
+ * Returns the single recommended lesson for the given profile.
+ * Steps (in order):
+ *   1. No data yet → lessons[0]
+ *   2. Lowest lesson with a struggling newly-introduced key (accuracy < 0.95, ≥5 presses)
+ *   3. Lowest unplayed lesson (0 stars)
+ *   4. Lesson with lowest bestAccuracy (most room to improve)
+ */
+export function getRecommendedLesson(profile, lessons) {
+  const lessonProgress = profile?.lessonProgress ?? {}
+  const keyStats = profile?.keyStats ?? {}
+
+  // Step 1: No data yet
+  const hasKeyData = Object.values(keyStats).some(arr => Array.isArray(arr) && arr.length >= 5)
+  if (!hasKeyData) return lessons[0]
+
+  // Step 2: Lowest lesson with a struggling key
+  for (let i = 0; i < lessons.length; i++) {
+    const lesson = lessons[i]
+    const prevId = i > 0 ? lessons[i - 1].id : 0
+    const currentKeys = new Set(getLearnedKeys(lesson.id))
+    const prevKeys = new Set(getLearnedKeys(prevId))
+    const newKeys = [...currentKeys].filter(k => !prevKeys.has(k))
+
+    for (const key of newKeys) {
+      const results = keyStats[key]
+      if (!results || results.length < 5) continue
+      const accuracy = results.filter(Boolean).length / results.length
+      if (accuracy < 0.95) return lesson
+    }
+  }
+
+  // Step 3: First unplayed lesson
+  for (const lesson of lessons) {
+    if ((lessonProgress[lesson.id]?.stars ?? 0) === 0) return lesson
+  }
+
+  // Step 4: Lesson with lowest bestAccuracy
+  let worst = lessons[0]
+  for (const lesson of lessons) {
+    const acc = lessonProgress[lesson.id]?.bestAccuracy ?? 0
+    const worstAcc = lessonProgress[worst.id]?.bestAccuracy ?? 0
+    if (acc < worstAcc) worst = lesson
+  }
+  return worst
+}
+
 export const FINGER_VARS = {
   lp:'var(--f-lp)', lr:'var(--f-lr)', lm:'var(--f-lm)', li:'var(--f-li)',
   ri:'var(--f-ri)', rm:'var(--f-rm)', rr:'var(--f-rr)', rp:'var(--f-rp)',

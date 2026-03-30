@@ -1,7 +1,7 @@
 <script>
   import { t } from '../i18n/index.js'
   import { activeProfile } from '../stores/profiles.js'
-  import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys } from '../lessons/index.js'
+  import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys, getRecommendedLesson } from '../lessons/index.js'
   import { selectLesson, goTo } from '../stores/screen.js'
   import ProfessorChick from '../components/ProfessorChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
@@ -79,9 +79,7 @@
     })
   })()
 
-  $: practiceLesson = worstKey
-    ? LESSONS.find(l => l.keys.includes(worstKey.key)) ?? null
-    : null
+  $: practiceLesson = profile ? getRecommendedLesson(profile, LESSONS) : null
 </script>
 
 <svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons'); else if (screenEl) arrowNav(e, screenEl) }} />
