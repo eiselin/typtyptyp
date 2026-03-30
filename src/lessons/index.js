@@ -5,6 +5,8 @@ export const FINGER_MAP = {
   'q':'lp','w':'lr','e':'lm','r':'li','t':'li','y':'ri','u':'ri','i':'rm','o':'rr','p':'rp',
   'a':'lp','s':'lr','d':'lm','f':'li','g':'li','h':'ri','j':'ri','k':'rm','l':'rr',';':'rp',
   'z':'lp','x':'lr','c':'lm','v':'li','b':'li','n':'ri','m':'ri',',':'rm','.':'rr','/':'rp',
+  '!':'lp','?':'rp',':':'rp','"':'rp',"'":'rp',
+  'shift_l':'lp','shift_r':'rp',
 }
 
 export const LESSONS = [
@@ -18,11 +20,14 @@ export const LESSONS = [
   { id:8,  group:'bovenrij', keys:['w','o'],         label:'W O' },
   { id:9,  group:'bovenrij', keys:['q','p'],         label:'Q P' },
   { id:10, group:'bovenrij', keys:['q','w','e','r','t','y','u','i','o','p'], label:'QWERTYUIOP' },
-  { id:11, group:'onderrij', keys:['v','m'],         label:'V M' },
-  { id:12, group:'onderrij', keys:['c'],              label:'C' },
-  { id:13, group:'onderrij', keys:['x'],              label:'X' },
-  { id:14, group:'onderrij', keys:['z'],              label:'Z' },
-  { id:15, group:'volledig', keys:Object.keys(FINGER_MAP).filter(k => /^[a-z]$/.test(k)), label:'VOLLEDIG', labelKey:'lessons.label.volledig' },
+  { id:11, group:'onderrij', keys:['b','n'],         label:'B N' },
+  { id:12, group:'onderrij', keys:['v','m'],         label:'V M' },
+  { id:13, group:'onderrij', keys:['z','x','c'],      label:'Z X C' },
+  { id:14, group:'zinnen', keys:['shift','.'],    label:'SHIFT .' },
+  { id:15, group:'zinnen', keys:[','],             label:',' },
+  { id:16, group:'zinnen', keys:['?','!'],         label:'? !' },
+  { id:17, group:'zinnen', keys:[':',';'],         label:': ;' },
+  { id:18, group:'zinnen', keys:['"',"'"],         label:'" \'' },
 ]
 
 /** Returns all keys introduced in lessons 1..lessonId (cumulative, deduped). */
@@ -37,6 +42,28 @@ export function getLearnedKeys(lessonId) {
 
 export function getFingerForKey(key) {
   return FINGER_MAP[key.toLowerCase()] ?? null
+}
+
+const SHIFT_TO_PHYSICAL = { '!':'1', '?':'/', ':':';', '"':"'" }
+
+export function needsShift(char) {
+  if (!char || char.length !== 1) return false
+  if (char >= 'A' && char <= 'Z') return true
+  return char in SHIFT_TO_PHYSICAL
+}
+
+export function getPhysicalKey(char) {
+  if (!char) return null
+  if (char >= 'A' && char <= 'Z') return char.toLowerCase()
+  return SHIFT_TO_PHYSICAL[char] ?? char
+}
+
+export function getShiftSide(char) {
+  if (!needsShift(char)) return null
+  const physKey = getPhysicalKey(char)
+  const finger = FINGER_MAP[physKey]
+  if (!finger) return null
+  return finger.startsWith('l') ? 'shift_r' : 'shift_l'
 }
 
 /**

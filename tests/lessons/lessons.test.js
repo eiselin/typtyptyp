@@ -1,8 +1,8 @@
-import { LESSONS, FINGER_MAP, getLearnedKeys, getFingerForKey, getRecommendedLesson } from '../../src/lessons/index.js'
+import { LESSONS, FINGER_MAP, getLearnedKeys, getFingerForKey, getRecommendedLesson, needsShift, getPhysicalKey, getShiftSide } from '../../src/lessons/index.js'
 
 describe('LESSONS', () => {
-  it('has 15 lessons', () => {
-    expect(LESSONS).toHaveLength(15)
+  it('has 18 lessons', () => {
+    expect(LESSONS).toHaveLength(18)
   })
 
   it('each lesson has id, group, keys, label fields', () => {
@@ -162,5 +162,86 @@ describe('getRecommendedLesson', () => {
 
     const profile = { lessonProgress, keyStats }
     expect(getRecommendedLesson(profile, LESSONS)).toBe(LESSONS[2]) // lesson id 3 = index 2
+  })
+})
+
+describe('FINGER_MAP extensions', () => {
+  it('maps ! to lp', () => expect(FINGER_MAP['!']).toBe('lp'))
+  it('maps ? to rp', () => expect(FINGER_MAP['?']).toBe('rp'))
+  it('maps : to rp', () => expect(FINGER_MAP[':']).toBe('rp'))
+  it('maps " to rp', () => expect(FINGER_MAP['"']).toBe('rp'))
+  it("maps ' to rp", () => expect(FINGER_MAP["'"]).toBe('rp'))
+  it('maps shift_l to lp', () => expect(FINGER_MAP['shift_l']).toBe('lp'))
+  it('maps shift_r to rp', () => expect(FINGER_MAP['shift_r']).toBe('rp'))
+})
+
+describe('needsShift', () => {
+  it('returns true for uppercase letters', () => {
+    expect(needsShift('A')).toBe(true)
+    expect(needsShift('Z')).toBe(true)
+  })
+  it('returns true for shifted punctuation', () => {
+    expect(needsShift('!')).toBe(true)
+    expect(needsShift('?')).toBe(true)
+    expect(needsShift(':')).toBe(true)
+    expect(needsShift('"')).toBe(true)
+  })
+  it('returns false for lowercase letters', () => {
+    expect(needsShift('a')).toBe(false)
+  })
+  it("returns false for unshifted punctuation", () => {
+    expect(needsShift('.')).toBe(false)
+    expect(needsShift(',')).toBe(false)
+    expect(needsShift("'")).toBe(false)
+  })
+  it('returns false for null/empty', () => {
+    expect(needsShift(null)).toBe(false)
+    expect(needsShift('')).toBe(false)
+  })
+})
+
+describe('getPhysicalKey', () => {
+  it('lowercases uppercase letters', () => {
+    expect(getPhysicalKey('A')).toBe('a')
+    expect(getPhysicalKey('Z')).toBe('z')
+  })
+  it('maps shifted punctuation to base key', () => {
+    expect(getPhysicalKey('!')).toBe('1')
+    expect(getPhysicalKey('?')).toBe('/')
+    expect(getPhysicalKey(':')).toBe(';')
+    expect(getPhysicalKey('"')).toBe("'")
+  })
+  it('returns unshifted punctuation unchanged', () => {
+    expect(getPhysicalKey('.')).toBe('.')
+    expect(getPhysicalKey(',')).toBe(',')
+    expect(getPhysicalKey("'")).toBe("'")
+  })
+})
+
+describe('getShiftSide', () => {
+  it('returns shift_r for left-hand characters (A=lp)', () => {
+    expect(getShiftSide('A')).toBe('shift_r')  // a is lp → left hand → right shift
+  })
+  it('returns shift_l for right-hand characters (J=ri)', () => {
+    expect(getShiftSide('J')).toBe('shift_l')  // j is ri → right hand → left shift
+  })
+  it('returns shift_l for ? (/ is rp → right hand → left shift)', () => {
+    expect(getShiftSide('?')).toBe('shift_l')
+  })
+  it('returns shift_r for ! (1 is lp → left hand → right shift)', () => {
+    expect(getShiftSide('!')).toBe('shift_r')
+  })
+  it('returns null for chars that do not need shift', () => {
+    expect(getShiftSide('a')).toBeNull()
+    expect(getShiftSide('.')).toBeNull()
+  })
+})
+
+describe('getLearnedKeys with zinnen lessons', () => {
+  it('includes all punctuation keys after lesson 18', () => {
+    const keys = getLearnedKeys(18)
+    for (const k of ['.', ',', '!', '?', ':', ';', '"', "'"]) {
+      expect(keys).toContain(k)
+    }
   })
 })
