@@ -1,18 +1,24 @@
 <script>
   import { t } from '../i18n/index.js'
-  import { getFingerForKey, FINGER_VARS } from '../lessons/index.js'
+  import { getFingerForKey, getShiftSide, needsShift, FINGER_VARS } from '../lessons/index.js'
 
   export let activeKey = null
 
-  $: isSpace      = activeKey === ' '
-  $: activeFinger = isSpace ? 'thumb' : (activeKey ? getFingerForKey(activeKey) : null)
-  $: fingerLabel  = activeFinger ? $t(`finger.${activeFinger}`) : ''
+  $: isSpace       = activeKey === ' '
+  $: activeFinger  = isSpace ? 'thumb' : (activeKey ? getFingerForKey(activeKey) : null)
+  $: shiftSide     = needsShift(activeKey) ? getShiftSide(activeKey) : null
+  $: shiftFingerId = shiftSide === 'shift_l' ? 'lp' : shiftSide === 'shift_r' ? 'rp' : null
+  $: fingerLabel   = activeFinger ? $t(`finger.${activeFinger}`) : ''
 
   const C = FINGER_VARS
 
   // [finger-id, tip-height-px]
   const LEFT  = [['lp',55],['lr',70],['lm',80],['li',65]]
   const RIGHT = [['ri',65],['rm',80],['rr',70],['rp',55]]
+
+  function isFingerActive(f) {
+    return f === activeFinger || f === shiftFingerId
+  }
 </script>
 
 <div class="hand-hints">
@@ -21,7 +27,7 @@
     <div class="hlabel">{$t('hand.left')}</div>
     <div class="fingers">
       {#each LEFT as [f, h]}
-        <div class="finger" class:active={f === activeFinger} style="--fc:{C[f]}">
+        <div class="finger" class:active={isFingerActive(f)} style="--fc:{C[f]}">
           <div class="ftip" style="height:{h}px"></div>
           <div class="fbase"></div>
         </div>
@@ -39,8 +45,13 @@
     <div class="hint-title">{$t('exercise.nextFinger')}</div>
     {#if activeFinger}
       {@const hintColor = isSpace ? 'var(--accent-yellow)' : C[activeFinger]}
-      <div class="hint-finger" style="color:{hintColor};text-shadow:0 0 8px {hintColor}">{fingerLabel}</div>
-      <div class="hint-key"    style="color:{hintColor}">{isSpace ? '⎵' : activeKey?.toUpperCase()}</div>
+      <div class="hint-finger" style="color:{hintColor};text-shadow:0 0 8px {hintColor}">
+        {#if shiftFingerId}SHIFT +{/if}
+        {fingerLabel}
+      </div>
+      <div class="hint-key" style="color:{hintColor}">
+        {isSpace ? '⎵' : activeKey?.toUpperCase()}
+      </div>
     {/if}
   </div>
 
@@ -53,7 +64,7 @@
         <div class="fbase"></div>
       </div>
       {#each RIGHT as [f, h]}
-        <div class="finger" class:active={f === activeFinger} style="--fc:{C[f]}">
+        <div class="finger" class:active={isFingerActive(f)} style="--fc:{C[f]}">
           <div class="ftip" style="height:{h}px"></div>
           <div class="fbase"></div>
         </div>
