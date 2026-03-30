@@ -274,7 +274,9 @@
     border-radius:4px; border:2px solid; cursor:pointer; font-family:inherit;
   }
   .modal-btn--cancel { background:transparent; color:var(--text-muted); border-color:var(--border); }
-  .modal-btn--cancel:hover { border-color:var(--text-muted); color:var(--text); }
-  .modal-btn--leave  { background:transparent; color:var(--accent-red,#ff4455); border-color:var(--accent-red,#ff4455); box-shadow:0 0 12px color-mix(in srgb,#ff4455 25%,transparent); }
-  .modal-btn--leave:hover { background:color-mix(in srgb,#ff4455 15%,transparent); }
+  .modal-btn--cancel:hover,
+  .modal-btn--cancel:focus-visible { border-color:var(--text-muted); color:var(--text); box-shadow:0 0 12px color-mix(in srgb,var(--text-muted) 35%,transparent); }
+  .modal-btn--leave  { background:transparent; color:var(--accent-red,#ff4455); border-color:var(--accent-red,#ff4455); box-shadow:0 0 12px color-mix(in srgb,#ff4455 25%,transparent); opacity:0.55; }
+  .modal-btn--leave:hover,
+  .modal-btn--leave:focus-visible { background:color-mix(in srgb,#ff4455 15%,transparent); box-shadow:0 0 20px color-mix(in srgb,#ff4455 55%,transparent); opacity:1; }
 </style>

@@ -22,8 +22,8 @@
   $: recommendedId = getRecommendedLesson($activeProfile ?? emptyProfile, LESSONS)?.id
 
   function tileState(lesson) {
-    if ((progress[lesson.id]?.stars ?? 0) >= 1) return 'completed'
     if (lesson.id === recommendedId) return 'recommended'
+    if ((progress[lesson.id]?.stars ?? 0) >= 1) return 'completed'
     return 'unplayed'
   }
 
@@ -94,7 +94,7 @@
             <div class="lkeys">{lesson.group === 'volledig' ? $t('lessons.label.volledig') : lesson.label}</div>
             <div class="lstate">
               {#if s === 'completed'}{dots(stars)}
-              {:else if s === 'recommended'}NEXT
+              {:else if s === 'recommended'}{$t('lessons.next')}
               {:else}·{/if}
             </div>
           </button>
@@ -210,11 +210,13 @@
   }
   .ltile--completed .lkeys  { color: var(--accent-green); }
   .ltile--completed .lstate { color: color-mix(in srgb,var(--accent-green) 40%,transparent); }
+  .ltile--completed:hover { border-color: var(--accent-green); box-shadow: 0 0 10px color-mix(in srgb,var(--accent-green) 25%,transparent); }
 
   .ltile--recommended {
     border-color: var(--accent-yellow);
     box-shadow: 0 0 10px color-mix(in srgb,var(--accent-yellow) 30%,transparent);
   }
+  .ltile--recommended:hover { box-shadow: 0 0 18px color-mix(in srgb,var(--accent-yellow) 55%,transparent); }
   .ltile--recommended .lkeys  { color: var(--accent-yellow); }
   .ltile--recommended .lstate {
     color: var(--accent-yellow);
@@ -225,11 +227,11 @@
   }
 
   .ltile--unplayed {
-    border-color: var(--border);
-    opacity: 0.45;
+    border-color: color-mix(in srgb,var(--accent-cyan) 20%,var(--border));
   }
   .ltile--unplayed .lkeys  { color: var(--text-muted); }
-  .ltile--unplayed .lstate { color: var(--border); }
+  .ltile--unplayed .lstate { color: color-mix(in srgb,var(--text-muted) 40%,transparent); }
+  .ltile--unplayed:hover { border-color: var(--accent-cyan); box-shadow: 0 0 10px color-mix(in srgb,var(--accent-cyan) 20%,transparent); }
 
   .lkeys  { font-size: 18px; font-weight: bold; letter-spacing: 1px; color: var(--text); }
   .lstate { font-size: 15px; letter-spacing: 1px; }

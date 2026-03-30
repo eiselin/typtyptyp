@@ -193,7 +193,9 @@
   .sl { font-size:15px; color:var(--text-muted); letter-spacing:1px; margin-top:2px; }
   .btn-row { display:flex; gap:10px; }
   .btn-retry   { flex:1; padding:11px; background:var(--bg-sunken); border:1px solid var(--border); border-radius:4px; font-size:19px; font-weight:bold; letter-spacing:2px; color:var(--text); font-family:inherit; cursor:pointer; }
+  .btn-retry:hover { border-color:var(--accent-cyan); box-shadow:0 0 10px color-mix(in srgb,var(--accent-cyan) 25%,transparent); color:var(--accent-cyan); }
   .btn-next    { flex:2; padding:11px; background:var(--accent-green); color:var(--bg); border-radius:4px; font-size:19px; font-weight:bold; letter-spacing:2px; box-shadow:0 0 18px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; border:none; }
+  .btn-next:hover { box-shadow:0 0 32px color-mix(in srgb,var(--accent-green) 65%,transparent); }
   .btn-lessons { width:100%; margin-top:8px; padding:11px; background:transparent; border:1px solid var(--border); border-radius:4px; font-size:16px; font-weight:bold; letter-spacing:2px; color:var(--text-muted); font-family:inherit; cursor:pointer; }
   .btn-lessons:hover { border-color:var(--text-muted); color:var(--text); }
 </style>

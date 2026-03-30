@@ -71,7 +71,9 @@
     display:flex; align-items:stretch; text-align:left;
   }
   .card--active { border-color:var(--pc,var(--accent-cyan)); box-shadow:0 0 12px color-mix(in srgb,var(--pc,var(--accent-cyan)) 25%,transparent); }
+  .card:not(.card--active):not(.card--new):hover { border-color:color-mix(in srgb,var(--pc,var(--accent-cyan)) 50%,var(--border)); box-shadow:0 0 10px color-mix(in srgb,var(--pc,var(--accent-cyan)) 20%,transparent); }
   .card--new { border-style:dashed; border-color:var(--text-muted); justify-content:center; font-family:'Courier New',monospace; font-size:15px; color:var(--text-muted); letter-spacing:2px; padding:16px 12px; }
+  .card--new:hover { border-color:var(--text); color:var(--text); }
 
   /* Normal state */
   .card-body { flex:1; background:none; border:none; cursor:pointer; font-family:inherit;
@@ -93,7 +95,9 @@
   /* Action buttons */
   .act { background:none; border:none; cursor:pointer; font-family:inherit; font-size:13px; padding:3px 6px; border-radius:3px; line-height:1; }
   .act--ok     { color:var(--accent-green); }
+  .act--ok:hover { text-shadow:0 0 8px var(--accent-green); }
   .act--danger { color:#ff4455; font-size:11px; letter-spacing:1px; font-weight:bold; }
+  .act--danger:hover { text-shadow:0 0 8px #ff4455; }
   .act--dim    { color:var(--text-muted); opacity:0.6; }
   .act--dim:hover { opacity:1; }
 

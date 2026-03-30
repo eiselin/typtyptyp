@@ -216,6 +216,7 @@
   .new-input-row input::placeholder { color:var(--text); opacity:.6; }
   .err { font-size:16px; color:#ff4455; }
   .btn-ok { background:var(--accent-cyan); color:var(--bg); border-radius:4px; padding:12px 18px; font-weight:bold; font-size:18px; letter-spacing:1px; }
+  .btn-ok:hover { box-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
   .bottom-row { display:flex; align-items:center; justify-content:space-between; margin-top:28px; }
   .lang-row { display:flex; gap:8px; opacity:0.55; }
   .lang-row:hover { opacity:0.75; }
@@ -225,6 +226,7 @@
   .lang-btn--on { border-color:var(--text-muted); opacity:1; }
   .lang-btn:not(.lang-btn--on) { opacity:0.5; }
   .btn-start { width:100%; padding:18px; font-size:22px; font-weight:bold; letter-spacing:3px; background:var(--accent-green); color:var(--bg); border-radius:4px; box-shadow:0 0 24px color-mix(in srgb,var(--accent-green) 40%,transparent); font-family:inherit; cursor:pointer; }
+  .btn-start:hover:not(:disabled) { box-shadow:0 0 40px color-mix(in srgb,var(--accent-green) 65%,transparent); }
   .btn-start:disabled { opacity:.4; cursor:not-allowed; box-shadow:none; }
   .backup-btn { background:none; border:1px solid var(--accent-cyan); border-radius:4px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--accent-cyan); letter-spacing:1px; padding:5px 10px; text-shadow:0 0 8px color-mix(in srgb,var(--accent-cyan) 60%,transparent); box-shadow:0 0 6px color-mix(in srgb,var(--accent-cyan) 25%,transparent); }
   .backup-btn:hover { box-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan) 55%,transparent); }
@@ -236,8 +238,11 @@
   .modal-desc { font-size:15px; color:var(--text-muted); line-height:1.6; margin:0 0 12px; }
   .modal-actions { display:flex; gap:10px; margin-bottom:8px; }
   .btn-save, .btn-load { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; margin-bottom:20px; display:block; }
+  .btn-save:hover, .btn-load:hover { box-shadow:0 0 16px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
   .btn-confirm { background:var(--accent-cyan); color:var(--bg); border:none; border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; }
+  .btn-confirm:hover { box-shadow:0 0 16px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
   .btn-cancel { background:none; border:2px solid var(--text-muted); color:var(--text-muted); border-radius:4px; padding:11px 18px; font-family:inherit; font-size:15px; font-weight:bold; letter-spacing:1px; cursor:pointer; }
+  .btn-cancel:hover { border-color:var(--text); color:var(--text); }
   .modal-msg { font-size:14px; margin:12px 0 0; letter-spacing:0.5px; }
   .modal-msg--error { color:#ff4455; }
   .modal-msg:not(.modal-msg--error) { color:var(--accent-green); }
