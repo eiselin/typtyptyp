@@ -5,7 +5,7 @@
   import { selectedGroup, goTo } from '../stores/screen.js'
   import { activeProfile, updateArcadeProgress } from '../stores/profiles.js'
   import { gameResults } from '../stores/game.js'
-  import { submitScore } from '../stores/leaderboard.js'
+  import { submitScore } from '../utils/leaderboard.js'
   import { getArcadeWordCycler, WORD_LISTS } from '../words/index.js'
   import { lang } from '../i18n/index.js'
   import PixelChick from '../components/PixelChick.svelte'
@@ -20,12 +20,18 @@
   $effect(() => { if (showIntro) tick().then(() => introBtn?.focus()) })
 
   // ── Constants ───────────────────────────────────────────────
-  const NUM_LANES   = 5
-  const BASE_SPEED  = 4         // % of container width per second at speed_factor 1.0
-  const MAX_SPEED   = 3.0
-  const EDGE_WARN   = 2         // pad-widths from edge triggers flash
-  const NEAR_BANK   = -1        // chick lane index when on near (start) bank
-  const FAR_BANK    = NUM_LANES // chick lane index when on far (goal) bank
+  const NUM_LANES          = 5
+  const BASE_SPEED         = 4         // % of container width per second at speed_factor 1.0
+  const MAX_SPEED          = 3.0
+  const EDGE_WARN          = 2         // pad-widths from edge triggers flash
+  const NEAR_BANK          = -1        // chick lane index when on near (start) bank
+  const FAR_BANK           = NUM_LANES // chick lane index when on far (goal) bank
+  const NEST_BONUS         = 500       // base score added on each successful crossing
+  const POST_CROSSING_MS   = 800       // delay (ms) before new round starts after nest hop
+  const FREEZE_MS          = 1200      // river freeze duration (ms) after losing a life
+  const GAME_OVER_MS       = 2000      // delay (ms) before navigating to results screen
+  const HOP_ANIM_MS        = 450       // chick hop animation duration (ms)
+  const WOBBLE_ANIM_MS     = 500       // chick wobble animation duration (ms)
 
   // ── Game state (Svelte 5 runes) ─────────────────────────────
   let showIntro    = $state(true)
@@ -193,69 +199,61 @@
     if (gamePhase !== 'playing') return
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return
 
-    // On the final lane, typing targets the nest word
     if (onFinalLane) {
-      const expected = nestWord[typedSoFar.length]
-      if (!expected) return
-      if (e.key === expected) {
-        combo += 1
-        const newTyped = typedSoFar + e.key
-        if (newTyped === nestWord) {
-          score += Math.round(nestWord.length * multiplier * speedFactor)
-          typedSoFar = ''
-          hopToNest()
-        } else {
-          typedSoFar = newTyped
-        }
-      } else {
-        combo = 0
-        typedSoFar = ''
-        chickState = 'wobble'
-        setTimeout(() => { if (chickState === 'wobble') chickState = 'idle' }, 500)
-      }
+      handleTypedChar(e.key, nestWord, () => {
+        score += Math.round(nestWord.length * multiplier * speedFactor)
+        hopToNest()
+      })
       return
     }
 
     const pad = getGlowingPad()
     if (!pad) return
+    handleTypedChar(e.key, pad.word, () => {
+      score += Math.round(pad.word.length * multiplier * speedFactor)
+      hopToNextLane(pad)
+    })
+  }
 
-    const expected = pad.word[typedSoFar.length]
+  /** Handle one typed character against a target word, calling onComplete when the word is finished. */
+  function handleTypedChar(key, targetWord, onComplete) {
+    const expected = targetWord[typedSoFar.length]
     if (!expected) return
-
-    if (e.key === expected) {
+    if (key === expected) {
       combo += 1
-      const newTyped = typedSoFar + e.key
-      if (newTyped === pad.word) {
-        score += Math.round(pad.word.length * multiplier * speedFactor)
+      const newTyped = typedSoFar + key
+      if (newTyped === targetWord) {
         typedSoFar = ''
-        hopToNextLane(pad)
+        onComplete()
       } else {
         typedSoFar = newTyped
       }
     } else {
       combo = 0
       typedSoFar = ''
-      chickState = 'wobble'
-      setTimeout(() => { if (chickState === 'wobble') chickState = 'idle' }, 500)
+      triggerChickState('wobble', WOBBLE_ANIM_MS)
     }
   }
 
+  function triggerChickState(state, durationMs) {
+    chickState = state
+    setTimeout(() => { if (chickState === state) chickState = 'idle' }, durationMs)
+  }
+
   function hopToNextLane(targetPad) {
-    chickState = 'hop'
-    setTimeout(() => { if (chickState === 'hop') chickState = 'idle' }, 450)
+    triggerChickState('hop', HOP_ANIM_MS)
     chickenLane = chickenLane + 1
     chickenPadId = targetPad.id
   }
 
   function hopToNest() {
-    chickState = 'hop'
-    setTimeout(() => { if (chickState === 'hop') chickState = 'idle' }, 450)
+    triggerChickState('hop', HOP_ANIM_MS)
     chickenLane = FAR_BANK
     chickenPadId = null
-    score += Math.round(500 * speedFactor)
+    score += Math.round(NEST_BONUS * speedFactor)
     crossings += 1
     speedFactor = Math.min(+(speedFactor + 0.1).toFixed(1), MAX_SPEED)
-    setTimeout(startNewRound, 800)
+    setTimeout(startNewRound, POST_CROSSING_MS)
   }
 
   function startNewRound() {
@@ -287,7 +285,7 @@
       chickState = 'idle'
       losing = false
       gamePhase = 'playing'  // $effect handles RAF restart
-    }, 1200)
+    }, FREEZE_MS)
   }
 
   function endGame() {
@@ -298,8 +296,7 @@
       submitScore(p.name, score, groupId)
     }
     gameResults.set({ score, crossings, groupId, profileName: p?.name ?? '?', prevBest })
-    // Show SPLASH overlay for 2s, then go to results
-    endGameTimer = setTimeout(() => goTo('results'), 2000)
+    endGameTimer = setTimeout(() => goTo('results'), GAME_OVER_MS)
   }
 
   $effect(() => {

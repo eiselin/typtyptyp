@@ -104,20 +104,7 @@
     flex-direction: column;
   }
 
-  .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 0; flex-shrink: 0; }
-  .back-btn {
-    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
-    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
-    padding: 4px 8px; white-space: nowrap; cursor: pointer;
-    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
-                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
-    transition: text-shadow 0.15s, color 0.15s;
-  }
-  .back-btn:hover, .back-btn:focus-visible {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
-                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
-  }
+  .topbar { padding: 16px 20px 0; flex-shrink: 0; }
   .title { font-size: 22px; color: var(--text); letter-spacing: 2px; }
 
   .inner { padding: 16px 20px 32px; flex: 1; overflow-y: auto; }

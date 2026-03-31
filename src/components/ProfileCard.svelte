@@ -53,7 +53,7 @@
             <span class="lcount">{$t('profile.lesson')} {lessonCount}/{LESSONS.length}</span>
             <span class="stars">{'★'.repeat(topStars)}{'☆'.repeat(Math.max(0, 3 - topStars))}</span>
           </div>
-          <div class="pbar"><div class="pfill" style="width:{(lessonCount/20)*100}%"></div></div>
+          <div class="pbar"><div class="pfill" style="width:{(lessonCount/LESSONS.length)*100}%"></div></div>
         </div>
       </button>
       <div class="card-actions">
@@ -92,8 +92,6 @@
   .stars { font-size:10px; color:#ffcc00; letter-spacing:1px; }
   .pbar { height:3px; background:var(--bg-sunken); border-radius:2px; margin-top:4px; overflow:hidden; }
   .pfill { height:100%; background:var(--pc,var(--accent-cyan)); border-radius:2px; }
-  .badge { font-family:monospace; font-size:10px; color:var(--pc,var(--accent-cyan)); white-space:nowrap; }
-
   /* Action buttons */
   .act { background:none; border:none; cursor:pointer; font-family:inherit; font-size:13px; padding:3px 6px; border-radius:3px; line-height:1; }
   .act--ok     { color:var(--accent-green); }

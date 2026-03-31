@@ -7,6 +7,7 @@
   import ProfileCard from '../components/ProfileCard.svelte'
   import PixelChick from '../components/PixelChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
+  import { exportProfiles, parseBackupFile } from '../utils/backup.js'
   import { onMount } from 'svelte'
 
   let screenEl
@@ -40,44 +41,21 @@
   }
 
   function handleExport() {
-    const data = {
-      version: 1,
-      exportedAt: Date.now(),
-      lang: get(lang),
-      profiles: get(profiles),
-    }
-    const json = JSON.stringify(data, null, 2)
-    const blob = new Blob([json], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `typtyptyp-backup-${new Date().toISOString().slice(0, 10)}.json`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    exportProfiles(get(profiles), get(lang))
   }
 
   function handleImportFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result)
-        if (!Array.isArray(data?.profiles)) throw new Error('invalid')
-        const valid = data.profiles.filter(p => p?.id && p?.name && p?.lessonProgress)
-        if (valid.length === 0) throw new Error('noProfiles')
-        pendingImport = valid
-        backupMsg = ''
-        backupMsgIsError = false
-      } catch (err) {
-        backupMsg = get(t)(err?.message === 'noProfiles' ? 'backup.noProfiles' : 'backup.error')
-        backupMsgIsError = true
-        pendingImport = null
-      }
-    }
-    reader.readAsText(file)
+    parseBackupFile(file).then(valid => {
+      pendingImport = valid
+      backupMsg = ''
+      backupMsgIsError = false
+    }).catch(err => {
+      backupMsg = get(t)(err?.message === 'noProfiles' ? 'backup.noProfiles' : 'backup.error')
+      backupMsgIsError = true
+      pendingImport = null
+    })
     e.target.value = ''
   }
 
@@ -234,9 +212,6 @@
   .home { max-width:820px; margin:0 auto; }
   .inner { padding:48px 48px 32px; }
   .logo { font-size:40px; font-weight:bold; letter-spacing:6px; text-align:center; margin-bottom:4px; }
-  .c1 { color:var(--accent-cyan);   text-shadow:0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
-  .c2 { color:var(--accent-green);  text-shadow:0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
-  .c3 { color:var(--accent-yellow); text-shadow:0 0 18px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
   .tagline { font-size:16px; color:var(--text); letter-spacing:4px; text-align:center; margin-bottom:32px; }
   .chick-wrap { display:flex; justify-content:center; margin-bottom:40px; }
   .section-label { font-size:16px; color:var(--text); letter-spacing:2px; margin-bottom:16px; }

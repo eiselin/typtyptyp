@@ -1,6 +1,6 @@
 <script>
   import { t } from './i18n/index.js'
-  import { screen, goTo } from './stores/screen.js'
+  import { screen } from './stores/screen.js'
   import { wipe, WIPE_MS } from './transitions.js'
   import HomeScreen         from './screens/HomeScreen.svelte'
   import LessonSelectScreen from './screens/LessonSelectScreen.svelte'
@@ -10,6 +10,17 @@
   import GameScreen         from './screens/GameScreen.svelte'
   import ProgressScreen     from './screens/ProgressScreen.svelte'
   import AboutScreen        from './screens/AboutScreen.svelte'
+
+  const SCREENS = {
+    home:     HomeScreen,
+    lessons:  LessonSelectScreen,
+    exercise: ExerciseScreen,
+    results:  ResultsScreen,
+    guide:    GuideScreen,
+    game:     GameScreen,
+    progress: ProgressScreen,
+    about:    AboutScreen,
+  }
 
   let storageOk = true
   try { localStorage.setItem('_t','1'); localStorage.removeItem('_t') } catch { storageOk = false }
@@ -21,39 +32,11 @@
   {/if}
 
   <div class="screens">
-    {#if $screen === 'home'}
+    {#key $screen}
       <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <HomeScreen />
+        <svelte:component this={SCREENS[$screen]} />
       </div>
-    {:else if $screen === 'lessons'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <LessonSelectScreen />
-      </div>
-    {:else if $screen === 'exercise'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <ExerciseScreen />
-      </div>
-    {:else if $screen === 'results'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <ResultsScreen />
-      </div>
-    {:else if $screen === 'guide'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <GuideScreen />
-      </div>
-    {:else if $screen === 'game'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <GameScreen />
-      </div>
-    {:else if $screen === 'progress'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <ProgressScreen />
-      </div>
-    {:else if $screen === 'about'}
-      <div class="sw" in:wipe={{delay:WIPE_MS}} out:wipe>
-        <AboutScreen />
-      </div>
-    {/if}
+    {/key}
   </div>
 </main>
 

@@ -4,7 +4,7 @@
   import { gameResults } from '../stores/game.js'
   import { LESSONS } from '../lessons/index.js'
   import { goTo, selectLesson, startArcade } from '../stores/screen.js'
-  import { getLeaderboard } from '../stores/leaderboard.js'
+  import { getLeaderboard } from '../utils/leaderboard.js'
   import PixelChick from '../components/PixelChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
 
@@ -140,7 +140,6 @@
   @keyframes c3 { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(80px) rotate(180deg);opacity:0} }
   @keyframes star-pop { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
 
-  .screen.results { max-width:480px; margin:0 auto; }
   .confetti-layer { position:absolute; top:0; left:0; right:0; height:110px; overflow:hidden; pointer-events:none; }
   .cp { position:absolute; top:0; width:6px; height:6px; border-radius:1px; }
   .inner { padding:24px 22px; text-align:center; }

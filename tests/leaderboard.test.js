@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect } from 'vitest'
-import { getLeaderboard, submitScore, clearLeaderboard } from '../src/stores/leaderboard.js'
+import { getLeaderboard, submitScore, clearLeaderboard } from '../src/utils/leaderboard.js'
 
 beforeEach(() => {
   localStorage.clear()

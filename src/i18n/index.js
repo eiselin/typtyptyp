@@ -14,7 +14,7 @@ function translate(key, vars = {}) {
   const strings = LANGUAGES[currentLang] ?? LANGUAGES.nl
   let str = strings[key] ?? key
   for (const [k, v] of Object.entries(vars)) {
-    str = str.replace(`{${k}}`, String(v).toUpperCase())
+    str = str.replaceAll(`{${k}}`, String(v))
   }
   return str
 }

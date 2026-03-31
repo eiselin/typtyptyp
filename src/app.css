@@ -18,6 +18,8 @@
   --accent-cyan:   #00ffee;
   --accent-green:  #00ff88;
   --accent-yellow: #ffcc00;
+  --accent-red:    #ff4455;
+  --accent-orange: #ff8844;
   --text:          #d8ccf0;
   --text-muted:    #b8aadf;
 
@@ -38,7 +40,7 @@ body {
   padding: 16px 8px;
 }
 
-/* Screen container: applied to each screen's root element */
+/* ── Screen container ── */
 .screen {
   background: var(--bg);
   border: 3px solid var(--accent-cyan);
@@ -51,20 +53,15 @@ body {
   max-width: 560px;
 }
 
-.screen.home {
-  width: min(605px, calc(100vw - 16px));
-  max-width: none;
-}
-
-.screen.game {
-  width: min(900px, calc(100vw - 16px));
-  max-width: none;
-}
-
-.screen.lessons {
-  width: min(760px, calc(100vw - 16px));
-  max-width: none;
-}
+/* Screen-specific widths — all size constraints in one place */
+.screen.home     { width: min(605px, calc(100vw - 16px)); max-width: none; }
+.screen.game     { width: min(900px, calc(100vw - 16px)); max-width: none; }
+.screen.lessons  { width: min(760px, calc(100vw - 16px)); max-width: none; margin: 0 auto; }
+.screen.exercise { max-width: 1400px; width: 100%; margin: 0 auto; position: relative; }
+.screen.results  { max-width: 480px; margin: 0 auto; }
+.screen.progress { max-width: 640px; margin: 0 auto; }
+.screen.guide    { max-width: 640px; margin: 0 auto; }
+.screen.about    { max-width: 640px; margin: 0 auto; }
 
 /* Scanline overlay on all .screen elements */
 .screen::after {
@@ -79,9 +76,39 @@ body {
   pointer-events: none;
 }
 
+/* ── Shared topbar layout ── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px 0;
+}
+
+/* ── Logo letter colours (used in HomeScreen and LessonSelectScreen) ── */
+.c1 { color: var(--accent-cyan);   text-shadow: 0 0 18px color-mix(in srgb, var(--accent-cyan)   60%, transparent); }
+.c2 { color: var(--accent-green);  text-shadow: 0 0 18px color-mix(in srgb, var(--accent-green)  60%, transparent); }
+.c3 { color: var(--accent-yellow); text-shadow: 0 0 18px color-mix(in srgb, var(--accent-yellow) 60%, transparent); }
+
+/* ── Buttons ── */
 button { font-family: inherit; cursor: pointer; border: none; }
 button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--accent-cyan), 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+}
+
+/* ── Back button — neon text style, used across all screens ── */
+.back-btn {
+  font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+  color: color-mix(in srgb, var(--accent-cyan) 60%, transparent);
+  background: transparent; border: none; padding: 4px 8px;
+  white-space: nowrap; cursor: pointer;
+  text-shadow: 0 0 5px color-mix(in srgb, var(--accent-cyan) 55%, transparent),
+               0 0 14px color-mix(in srgb, var(--accent-cyan) 28%, transparent);
+  transition: text-shadow 0.15s, color 0.15s;
+}
+.back-btn:hover, .back-btn:focus-visible {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
+               0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb, var(--accent-cyan) 70%, transparent);
 }
 .back-btn:focus-visible { outline: none; box-shadow: none; }

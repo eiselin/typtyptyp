@@ -31,16 +31,9 @@
     return '●'.repeat(stars) + '○'.repeat(3 - stars)
   }
 
-  const GROUPS = ['thuisrij','bovenrij','onderrij','zinnen']
+  const GROUPS = ['home', 'top', 'bottom', 'sentences']
 
-  const GROUP_IDS = {
-    thuisrij: 'home',
-    bovenrij: 'top',
-    onderrij: 'bottom',
-    zinnen:   'sentences',
-  }
-
-  const NO_GAME_GROUPS = new Set(['zinnen'])
+  const NO_GAME_GROUPS = new Set(['sentences'])
 </script>
 
 <svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('home'); else if (screenEl) arrowNav2D(e, screenEl) }} />
@@ -78,7 +71,6 @@
     {/if}
 
     {#each GROUPS as group}
-      {@const groupId = GROUP_IDS[group]}
       {@const groupLessons = LESSONS.filter(l => l.group === group)}
 
       <div class="group-lbl">{$t(`lessons.group.${group}`)}</div>
@@ -106,7 +98,7 @@
         {#if !NO_GAME_GROUPS.has(group)}
         <button
           class="game-tile game-tile--unlocked"
-          on:click={() => startArcade(groupId)}
+          on:click={() => startArcade(group)}
         >
           <div class="game-icon">▶▶</div>
           <div class="game-lbl">GAME</div>
@@ -118,31 +110,10 @@
 </div>
 
 <style>
-  .screen.lessons { margin: 0 auto; }
-
-  .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 22px 14px;
-  }
-  .back-btn {
-    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
-    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
-    padding: 4px 8px; white-space: nowrap; cursor: pointer; flex: 1; text-align: left;
-    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
-                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
-    transition: text-shadow 0.15s, color 0.15s;
-  }
-  .back-btn:hover, .back-btn:focus-visible {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
-                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
-  }
+  /* topbar override: bottom padding and back-btn layout */
+  .topbar { padding-bottom: 14px; }
+  .back-btn { flex: 1; text-align: left; }
   .title { font-size: 22px; font-weight: bold; letter-spacing: 3px; }
-  .c1 { color: var(--accent-cyan);   text-shadow: 0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
-  .c2 { color: var(--accent-green);  text-shadow: 0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
-  .c3 { color: var(--accent-yellow); text-shadow: 0 0 18px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
   .topbar-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; }
   .player-name {
     font-size: 17px; font-weight: bold; letter-spacing: 2px;

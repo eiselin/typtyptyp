@@ -17,6 +17,10 @@
   import { arrowNav } from '../utils/keyboard.js'
 
 
+  const SEQUENCE_LENGTH   = 200
+  const STAR_THRESHOLDS   = { three: 95, two: 80 }
+  const MIN_DURATION_MS   = 1000  // prevents division by zero in WPM calc
+
   let chick = $state()
   let modalEl = $state()
   let cancelBtn = $state()
@@ -44,13 +48,13 @@
 
   $effect(() => {
     if (lesson) {
-      if (lesson.group === 'zinnen') {
+      if (lesson.group === 'sentences') {
         const sentenceList = SENTENCE_LISTS[$lang] ?? SENTENCE_LISTS.nl
         const stories = sentenceList[String(lesson.id)] ?? []
         const idx = Math.floor(Math.random() * stories.length)
-        sequence = buildSentenceSequence(stories[idx] ?? [], 200)
+        sequence = buildSentenceSequence(stories[idx] ?? [], SEQUENCE_LENGTH)
       } else {
-        sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
+        sequence = buildExerciseSequence(learnedKeys, newKeys, SEQUENCE_LENGTH, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
       }
       cursor = 0; errors = 0; mistakeLog = []; keyLog = {}; startTime = null; scaleMeasured = false
     }
@@ -103,9 +107,9 @@
   function finish() {
     const total = sequence.replace(/ /g, '').length
     const acc   = Math.round(((total - errors) / total) * 100)
-    const mins  = Math.max((Date.now() - startTime) / 60000, 1/60)
+    const mins  = Math.max((Date.now() - startTime) / 60000, MIN_DURATION_MS / 60000)
     const wpm   = Math.round((sequence.length / 5) / mins)
-    const stars = acc >= 95 ? 3 : acc >= 80 ? 2 : 1
+    const stars = acc >= STAR_THRESHOLDS.three ? 3 : acc >= STAR_THRESHOLDS.two ? 2 : 1
     if ($activeProfile) {
       const mistakes = {}
       for (const { expected, typed } of mistakeLog) {
@@ -232,21 +236,7 @@
 </div>
 
 <style>
-  .screen.exercise { max-width:1400px; width:100%; margin:0 auto; position:relative; }
-  .topbar { display:flex; justify-content:space-between; align-items:center; padding:20px 36px 0; }
-  .back-btn {
-    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
-    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
-    padding: 4px 8px; white-space: nowrap; cursor: pointer;
-    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
-                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
-    transition: text-shadow 0.15s, color 0.15s;
-  }
-  .back-btn:hover, .back-btn:focus-visible {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
-                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
-  }
+  .topbar { padding: 20px 36px 0; }
   .lesson-lbl { font-size:19px; color:var(--text); letter-spacing:1px; }
   .inner { padding:18px 36px 30px; }
   .prog-row { display:flex; justify-content:space-between; font-size:16px; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; }

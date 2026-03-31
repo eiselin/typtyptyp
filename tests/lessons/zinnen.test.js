@@ -1,5 +1,5 @@
-import nlSentences from '../../src/lessons/zinnen/nl.json'
-import enSentences from '../../src/lessons/zinnen/en.json'
+import nlSentences from '../../src/lessons/sentences/nl.json'
+import enSentences from '../../src/lessons/sentences/en.json'
 
 describe('zinnen sentence files', () => {
   const LESSON_IDS = ['14', '15', '16', '17', '18']

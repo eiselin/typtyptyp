@@ -1,8 +1,8 @@
 import nlWords from './nl.json'
 import enWords from './en.json'
-import nlSentences from '../lessons/zinnen/nl.json'
-import enSentences from '../lessons/zinnen/en.json'
-import { getLearnedKeys } from '../lessons/index.js'
+import nlSentences from '../lessons/sentences/nl.json'
+import enSentences from '../lessons/sentences/en.json'
+import { getLearnedKeys, LESSONS as _LESSONS } from '../lessons/index.js'
 
 export const WORD_LISTS = { nl: nlWords, en: enWords }
 export const SENTENCE_LISTS = { nl: nlSentences, en: enSentences }
@@ -12,10 +12,6 @@ const POOL_THRESHOLD = 10
 export function getWordPool(learnedKeys, wordList = nlWords) {
   const keySet = new Set(learnedKeys.map(k => k.toLowerCase()))
   return wordList.filter(word => [...word].every(c => keySet.has(c)))
-}
-
-export function hasEnoughWords(learnedKeys, wordList = nlWords) {
-  return getWordPool(learnedKeys, wordList).length >= POOL_THRESHOLD
 }
 
 const PATTERNS = [
@@ -55,14 +51,19 @@ export function makeCycler(arr) {
   }
 }
 
+function resolveWordPool(learnedKeys, wordList) {
+  const pool = getWordPool(learnedKeys, wordList)
+  return pool.length >= POOL_THRESHOLD ? pool : generateNonsense(learnedKeys, 40)
+}
+
 export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 200, wordList = nlWords) {
   const pool = getWordPool(learnedKeys, wordList)
   const useWords = pool.length >= POOL_THRESHOLD
+  const allWords = resolveWordPool(learnedKeys, wordList)
 
-  let allWords, newKeyWords
+  let newKeyWords
 
   if (useWords) {
-    allWords = pool
     const newKeyList = newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k))
     if (newKeyList.length > 0) {
       // Build a balanced pool: each new key gets equal weight regardless of vocabulary size.
@@ -82,7 +83,6 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
       newKeyWords = []
     }
   } else {
-    allWords = generateNonsense(learnedKeys, 40)
     const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k)))
     newKeyWords = newKeySet.size > 0
       ? generateNonsense([...newKeySet, ...learnedKeys.filter(k => !newKeySet.has(k))].slice(0, 6), 20)
@@ -112,8 +112,10 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
   return result.join(' ')
 }
 
-// Maps arcade group IDs to the last lesson in that group (determines learned keys)
-const GROUP_LAST_LESSON = { home: 5, top: 10, bottom: 13 }
+// Maps each arcade group to the last lesson ID in that group (derived from LESSONS data)
+const GROUP_LAST_LESSON = Object.fromEntries(
+  ['home', 'top', 'bottom'].map(g => [g, Math.max(..._LESSONS.filter(l => l.group === g).map(l => l.id))])
+)
 
 /**
  * Returns a word cycler function for the given arcade group.
@@ -122,9 +124,7 @@ const GROUP_LAST_LESSON = { home: 5, top: 10, bottom: 13 }
 export function getArcadeWordCycler(groupId, wordList = nlWords) {
   const lastLesson = GROUP_LAST_LESSON[groupId] ?? 5
   const learnedKeys = getLearnedKeys(lastLesson)
-  const pool = getWordPool(learnedKeys, wordList)
-  const words = pool.length >= POOL_THRESHOLD ? pool : generateNonsense(learnedKeys, 40)
-  return makeCycler(words)
+  return makeCycler(resolveWordPool(learnedKeys, wordList))
 }
 
 export function buildSentenceSequence(sentences, targetLength = 200) {

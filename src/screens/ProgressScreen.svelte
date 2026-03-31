@@ -1,11 +1,12 @@
 <script>
   import { t } from '../i18n/index.js'
   import { activeProfile } from '../stores/profiles.js'
-  import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys, getRecommendedLesson, needsShift, getPhysicalKey, getShiftSide } from '../lessons/index.js'
+  import { FINGER_VARS, getFingerForKey, getLearnedKeys, needsShift, getPhysicalKey, getShiftSide } from '../lessons/index.js'
   import { selectLesson, goTo } from '../stores/screen.js'
   import { kbLayout } from '../keyboards/index.js'
   import ProfessorChick from '../components/ProfessorChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
+  import { keyState, getWorstKey, getPracticeLesson } from '../utils/progress.js'
 
   let screenEl
 
@@ -19,47 +20,14 @@
   $: completedCount = Object.values(progress).filter(lp => lp.stars > 0).length
   $: maxDoneLesson  = Math.max(0, ...Object.keys(progress).filter(id => (progress[id]?.stars ?? 0) > 0).map(Number))
   $: learnedKeys    = new Set(maxDoneLesson > 0 ? getLearnedKeys(maxDoneLesson) : [])
+  $: keyStats       = profile?.keyStats ?? {}
 
-  // Rolling window per key: boolean[] (true=correct), last 50 presses
-  $: keyStats = profile?.keyStats ?? {}
+  $: worstKey       = getWorstKey(keyStats, learnedKeys, lessonMistakes)
+  $: practiceLesson = getPracticeLesson(worstKey, profile)
 
-  function keyAccuracy(key) {
-    const results = keyStats[key]
-    if (!results || results.length < 5) return null  // not enough data
-    return results.reduce((s, v) => s + (v ? 1 : 0), 0) / results.length
+  function heatmapState(key) {
+    return keyState(keyStats, learnedKeys, PHYSICAL_TO_LOGICAL, key)
   }
-
-  function keyState(key) {
-    const logicalKeys = PHYSICAL_TO_LOGICAL[key] ?? [key]
-    if (!logicalKeys.some(k => learnedKeys.has(k))) return 'locked'
-    const allResults = logicalKeys.flatMap(k => keyStats[k] ?? [])
-    if (allResults.length < 5) return 'green'
-    const acc = allResults.filter(Boolean).length / allResults.length
-    if (acc >= 0.95) return 'green'
-    if (acc >= 0.80) return 'orange'
-    return 'red'
-  }
-
-  // Worst key: lowest accuracy (in rolling window) among unlocked keys with enough data
-  $: worstKey = (() => {
-    const candidates = Object.entries(keyStats)
-      .filter(([key]) => learnedKeys.has(key) ||
-        (key.length === 1 && key >= 'A' && key <= 'Z' && learnedKeys.has('shift') && learnedKeys.has(key.toLowerCase())))
-      .map(([key]) => ({ key, acc: keyAccuracy(key) }))
-      .filter(({ acc }) => acc !== null && acc < 1)
-      .sort((a, b) => a.acc - b.acc)
-    if (candidates.length === 0) return null
-    const { key } = candidates[0]
-    let topWrong = null, topCount = 0
-    for (const lessonData of Object.values(lessonMistakes)) {
-      if (lessonData[key]) {
-        for (const [typed, c] of Object.entries(lessonData[key])) {
-          if (c > topCount) { topWrong = typed; topCount = c }
-        }
-      }
-    }
-    return { key, topWrong }
-  })()
 
   $: openingMsg = (() => {
     if (completedCount === 0) return $t('progress.coach.noLessons')
@@ -94,23 +62,6 @@
       wrong: wrongLabel,
     })
   })()
-
-  $: practiceLesson = (() => {
-    if (!profile) return null
-    // If a specific key is struggling, recommend the lesson that introduced it
-    // so the tip and the practice button always point to the same problem
-    if (worstKey) {
-      const key = worstKey.key
-      const exactLesson = LESSONS.find(l => l.keys.includes(key))
-      if (exactLesson) return exactLesson
-      // Uppercase letters → recommend the shift lesson
-      if (key.length === 1 && key >= 'A' && key <= 'Z') {
-        const shiftLesson = LESSONS.find(l => l.keys.includes('shift'))
-        if (shiftLesson) return shiftLesson
-      }
-    }
-    return getRecommendedLesson(profile, LESSONS)
-  })()
 </script>
 
 <svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons'); else if (screenEl) arrowNav(e, screenEl) }} />
@@ -127,17 +78,17 @@
       {#each KEYBOARD_ROWS as row, ri}
         <div class="hmap-row" style="padding-left:{$kbLayout.rowStagger[ri] ?? 0}px">
           {#if ri === 3}
-            <div class="hmap-key hmap-key--shift hmap-key--{keyState('shift_l')}">SHIFT</div>
+            <div class="hmap-key hmap-key--shift hmap-key--{heatmapState('shift_l')}">SHIFT</div>
             {#if $kbLayout.isoExtraKey}
               <div class="hmap-key hmap-key--locked hmap-key--iso-extra">{$kbLayout.isoExtraKey.toUpperCase()}</div>
             {/if}
           {/if}
           {#each row as key}
-            {@const s = keyState(key)}
+            {@const s = heatmapState(key)}
             <div class="hmap-key hmap-key--{s}">{key.toUpperCase()}</div>
           {/each}
           {#if ri === 3}
-            <div class="hmap-key hmap-key--shift hmap-key--{keyState('shift_r')}">SHIFT</div>
+            <div class="hmap-key hmap-key--shift hmap-key--{heatmapState('shift_r')}">SHIFT</div>
           {/if}
         </div>
       {/each}
@@ -172,21 +123,6 @@
 </div>
 
 <style>
-  .screen.progress { max-width:640px; margin:0 auto; }
-  .topbar { display:flex; justify-content:space-between; align-items:center; padding:18px 22px 0; }
-  .back-btn {
-    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
-    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
-    padding: 4px 8px; white-space: nowrap; cursor: pointer;
-    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
-                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
-    transition: text-shadow 0.15s, color 0.15s;
-  }
-  .back-btn:hover, .back-btn:focus-visible {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
-                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
-  }
   .title { font-size:22px; color:var(--text); letter-spacing:3px; font-weight:bold; }
 
   .inner { padding:28px 28px 44px; }

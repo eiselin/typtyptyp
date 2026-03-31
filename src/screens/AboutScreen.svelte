@@ -24,22 +24,8 @@
 </div>
 
 <style>
-  .screen.about { max-width: 640px; margin: 0 auto; }
-
-  .topbar { position: relative; display: flex; align-items: center; padding: 18px 22px 0; }
-  .back-btn {
-    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
-    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
-    padding: 4px 8px; white-space: nowrap; cursor: pointer;
-    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
-                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
-    transition: text-shadow 0.15s, color 0.15s;
-  }
-  .back-btn:hover, .back-btn:focus-visible {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
-                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
-  }
+  /* topbar override: centered title needs position:relative, no space-between */
+  .topbar { position: relative; justify-content: flex-start; }
   .title { position: absolute; left: 50%; transform: translateX(-50%); font-size: 22px; color: var(--text); letter-spacing: 3px; font-weight: bold; pointer-events: none; }
   .spacer { flex: 1; }
 

@@ -12,8 +12,8 @@ describe('i18n', () => {
     expect(get(t)('nonexistent.key')).toBe('nonexistent.key')
   })
 
-  it('supports interpolation with uppercased value', () => {
-    expect(get(t)('home.continueAs', { name: 'Fleur' })).toBe('▶ VERDER ALS FLEUR')
+  it('supports interpolation', () => {
+    expect(get(t)('progress.coach.earlyStart', { count: 3 })).toContain('3')
   })
 
   it('guide keys exist in Dutch', () => {
