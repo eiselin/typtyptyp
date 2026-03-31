@@ -125,7 +125,7 @@
     <!-- Keyboard heatmap -->
     <div class="heatmap">
       {#each KEYBOARD_ROWS as row, ri}
-        <div class="hmap-row" style="padding-left:{ri === 2 ? 22 : ri === 3 ? 36 : 0}px">
+        <div class="hmap-row" style="padding-left:{$kbLayout.rowStagger[ri] ?? 0}px">
           {#if ri === 3}
             <div class="hmap-key hmap-key--shift hmap-key--{keyState('shift_l')}">SHIFT</div>
             {#if $kbLayout.isoExtraKey}
