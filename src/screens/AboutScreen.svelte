@@ -18,6 +18,7 @@
   <div class="inner">
     <p class="body-text">{$t('about.body1')}</p>
     <p class="body-text">{$t('about.body2')}</p>
+    <p class="body-text">{$t('about.body3')}</p>
     <p class="author">Nick Eiselin</p>
   </div>
 </div>
