@@ -70,8 +70,8 @@ export function getShiftSide(char) {
  * Returns the single recommended lesson for the given profile.
  * Steps (in order):
  *   1. No data yet → lessons[0]
- *   2. Lowest lesson with a struggling newly-introduced key (accuracy < 0.95, ≥5 presses)
- *   3. Lowest unplayed lesson (0 stars)
+ *   2. Lowest *completed* lesson with a struggling newly-introduced key (accuracy < 0.95, ≥5 presses)
+ *   3. First unplayed lesson after the progress frontier (never goes backwards past last completed)
  *   4. Lesson with lowest bestAccuracy (most room to improve)
  */
 export function getRecommendedLesson(profile, lessons) {
@@ -82,9 +82,18 @@ export function getRecommendedLesson(profile, lessons) {
   const hasKeyData = Object.values(keyStats).some(arr => Array.isArray(arr) && arr.length >= 5)
   if (!hasKeyData) return lessons[0]
 
+  // Find progress frontier: index of the furthest completed lesson
+  let lastCompletedIdx = -1
+  for (let i = 0; i < lessons.length; i++) {
+    if ((lessonProgress[lessons[i].id]?.stars ?? 0) >= 1) lastCompletedIdx = i
+  }
+
   // Step 2: Lowest lesson with a struggling key
+  // Skip unplayed lessons that come before the progress frontier (don't go backwards)
   for (let i = 0; i < lessons.length; i++) {
     const lesson = lessons[i]
+    const isUnplayed = (lessonProgress[lesson.id]?.stars ?? 0) === 0
+    if (isUnplayed && i < lastCompletedIdx) continue
     const prevId = i > 0 ? lessons[i - 1].id : 0
     const currentKeys = new Set(getLearnedKeys(lesson.id))
     const prevKeys = new Set(getLearnedKeys(prevId))
@@ -98,7 +107,11 @@ export function getRecommendedLesson(profile, lessons) {
     }
   }
 
-  // Step 3: First unplayed lesson
+  // Step 3: First unplayed lesson after the frontier (never suggest going backwards)
+  for (let i = lastCompletedIdx + 1; i < lessons.length; i++) {
+    if ((lessonProgress[lessons[i].id]?.stars ?? 0) === 0) return lessons[i]
+  }
+  // Fallback: any unplayed lesson (gap before frontier)
   for (const lesson of lessons) {
     if ((lessonProgress[lesson.id]?.stars ?? 0) === 0) return lesson
   }
