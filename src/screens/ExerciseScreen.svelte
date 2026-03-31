@@ -20,6 +20,7 @@
   let chick = $state()
   let modalEl = $state()
   let cancelBtn = $state()
+  let beginBtn = $state()
   let cursor = $state(0)
   let errors = $state(0)
   let mistakeLog = $state([])
@@ -29,6 +30,7 @@
   let introDismissedForLesson = $state(null)
   let showExitModal = $state(false)
   $effect(() => { if (showExitModal) tick().then(() => cancelBtn?.focus()) })
+  $effect(() => { if (showIntro) tick().then(() => beginBtn?.focus()) })
 
   const lesson      = $derived(LESSONS.find(l => l.id === $selectedLesson))
   const learnedKeys = $derived(lesson ? getLearnedKeys(lesson.id) : [])
@@ -66,7 +68,7 @@
     }
     if (showIntro) {
       if (e.key === 'Escape') { goTo('lessons'); return }
-      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); introDismissedForLesson = lesson.id }
+      if (scaleWrap) arrowNav(e, scaleWrap)
       return
     }
     if (!sequence || cursor >= sequence.length) return
@@ -186,7 +188,7 @@
           {/if}
         {/each}
       </div>
-      <button class="btn-begin" onclick={() => introDismissedForLesson = lesson.id}>{$t('exercise.begin')}</button>
+      <button class="btn-begin" bind:this={beginBtn} onclick={() => introDismissedForLesson = lesson.id}>{$t('exercise.begin')}</button>
     </div>
   {:else}
   <div class="inner" in:wipe={{delay:WIPE_MS}}>
@@ -232,7 +234,19 @@
 <style>
   .screen.exercise { max-width:1400px; width:100%; margin:0 auto; position:relative; }
   .topbar { display:flex; justify-content:space-between; align-items:center; padding:20px 36px 0; }
-  .back-btn { font-family:inherit; font-size:19px; color:var(--text); background:none; border:none; cursor:pointer; white-space:nowrap; }
+  .back-btn {
+    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
+    padding: 4px 8px; white-space: nowrap; cursor: pointer;
+    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
+                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
+    transition: text-shadow 0.15s, color 0.15s;
+  }
+  .back-btn:hover, .back-btn:focus-visible {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
+                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
+  }
   .lesson-lbl { font-size:19px; color:var(--text); letter-spacing:1px; }
   .inner { padding:18px 36px 30px; }
   .prog-row { display:flex; justify-content:space-between; font-size:16px; color:var(--text-muted); letter-spacing:1px; margin-bottom:8px; }
@@ -294,4 +308,5 @@
   .modal-btn--leave  { background:transparent; color:var(--accent-red,#ff4455); border-color:var(--accent-red,#ff4455); box-shadow:0 0 12px color-mix(in srgb,#ff4455 25%,transparent); opacity:0.55; }
   .modal-btn--leave:hover,
   .modal-btn--leave:focus-visible { background:color-mix(in srgb,#ff4455 15%,transparent); box-shadow:0 0 20px color-mix(in srgb,#ff4455 55%,transparent); opacity:1; }
+  .btn-begin:focus-visible { box-shadow: 0 0 6px var(--accent-cyan), 0 0 24px color-mix(in srgb,var(--accent-cyan) 60%,transparent); }
 </style>

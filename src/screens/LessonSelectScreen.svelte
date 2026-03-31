@@ -127,9 +127,17 @@
     padding: 18px 22px 14px;
   }
   .back-btn {
-    font-family: inherit; font-size: 19px; color: var(--text);
-    background: none; border: none; cursor: pointer; letter-spacing: 1px;
-    white-space: nowrap; text-align: left; flex: 1;
+    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
+    padding: 4px 8px; white-space: nowrap; cursor: pointer; flex: 1; text-align: left;
+    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
+                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
+    transition: text-shadow 0.15s, color 0.15s;
+  }
+  .back-btn:hover, .back-btn:focus-visible {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
+                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
   }
   .title { font-size: 22px; font-weight: bold; letter-spacing: 3px; }
   .c1 { color: var(--accent-cyan);   text-shadow: 0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
@@ -269,4 +277,11 @@
   }
   .game-icon { font-size: 17px; color: var(--accent-yellow); }
   .game-lbl  { font-size: 14px; letter-spacing: 1px; color: var(--accent-yellow); opacity: 0.7; }
+
+  .ltile--unplayed:focus-visible   { border-color: var(--accent-cyan);   box-shadow: 0 0 6px var(--accent-cyan),   0 0 20px color-mix(in srgb,var(--accent-cyan)   50%,transparent); }
+  .ltile--completed:focus-visible  { border-color: var(--accent-green);  box-shadow: 0 0 6px var(--accent-green),  0 0 20px color-mix(in srgb,var(--accent-green)  50%,transparent); }
+  .ltile--recommended:focus-visible{ border-color: var(--accent-yellow); box-shadow: 0 0 6px var(--accent-yellow), 0 0 24px color-mix(in srgb,var(--accent-yellow) 70%,transparent); }
+  .game-tile:focus-visible         { border-color: var(--accent-yellow); box-shadow: 0 0 6px var(--accent-yellow), 0 0 22px color-mix(in srgb,var(--accent-yellow) 55%,transparent); }
+  .guide-tile:focus-visible        { border-color: var(--accent-green);  box-shadow: 0 0 6px var(--accent-green),  0 0 20px color-mix(in srgb,var(--accent-green)  50%,transparent); }
+  .progress-tile:focus-visible     { border-color: var(--accent-cyan);   box-shadow: 0 0 6px var(--accent-cyan),   0 0 20px color-mix(in srgb,var(--accent-cyan)   50%,transparent); }
 </style>

@@ -174,7 +174,19 @@
 <style>
   .screen.progress { max-width:640px; margin:0 auto; }
   .topbar { display:flex; justify-content:space-between; align-items:center; padding:18px 22px 0; }
-  .back-btn { font-family:inherit; font-size:19px; color:var(--text); background:none; border:none; cursor:pointer; letter-spacing:1px; white-space:nowrap; }
+  .back-btn {
+    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
+    padding: 4px 8px; white-space: nowrap; cursor: pointer;
+    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
+                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
+    transition: text-shadow 0.15s, color 0.15s;
+  }
+  .back-btn:hover, .back-btn:focus-visible {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
+                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
+  }
   .title { font-size:22px; color:var(--text); letter-spacing:3px; font-weight:bold; }
 
   .inner { padding:28px 28px 44px; }
@@ -253,4 +265,5 @@
     box-shadow:0 0 24px color-mix(in srgb,var(--accent-green) 40%,transparent);
   }
   .practice-btn:hover { box-shadow:0 0 36px color-mix(in srgb,var(--accent-green) 60%,transparent); }
+  .practice-btn:focus-visible { box-shadow: 0 0 6px var(--accent-green), 0 0 28px color-mix(in srgb,var(--accent-green) 60%,transparent); }
 </style>

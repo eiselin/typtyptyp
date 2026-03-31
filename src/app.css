@@ -80,4 +80,8 @@ body {
 }
 
 button { font-family: inherit; cursor: pointer; border: none; }
-button:focus-visible { outline: none; }
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-cyan), 0 0 10px color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+}
+.back-btn:focus-visible { outline: none; box-shadow: none; }

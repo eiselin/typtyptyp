@@ -194,8 +194,8 @@
         </div>
       </div>
       <div class="actions-row">
-        <button class="backup-btn" tabindex="-1" on:click={() => showBackup = true}>{$t('home.backup')}</button>
-        <button class="about-btn" tabindex="-1" on:click={() => goTo('about')}>{$t('about.title')}</button>
+        <button class="backup-btn" on:click={() => showBackup = true}>{$t('home.backup')}</button>
+        <button class="about-btn" on:click={() => goTo('about')}>{$t('about.title')}</button>
       </div>
     </div>
 
@@ -249,7 +249,7 @@
   .btn-ok:hover { box-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
   .bottom-area { display:flex; flex-direction:column; gap:22px; margin-top:28px; }
   .selectors-row { display:flex; align-items:center; gap:24px; opacity:0.55; }
-  .selectors-row:hover { opacity:0.8; }
+  .selectors-row:hover, .selectors-row:focus-within { opacity:0.8; }
   .actions-row { display:flex; justify-content:space-between; align-items:center; }
   .settings-row { display:flex; align-items:center; gap:10px; }
   .settings-label { font-size:10px; color:var(--text-muted); letter-spacing:1px; white-space:nowrap; }
@@ -276,6 +276,7 @@
   .modal { position:relative; background:var(--bg-raised); border:2px solid var(--accent-cyan); border-radius:8px; padding:32px 28px 28px; max-width:480px; width:calc(100% - 48px); box-shadow:0 0 32px color-mix(in srgb,var(--accent-cyan) 25%,transparent); }
   .modal-close { position:absolute; top:12px; right:14px; background:none; border:none; cursor:pointer; font-size:18px; color:var(--text-muted); font-family:inherit; }
   .modal-close:hover { color:var(--text); }
+  .modal-close:focus-visible { outline:none; box-shadow:none; color:var(--text); text-shadow:0 0 8px var(--text-muted), 0 0 16px color-mix(in srgb,var(--text-muted) 50%,transparent); }
   .modal-title { font-size:20px; font-weight:bold; letter-spacing:3px; color:var(--accent-cyan); text-shadow:0 0 10px color-mix(in srgb,var(--accent-cyan) 50%,transparent); margin-bottom:20px; }
   .modal-desc { font-size:15px; color:var(--text-muted); line-height:1.6; margin:0 0 12px; }
   .modal-actions { display:flex; gap:10px; margin-bottom:8px; }
@@ -288,4 +289,15 @@
   .modal-msg { font-size:14px; margin:12px 0 0; letter-spacing:0.5px; }
   .modal-msg--error { color:#ff4455; }
   .modal-msg:not(.modal-msg--error) { color:var(--accent-green); }
+
+  .btn-start:focus-visible    { box-shadow: 0 0 6px var(--accent-green),  0 0 24px color-mix(in srgb,var(--accent-green)  60%,transparent); }
+  .about-btn:focus-visible    { box-shadow: 0 0 6px var(--accent-yellow), 0 0 20px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
+  .backup-btn:focus-visible   { box-shadow: 0 0 6px var(--accent-cyan),   0 0 20px color-mix(in srgb,var(--accent-cyan)   55%,transparent); }
+  .btn-ok:focus-visible       { box-shadow: 0 0 6px var(--accent-cyan),   0 0 20px color-mix(in srgb,var(--accent-cyan)   55%,transparent); }
+  .btn-save:focus-visible,
+  .btn-load:focus-visible,
+  .btn-confirm:focus-visible  { box-shadow: 0 0 6px var(--accent-cyan),   0 0 20px color-mix(in srgb,var(--accent-cyan)   55%,transparent); }
+  .btn-cancel:focus-visible   { box-shadow: 0 0 6px var(--text-muted),    0 0 16px color-mix(in srgb,var(--text-muted)    40%,transparent); }
+  .lang-btn:focus-visible     { border-color: var(--text); box-shadow: 0 0 6px var(--text-muted), 0 0 22px color-mix(in srgb,var(--text-muted) 70%,transparent); opacity: 1; }
+  .layout-btn:focus-visible   { border-color: var(--text); box-shadow: 0 0 6px var(--text-muted), 0 0 22px color-mix(in srgb,var(--text-muted) 70%,transparent); color: var(--text); }
 </style>

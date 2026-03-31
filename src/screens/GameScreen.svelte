@@ -13,7 +13,11 @@
 
   let pauseBoxEl = $state()
   let resumeBtn = $state()
+  let introEl = $state()
+  let introBtn = $state()
+  let gameScreenEl = $state()
   $effect(() => { if (gamePhase === 'paused') tick().then(() => resumeBtn?.focus()) })
+  $effect(() => { if (showIntro) tick().then(() => introBtn?.focus()) })
 
   // ── Constants ───────────────────────────────────────────────
   const NUM_LANES   = 5
@@ -183,8 +187,9 @@
 
   function handleKey(e) {
     if (e.key === 'Escape') { togglePause(); return }
-    if (showIntro) { if (e.key === ' ') { e.preventDefault(); showIntro = false } return }
+    if (showIntro) { if (introEl) arrowNav(e, introEl); return }
     if (gamePhase === 'paused') { if (pauseBoxEl) arrowNav(e, pauseBoxEl); return }
+    if (e.key === 'Tab' && gameScreenEl) { arrowNav(e, gameScreenEl); return }
     if (gamePhase !== 'playing') return
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return
 
@@ -310,7 +315,7 @@
 
 </script>
 
-<div class="screen game">
+<div class="screen game" bind:this={gameScreenEl}>
 
   <!-- HUD -->
   <div class="hud">
@@ -452,7 +457,7 @@
 
   <!-- Intro modal -->
   {#if showIntro}
-    <div class="intro-overlay">
+    <div class="intro-overlay" bind:this={introEl}>
       <div class="intro-box">
         <div class="intro-title">{$t('arcade.intro.title')}</div>
         <ul class="intro-steps">
@@ -460,7 +465,7 @@
           <li>{$t('arcade.intro.step2')}</li>
           <li>{$t('arcade.intro.step3')}</li>
         </ul>
-        <button class="intro-btn" on:click={() => showIntro = false}>
+        <button class="intro-btn" bind:this={introBtn} on:click={() => showIntro = false}>
           {$t('arcade.intro.start')}
         </button>
       </div>
@@ -662,14 +667,28 @@
   /* Pause button in HUD */
   .hud-btns { display: flex; flex-direction: column; gap: 5px; align-self: center; }
   .pause-btn {
-    font-size: 16px; font-weight: bold; font-family: monospace; letter-spacing: 1px;
-    color: var(--text-muted); background: var(--bg-raised);
-    border: 1px solid var(--border); border-radius: 3px;
+    font-size: 15px; font-weight: bold; font-family: monospace; letter-spacing: 2px;
+    color: color-mix(in srgb,var(--accent-cyan) 60%,transparent); background: transparent; border: none;
     padding: 4px 8px;
-    transition: color 0.15s, border-color 0.15s;
+    text-shadow: 0 0 5px color-mix(in srgb,var(--accent-cyan) 55%,transparent),
+                 0 0 14px color-mix(in srgb,var(--accent-cyan) 28%,transparent);
+    transition: text-shadow 0.15s, color 0.15s;
   }
-  .pause-btn:hover { color: var(--accent-cyan); border-color: var(--accent-cyan); }
-  .pause-btn--exit:hover { color: #ff4466; border-color: #ff4466; }
+  .pause-btn--exit {
+    color: color-mix(in srgb,#ff4466 60%,transparent);
+    text-shadow: 0 0 5px color-mix(in srgb,#ff4466 55%,transparent),
+                 0 0 14px color-mix(in srgb,#ff4466 28%,transparent);
+  }
+  .pause-btn:hover, .pause-btn:focus-visible {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 6px var(--accent-cyan), 0 0 16px var(--accent-cyan),
+                 0 0 32px var(--accent-cyan), 0 0 60px color-mix(in srgb,var(--accent-cyan) 70%,transparent);
+  }
+  .pause-btn--exit:hover, .pause-btn--exit:focus-visible {
+    color: #ff4466;
+    text-shadow: 0 0 6px #ff4466, 0 0 16px #ff4466,
+                 0 0 32px #ff4466, 0 0 60px color-mix(in srgb,#ff4466 70%,transparent);
+  }
 
   /* Pause overlay */
   .pause-overlay {
@@ -751,4 +770,8 @@
   }
   .intro-btn:hover { box-shadow: 0 0 28px var(--accent-cyan); transform: scale(1.04); }
   .intro-btn:active { transform: scale(0.97); }
+
+  .pause-action-btn--resume:focus-visible { box-shadow: 0 0 6px var(--accent-cyan), 0 0 24px color-mix(in srgb,var(--accent-cyan) 60%,transparent); }
+  .pause-action-btn--exit:focus-visible   { color: #ff4466; border-color: #ff4466; box-shadow: 0 0 6px #ff4466, 0 0 20px color-mix(in srgb,#ff4466 50%,transparent); }
+  .intro-btn:focus-visible                { box-shadow: 0 0 6px var(--accent-cyan), 0 0 28px color-mix(in srgb,var(--accent-cyan) 60%,transparent); }
 </style>

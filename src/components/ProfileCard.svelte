@@ -79,6 +79,8 @@
   .card-body { flex:1; background:none; border:none; cursor:pointer; font-family:inherit;
     display:flex; align-items:center; gap:10px; padding:10px 12px; text-align:left; }
   .card-body:focus-visible { outline: none; box-shadow: none; }
+  .card:focus-within { border-color: var(--pc, var(--accent-cyan)); box-shadow: 0 0 6px var(--pc, var(--accent-cyan)), 0 0 20px color-mix(in srgb, var(--pc, var(--accent-cyan)) 50%, transparent); }
+  .card--new:focus-visible { border-color: var(--text); color: var(--text); box-shadow: 0 0 6px var(--text-muted), 0 0 16px color-mix(in srgb, var(--text-muted) 40%, transparent); }
   .card-actions { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:6px 8px 6px 0; border-left: 1px solid var(--border); margin-left: 0; opacity:0; transition:opacity 0.15s; }
   .card:hover .card-actions { opacity:1; }
 

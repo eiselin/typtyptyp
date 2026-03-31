@@ -198,4 +198,8 @@
   .btn-next:hover { box-shadow:0 0 32px color-mix(in srgb,var(--accent-green) 65%,transparent); }
   .btn-lessons { width:100%; margin-top:8px; padding:11px; background:transparent; border:1px solid var(--border); border-radius:4px; font-size:16px; font-weight:bold; letter-spacing:2px; color:var(--text-muted); font-family:inherit; cursor:pointer; }
   .btn-lessons:hover { border-color:var(--text-muted); color:var(--text); }
+
+  .btn-next:focus-visible    { box-shadow: 0 0 6px var(--accent-green),  0 0 24px color-mix(in srgb,var(--accent-green)  65%,transparent); }
+  .btn-retry:focus-visible   { border-color:var(--accent-cyan); color:var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan), 0 0 20px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
+  .btn-lessons:focus-visible { border-color:var(--text-muted); color:var(--text); box-shadow: 0 0 6px var(--text-muted), 0 0 16px color-mix(in srgb,var(--text-muted) 40%,transparent); }
 </style>

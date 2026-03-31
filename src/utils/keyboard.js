@@ -12,14 +12,15 @@ function isEditableEl() {
 /**
  * Flat arrow-key navigation in reading order.
  * ArrowRight/Down = next; ArrowLeft/Up = previous.
+ * Tab/Shift+Tab follow the same pattern.
  */
 export function arrowNav(e, containerEl) {
-  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return
+  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) return
   if (isEditableEl()) return
   const buttons = navButtons(containerEl)
   if (buttons.length === 0) return
   const idx = buttons.indexOf(document.activeElement)
-  const forward = e.key === 'ArrowRight' || e.key === 'ArrowDown'
+  const forward = e.key === 'ArrowRight' || e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)
   const next = idx === -1
     ? (forward ? 0 : buttons.length - 1)
     : (forward ? (idx + 1) % buttons.length : (idx - 1 + buttons.length) % buttons.length)
@@ -31,16 +32,17 @@ export function arrowNav(e, containerEl) {
  * 2D arrow-key navigation using screen position.
  * Left/Right = previous/next in reading order.
  * Up/Down = nearest button in that direction, preferring closest horizontal position.
+ * Tab/Shift+Tab follow the same pattern as Left/Right.
  */
 export function arrowNav2D(e, containerEl) {
-  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return
+  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab'].includes(e.key)) return
   if (isEditableEl()) return
   const buttons = navButtons(containerEl)
   if (buttons.length === 0) return
   const idx = buttons.indexOf(document.activeElement)
 
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-    const forward = e.key === 'ArrowRight'
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Tab') {
+    const forward = e.key === 'ArrowRight' || (e.key === 'Tab' && !e.shiftKey)
     const next = idx === -1
       ? (forward ? 0 : buttons.length - 1)
       : (forward ? (idx + 1) % buttons.length : (idx - 1 + buttons.length) % buttons.length)
