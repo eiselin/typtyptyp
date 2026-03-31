@@ -1,96 +1,132 @@
 {
   "14": [
-    "Kuiken ziet een grote berg.",
-    "Jij typt als een echte held.",
-    "De zon schijnt op het bos.",
-    "Kuiken vindt een gouden sleutel.",
-    "Jij bent de snelste typist.",
-    "Het pad leidt naar het meer.",
-    "Kuiken springt over de stenen.",
-    "Elke dag word je beter.",
-    "De vogels zingen in de boom.",
-    "Kuiken draagt een rode rugzak.",
-    "Jij typt zonder te kijken.",
-    "Het avontuur wacht op jou.",
-    "Kuiken volgt het spoor in het zand.",
-    "Je vingers kennen de weg.",
-    "Kuiken bereikt de top van de heuvel.",
-    "Goed gedaan. Je bent geweldig.",
-    "Kuiken lacht en danst van vreugde.",
-    "Jij maakt Kuiken heel blij."
+    [
+      "Kuiken en zijn beste vriend Vos wonen in het Kleine Kippendorp.",
+      "Op een dag stuurt Professor Fazant een brief aan Kuiken.",
+      "De brief leidt naar het Gouden Eiland in het Grote Bos.",
+      "Kuiken vraagt Vos en Uil en Haas om mee te gaan.",
+      "Ze verzamelen bij de Grote Eik aan de rand van Kippendorp.",
+      "Het avontuur van Kuiken en zijn vrienden in het Grote Bos begint."
+    ],
+    [
+      "Kuiken wil de Hoge Berg in het Noorden beklimmen.",
+      "Zijn vriend Vos kent de weg naar de Top van de Hoge Berg.",
+      "Onderweg passeren ze het Dorp van Meester Das en zijn gezin.",
+      "Meester Das geeft Kuiken en Vos een warme maaltijd mee.",
+      "Bij het Grote Meer rusten ze bij Herberg De Veren Hoed.",
+      "Eindelijk bereiken Kuiken en Vos de Top van de Hoge Berg."
+    ],
+    [
+      "Kuiken en zijn hulpje Rex bouwen iets groots in de Werkplaats.",
+      "Rex is een robot van Professor Fazant en heel erg slim.",
+      "Rex kan lopen en praten en zelfs koken voor Kuiken en Vos.",
+      "De hele buurt van Kippendorp komt kijken naar Rex en Kuiken.",
+      "Professor Fazant is heel erg trots op het werk van Kuiken.",
+      "Rex en Kuiken en Vos en Professor Fazant vieren een groot feest."
+    ]
   ],
   "15": [
-    "Kuiken pakt zijn rugzak, zijn kaart en zijn kompas.",
-    "Jij typt snel, netjes en zonder fouten.",
-    "Het bos is stil, donker en diep.",
-    "Kuiken ziet een vos, een haas en een egel.",
-    "Links, rechts, links, rechts loopt Kuiken door het bos.",
-    "De rugzak is zwaar, maar Kuiken gaat door.",
-    "Jij bent slim, sterk en moedig.",
-    "Kuiken eet een appel, een peer en wat noten.",
-    "Het water is koud, helder en fris.",
-    "Kuiken kijkt omhoog, omlaag en om zich heen.",
-    "Jij typt met je vingers, niet met je ogen.",
-    "De weg is lang, maar het doel is dichtbij.",
-    "Kuiken stopt even, ademt diep in en gaat verder.",
-    "Jij bent goed bezig, echt waar.",
-    "De vogels, de bomen en de beekjes maken het bos mooi.",
-    "Kuiken is moe, maar hij geeft niet op."
+    [
+      "Kuiken pakt zijn kaart, zijn kompas, zijn zaklamp, zijn touw en zijn lantaarn.",
+      "Het bos is donker, nat, koud, stil en een beetje eng.",
+      "Kuiken ziet een uil, een vos, een das, een haas en een egel.",
+      "Hij eet een appel, een peer, een banaan, een noot en een koek.",
+      "De rugzak is groot, zwaar, bont, vol en toch heel handig.",
+      "Hij bereikt het kamp moe, nat, koud, blij en erg trots."
+    ],
+    [
+      "Op de markt liggen appels, peren, pruimen, kersen en aardbeien.",
+      "Kuiken koopt brood, kaas, boter, honing en een groot stuk vlees.",
+      "De koopman heeft rode, gele, groene, blauwe en paarse lappen.",
+      "Kuiken proeft de jam, de soep, de taart, de kaas en het gebak.",
+      "Hij koopt bloemen voor zijn moeder, zijn oma, zijn tante, zijn buurvrouw en zijn juf.",
+      "Blij, vol, tevreden, moe en gelukkig loopt Kuiken naar huis."
+    ],
+    [
+      "Kuiken haalt bloem, eieren, boter, suiker, melk en vanille.",
+      "Hij mengt alles rustig, zorgvuldig, langzaam, goed en fijn.",
+      "De taart heeft aardbeien, bananen, kersen, bessen en rozijnen erop.",
+      "Kuiken wacht, wacht, wacht, wacht en wacht nog een keer.",
+      "De taart is zoet, warm, goudbruin, luchtig en heerlijk lekker.",
+      "Kuiken deelt hem met vrienden, buren, de juf, de postman en zijn held."
+    ]
   ],
   "16": [
-    "Wat ziet Kuiken daar in de verte?",
-    "Jij typt zo snel! Wauw!",
-    "Waar leidt dit pad naartoe?",
-    "Er is een draak! Snel, rennen!",
-    "Hoe ver is het nog?",
-    "Jij hebt het gehaald! Gefeliciteerd!",
-    "Is dit het geheime pad?",
-    "Kuiken springt op en juicht van blijdschap!",
-    "Wat een prachtig uitzicht!",
-    "Ken jij de weg door het bos?",
-    "Kijk daar, een prachtige regenboog!",
-    "Hoe doe jij dat zo goed?",
-    "Is er iemand thuis?",
-    "Kuiken danst en springt van vreugde!",
-    "Wat een geweldig avontuur!",
-    "Kun jij sneller typen dan Kuiken?",
-    "Kuiken wint! Wat een held!",
-    "Wie heeft dit spoor achtergelaten?"
+    [
+      "Wat is dat? Hoor je dat? Kuiken schrikt! Help!",
+      "Is het een monster? Een draak? Een reus? Kuiken bibbert!",
+      "Rennen! Vluchten! Weg hier! Maar waarheen?",
+      "Kuiken springt op! Hij schreeuwt heel hard! De struiken bewegen!",
+      "Aha! Kijk dan! Het is maar een klein egel!",
+      "Wat een schrik! Wat een verrassing! Wat een grappig beestje!"
+    ],
+    [
+      "Wie typt het snelst? Jij? Kuiken? Of Vos?",
+      "Ben je er klaar voor? Zeker weten? Dan gaan we! Start!",
+      "Kuiken typt snel! Jij typt ook snel! Wie gaat het snelst?",
+      "Sneller! Harder! Niet stoppen! Doorpakken!",
+      "Wie wint er? Jij? Kuiken? Of zijn jullie gelijk?",
+      "Gelijkspel! Hoera! Jullie winnen allebei! Geweldig!"
+    ],
+    [
+      "Waar is de hoed? Weg! Verdwenen! Waar naartoe?",
+      "Vliegt hij links? Vliegt hij rechts? Of vliegt hij omhoog?",
+      "Pak hem! Grijp hem! Ren hem achterna! Snel!",
+      "Kuiken springt hoog! Hoger! Nog hoger! Hij raakt hem bijna!",
+      "Yes! Gelukt! De hoed is gered! Hoera!",
+      "Kuiken lacht! Vos lacht! Iedereen lacht! Wat een dag!"
+    ]
   ],
   "17": [
-    "Kuiken heeft drie dingen nodig: moed, kracht en geluk.",
-    "Jij typt goed; dat is zeker.",
-    "Kuiken zegt iets bijzonders: jij bent mijn held.",
-    "Het recept is simpel: oefen elke dag.",
-    "Kuiken pakt zijn spullen; hij is klaar voor het avontuur.",
-    "Er zijn twee paden: links naar het meer, rechts naar de berg.",
-    "Jij hebt alles wat nodig is: talent en inzet.",
-    "Kuiken fluistert: luister, hoor je dat?",
-    "De les van vandaag: nooit opgeven.",
-    "Kuiken is blij; het doel is bereikt.",
-    "Er zijn drie regels: wees snel, wees nauwkeurig en wees trots.",
-    "Jij typt zo goed; Kuiken is er trots op.",
-    "Kuiken denkt aan zijn vrienden: de vos, de eekhoorn en de uil.",
-    "Het geheim van goed typen: kijk niet naar je handen.",
-    "Kuiken rust even uit; morgen wacht een nieuw avontuur.",
-    "Jij bent al ver gekomen; ga zo door."
+    [
+      "Kuiken heeft een plan; Vos heeft een idee; Haas kent de weg.",
+      "Hij heeft echt alles nodig: een kaart; een schop; een kompas; een lantaarn.",
+      "Stap een: graven; stap twee: zoeken; stap drie: juichen.",
+      "Kuiken graaft hier; Vos graaft daar; Haas graaft ook; niemand geeft op.",
+      "Hij vindt iets glinsteren: een munt; hij roept: gevonden!",
+      "Zijn plan: geslaagd; zijn schat: gevonden; zijn gevoel: geweldig."
+    ],
+    [
+      "Kuiken schrijft een brief; hij denkt lang na; dan begint hij.",
+      "Onderwerp: een groot feest; datum: zaterdag; locatie: het bos.",
+      "Zijn gasten: de vos; de haas; de uil; de das; de eekhoorn.",
+      "De vos schrijft terug; de haas belt; de uil stuurt post; de das komt langs.",
+      "Kuiken noteert alles: ballonnen; taart; spelletjes; slingers; muziek.",
+      "Alles staat klaar: de tafel; de stoelen; de slingers; de taart."
+    ],
+    [
+      "Zijn recept heeft vier stappen: snijden; bakken; koken; proeven.",
+      "Het recept zegt: eerst de uien; dan de wortels; dan de aardappels.",
+      "Kuiken voegt toe: selderij; peterselie; zout; peper; laurierblad.",
+      "De soep pruttelt zacht; Kuiken roert; hij proeft; hij knikt tevreden.",
+      "Zijn oordeel: perfect; zijn gezicht: stralend; zijn soep: de lekkerste.",
+      "Kuiken glimlacht; zijn recept is geheim; zijn soep: de allerbeste; zijn dag: perfect."
+    ]
   ],
   "18": [
-    "Kuiken roept: \"Dit is het mooiste uitzicht ooit!\"",
-    "Het pad heet 'De Gouden Weg'.",
-    "Kuiken zegt: \"Ik ben zo trots op jou.\"",
-    "Het geheime wachtwoord is 'avontuur'.",
-    "\"Wauw,\" zegt Kuiken, \"jij bent echt geweldig!\"",
-    "Het dagboek van Kuiken begint met: 'Vandaag was een bijzondere dag'.",
-    "Kuiken fluistert: \"Luister, ik heb een geheim.\"",
-    "De naam van het bos is 'Het Donkere Woud'.",
-    "\"Ga zo door,\" zegt Kuiken, \"je bent bijna een meester.\"",
-    "Kuikens favoriete liedje heet 'Op naar de top'.",
-    "\"Ik kan het niet geloven,\" zegt Kuiken, \"jij typt als een professional!\"",
-    "Het schattenkistje heeft het opschrift: 'Open alleen als je klaar bent'.",
-    "Kuiken schrijft in zijn dagboek: 'Dit was de beste dag ooit'.",
-    "\"Snel, snel,\" roept Kuiken, \"het avontuur wacht!\"",
-    "De kaart zegt: 'Hier is de schat begraven'.",
-    "Kuiken glundert en zegt: \"Jij bent de beste typist van het land!\""
+    [
+      "Kuiken roept: \"Ik heb iets gevonden!\" Vos vraagt: \"Wat is 't?\"",
+      "\"Wat is het?\" vraagt Vos. \"Vertel het snel!\" roept Haas.",
+      "\"Een magische pen,\" fluistert Kuiken, \"hij maakt alles wat je schrijft waar.\"",
+      "Vos zegt: \"Schrijf 'taart'!\" Kuiken schrijft: 'taart'.",
+      "'t Is een wonder! Er ligt een taart! \"Ongelooflijk!\" roept Vos.",
+      "Kuiken schrijft: 'feest' en 'vrienden'; Vos juicht: \"Geweldig! 't Werkt!\""
+    ],
+    [
+      "'s Morgens pakt Kuiken zijn dagboek en schrijft: \"Vandaag ga ik op avontuur.\"",
+      "\"Eerst naar 't bos,\" schrijft hij, \"dan naar 't meer en 't kasteel.\"",
+      "In 't bos vindt hij een briefje: \"'t Is hier gevaarlijk! Ga terug!\"",
+      "Kuiken schrijft: \"Ik ga toch verder; 't avontuur wacht op mij.\"",
+      "'s Avonds schrijft hij: \"'t Was de beste dag van mijn leven.\"",
+      "'t Dagboek fluistert: \"Dit zijn jouw mooiste herinneringen, 't lieve kind.\""
+    ],
+    [
+      "Kuiken ziet een bordje: 'Het Huis van Woorden'; hij roept: \"Wow!\"",
+      "\"Wat een plek,\" fluistert Kuiken, \"'t Is magisch en heel bijzonder!\"",
+      "\"Dit boek,\" zegt de bieb, \"heet 'De Gouden Veer'; 't Is fantastisch.\"",
+      "Kuiken leest voor: \"'t Was eens een dag dat gouden veren vielen.\"",
+      "\"Dit is het beste boek ooit,\" zegt Kuiken; \"'t Is alsof ik er zelf bij ben.\"",
+      "'t Is zo stil in de bieb; Kuiken fluistert: \"Ik kom hier elke dag terug.\""
+    ]
   ]
 }

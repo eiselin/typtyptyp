@@ -1,18 +1,16 @@
 <script>
   import { t } from '../i18n/index.js'
   import { activeProfile } from '../stores/profiles.js'
-  import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys, getRecommendedLesson } from '../lessons/index.js'
+  import { LESSONS, FINGER_VARS, getFingerForKey, getLearnedKeys, getRecommendedLesson, needsShift, getPhysicalKey, getShiftSide } from '../lessons/index.js'
   import { selectLesson, goTo } from '../stores/screen.js'
+  import { kbLayout } from '../keyboards/index.js'
   import ProfessorChick from '../components/ProfessorChick.svelte'
   import { arrowNav } from '../utils/keyboard.js'
 
   let screenEl
 
-  const KEYBOARD_ROWS = [
-    ['q','w','e','r','t','y','u','i','o','p'],
-    ['a','s','d','f','g','h','j','k','l'],
-    ['z','x','c','v','b','n','m'],
-  ]
+  $: KEYBOARD_ROWS      = $kbLayout.rows
+  $: PHYSICAL_TO_LOGICAL = $kbLayout.physicalToLogical
 
   $: profile        = $activeProfile
   $: lessonMistakes = profile?.lessonMistakes ?? {}
@@ -32,9 +30,11 @@
   }
 
   function keyState(key) {
-    if (!learnedKeys.has(key)) return 'locked'
-    const acc = keyAccuracy(key)
-    if (acc === null) return 'green'   // unlocked, not enough data yet
+    const logicalKeys = PHYSICAL_TO_LOGICAL[key] ?? [key]
+    if (!logicalKeys.some(k => learnedKeys.has(k))) return 'locked'
+    const allResults = logicalKeys.flatMap(k => keyStats[k] ?? [])
+    if (allResults.length < 5) return 'green'
+    const acc = allResults.filter(Boolean).length / allResults.length
     if (acc >= 0.95) return 'green'
     if (acc >= 0.80) return 'orange'
     return 'red'
@@ -43,7 +43,8 @@
   // Worst key: lowest accuracy (in rolling window) among unlocked keys with enough data
   $: worstKey = (() => {
     const candidates = Object.entries(keyStats)
-      .filter(([key]) => learnedKeys.has(key))
+      .filter(([key]) => learnedKeys.has(key) ||
+        (key.length === 1 && key >= 'A' && key <= 'Z' && learnedKeys.has('shift') && learnedKeys.has(key.toLowerCase())))
       .map(([key]) => ({ key, acc: keyAccuracy(key) }))
       .filter(({ acc }) => acc !== null && acc < 1)
       .sort((a, b) => a.acc - b.acc)
@@ -72,14 +73,44 @@
     if (!worstKey) return $t('progress.coach.noTip')
     const finger = getFingerForKey(worstKey.key)
     const fingerName = finger ? $t(`finger.${finger}`) : ''
+    const wrongLabel = (!worstKey.topWrong || worstKey.topWrong === ' ') ? $t('keyboard.space') : worstKey.topWrong.toUpperCase()
+    if (needsShift(worstKey.key)) {
+      const shiftSide = getShiftSide(worstKey.key)
+      const shiftFingerId = shiftSide === 'shift_l' ? 'lp' : 'rp'
+      const isCapital = worstKey.key >= 'A' && worstKey.key <= 'Z'
+      const params = {
+        key: worstKey.key.toUpperCase(),
+        baseKey: worstKey.key.toUpperCase(),
+        finger: fingerName,
+        shiftFinger: $t(`finger.${shiftFingerId}`),
+        wrong: wrongLabel,
+      }
+      if (isCapital) return $t('progress.coach.tipCapital', params)
+      return $t('progress.coach.tipShift', { ...params, physKey: getPhysicalKey(worstKey.key).toUpperCase() })
+    }
     return $t('progress.coach.tip', {
       key: worstKey.key.toUpperCase(),
       finger: fingerName,
-      wrong: (!worstKey.topWrong || worstKey.topWrong === ' ') ? $t('keyboard.space') : worstKey.topWrong.toUpperCase(),
+      wrong: wrongLabel,
     })
   })()
 
-  $: practiceLesson = profile ? getRecommendedLesson(profile, LESSONS) : null
+  $: practiceLesson = (() => {
+    if (!profile) return null
+    // If a specific key is struggling, recommend the lesson that introduced it
+    // so the tip and the practice button always point to the same problem
+    if (worstKey) {
+      const key = worstKey.key
+      const exactLesson = LESSONS.find(l => l.keys.includes(key))
+      if (exactLesson) return exactLesson
+      // Uppercase letters → recommend the shift lesson
+      if (key.length === 1 && key >= 'A' && key <= 'Z') {
+        const shiftLesson = LESSONS.find(l => l.keys.includes('shift'))
+        if (shiftLesson) return shiftLesson
+      }
+    }
+    return getRecommendedLesson(profile, LESSONS)
+  })()
 </script>
 
 <svelte:window on:keydown={e => { if (e.key === 'Escape') goTo('lessons'); else if (screenEl) arrowNav(e, screenEl) }} />
@@ -94,11 +125,20 @@
     <!-- Keyboard heatmap -->
     <div class="heatmap">
       {#each KEYBOARD_ROWS as row, ri}
-        <div class="hmap-row" style="padding-left:{ri === 1 ? 22 : ri === 2 ? 44 : 0}px">
+        <div class="hmap-row" style="padding-left:{ri === 2 ? 22 : ri === 3 ? 36 : 0}px">
+          {#if ri === 3}
+            <div class="hmap-key hmap-key--shift hmap-key--{keyState('shift_l')}">SHIFT</div>
+            {#if $kbLayout.isoExtraKey}
+              <div class="hmap-key hmap-key--locked hmap-key--iso-extra">{$kbLayout.isoExtraKey.toUpperCase()}</div>
+            {/if}
+          {/if}
           {#each row as key}
             {@const s = keyState(key)}
             <div class="hmap-key hmap-key--{s}">{key.toUpperCase()}</div>
           {/each}
+          {#if ri === 3}
+            <div class="hmap-key hmap-key--shift hmap-key--{keyState('shift_r')}">SHIFT</div>
+          {/if}
         </div>
       {/each}
     </div>
@@ -125,7 +165,7 @@
 
     {#if practiceLesson}
       <button class="practice-btn" on:click={() => selectLesson(practiceLesson.id)}>
-        {$t('progress.coach.practice', { label: practiceLesson.group === 'volledig' ? $t('lessons.label.volledig') : practiceLesson.label })}
+        {$t('progress.coach.practice', { label: practiceLesson.label })}
       </button>
     {/if}
   </div>
@@ -148,6 +188,8 @@
     font-family:'Courier New',monospace; font-size:22px; font-weight:bold;
     border-radius:6px; border:2px solid;
   }
+  .hmap-key--shift { width:auto; min-width:60px; padding:0 10px; font-size:11px; letter-spacing:1px; }
+  .hmap-key--iso-extra { font-size:16px; }
   .hmap-key--locked  { color:var(--text-muted); border-color:var(--border); background:var(--bg-sunken); opacity:0.3; }
   .hmap-key--green   {
     color:var(--accent-green); border-color:var(--accent-green);

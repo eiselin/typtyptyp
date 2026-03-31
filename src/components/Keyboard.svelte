@@ -1,19 +1,12 @@
 <script>
-  import { FINGER_MAP, FINGER_VARS, needsShift, getPhysicalKey, getShiftSide } from '../lessons/index.js'
+  import { FINGER_MAP, FINGER_VARS, getPhysicalKey, getShiftSide } from '../lessons/index.js'
   import { t } from '../i18n/index.js'
+  import { kbLayout } from '../keyboards/index.js'
 
   export let activeKey = null
 
-  // Row stagger offsets (px) — matches real ANSI keyboard proportions
-  // Bottom row (index 3) gets no stagger because shift keys flank it
-  const ROW_STAGGER = [0, 22, 36, 0]
-
-  const ROWS = [
-    ['1','2','3','4','5','6','7','8','9','0'],
-    ['q','w','e','r','t','y','u','i','o','p'],
-    ['a','s','d','f','g','h','j','k','l',';'],
-    ['z','x','c','v','b','n','m',',','.',"'",'/',],
-  ]
+  $: ROWS       = $kbLayout.rows
+  $: ROW_STAGGER = $kbLayout.rowStagger
 
   function colour(key) {
     return FINGER_VARS[FINGER_MAP[key]] ?? 'var(--text-muted)'
@@ -36,9 +29,13 @@
       {#if ri === 3}
         <span
           class="key key--shift"
+          class:key--shift-wide={!$kbLayout.isoExtraKey}
           class:key--active={shiftSide === 'shift_l'}
           style="--kc:{shiftColourL}"
         >SHIFT</span>
+        {#if $kbLayout.isoExtraKey}
+          <span class="key key--iso-extra">{$kbLayout.isoExtraKey.toUpperCase()}</span>
+        {/if}
       {/if}
 
       {#each row as key}
@@ -117,5 +114,10 @@
   }
   .key--shift {
     width:auto; min-width:56px; padding:11px 10px; font-size:11px; letter-spacing:1px;
+  }
+  .key--shift-wide { min-width:104px; }
+  .key--iso-extra {
+    color:var(--text-muted); border-color:var(--border);
+    background:var(--bg-sunken); opacity:0.35; font-size:13px; text-shadow:none;
   }
 </style>

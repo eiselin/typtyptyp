@@ -63,10 +63,24 @@ export function buildExerciseSequence(learnedKeys, newKeys = [], targetLength = 
 
   if (useWords) {
     allWords = pool
-    const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k)))
-    newKeyWords = newKeySet.size > 0
-      ? pool.filter(w => [...w].some(c => newKeySet.has(c)))
-      : []
+    const newKeyList = newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k))
+    if (newKeyList.length > 0) {
+      // Build a balanced pool: each new key gets equal weight regardless of vocabulary size.
+      // This prevents rare-letter keys (e.g. x) from being crowded out by common-letter keys.
+      const perKey = newKeyList.map(k => pool.filter(w => w.includes(k))).filter(a => a.length > 0)
+      if (perKey.length > 0) {
+        const maxLen = Math.max(...perKey.map(a => a.length))
+        newKeyWords = perKey.flatMap(keyWords => {
+          const repeated = []
+          while (repeated.length < maxLen) repeated.push(...keyWords)
+          return repeated.slice(0, maxLen)
+        })
+      } else {
+        newKeyWords = []
+      }
+    } else {
+      newKeyWords = []
+    }
   } else {
     allWords = generateNonsense(learnedKeys, 40)
     const newKeySet = new Set(newKeys.map(k => k.toLowerCase()).filter(k => /^[a-z]$/.test(k)))

@@ -1,4 +1,4 @@
-import { getWordPool, generateNonsense, buildExerciseSequence } from '../../src/words/index.js'
+import { getWordPool, generateNonsense, buildExerciseSequence, buildSentenceSequence, SENTENCE_LISTS } from '../../src/words/index.js'
 
 describe('getWordPool', () => {
   it('returns only words that use keys from the provided set', () => {
@@ -55,5 +55,55 @@ describe('buildExerciseSequence', () => {
     for (const char of seq) {
       expect([...keys, ' ']).toContain(char)
     }
+  })
+})
+
+describe('buildSentenceSequence', () => {
+  const sentences = [
+    'Chick finds a key.',
+    'You are amazing.',
+    'The forest is dark.',
+    'Chick runs fast.',
+  ]
+
+  it('returns a string', () => {
+    expect(typeof buildSentenceSequence(sentences, 200)).toBe('string')
+  })
+
+  it('result length is at least targetLength characters', () => {
+    const result = buildSentenceSequence(sentences, 200)
+    expect(result.length).toBeGreaterThanOrEqual(200)
+  })
+
+  it('does not add extra punctuation between sentences', () => {
+    const result = buildSentenceSequence(sentences, 50)
+    // Sentences joined by single space; no double periods or added commas
+    expect(result).not.toMatch(/\.\s*\./)
+  })
+
+  it('works when sentences array is shorter than target (wraps)', () => {
+    const short = ['Hello.', 'Hi.']
+    const result = buildSentenceSequence(short, 200)
+    expect(result.length).toBeGreaterThanOrEqual(200)
+  })
+
+  it('works with a single sentence (wraps)', () => {
+    const result = buildSentenceSequence(['One sentence.'], 50)
+    expect(result.length).toBeGreaterThanOrEqual(50)
+  })
+})
+
+describe('SENTENCE_LISTS', () => {
+  it('exports nl and en keys', () => {
+    expect(SENTENCE_LISTS).toHaveProperty('nl')
+    expect(SENTENCE_LISTS).toHaveProperty('en')
+  })
+
+  it('nl[14] is an array of strings', () => {
+    expect(Array.isArray(SENTENCE_LISTS.nl['14'])).toBe(true)
+  })
+
+  it('en[18] is an array of strings', () => {
+    expect(Array.isArray(SENTENCE_LISTS.en['18'])).toBe(true)
   })
 })

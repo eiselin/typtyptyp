@@ -1,6 +1,7 @@
 <script>
   import { get } from 'svelte/store'
   import { t, setLanguage, lang } from '../i18n/index.js'
+  import { kbLayout, setKbLayout } from '../keyboards/index.js'
   import { profiles, activeProfile, createProfile, selectProfile, mergeProfiles } from '../stores/profiles.js'
   import { goTo } from '../stores/screen.js'
   import ProfileCard from '../components/ProfileCard.svelte'
@@ -142,31 +143,60 @@
       {$t('nav.start')}
     </button>
 
-    <div class="bottom-row">
-      <div class="lang-row">
-      <button class="lang-btn" class:lang-btn--on={$lang === 'nl'} on:click={() => setLanguage('nl')}>
-        <svg width="24" height="16" viewBox="0 0 9 6" style="image-rendering:pixelated;display:block">
-          <rect width="9" height="2" fill="#AE1C28"/>
-          <rect y="2" width="9" height="2" fill="#fff"/>
-          <rect y="4" width="9" height="2" fill="#21468B"/>
-        </svg>
-      </button>
-      <button class="lang-btn" class:lang-btn--on={$lang === 'en'} on:click={() => setLanguage('en')}>
-        <svg width="28" height="16" viewBox="0 0 20 12" style="display:block">
-          <rect width="20" height="12" fill="#012169"/>
-          <polygon points="0,0 2.5,0 20,10.5 20,12 17.5,12 0,1.5" fill="#fff"/>
-          <polygon points="20,0 17.5,0 0,10.5 0,12 2.5,12 20,1.5" fill="#fff"/>
-          <line x1="0" y1="0" x2="20" y2="12" stroke="#C8102E" stroke-width="1.2"/>
-          <line x1="20" y1="0" x2="0" y2="12" stroke="#C8102E" stroke-width="1.2"/>
-          <rect x="8" width="4" height="12" fill="#fff"/>
-          <rect y="4" width="20" height="4" fill="#fff"/>
-          <rect x="9" width="2" height="12" fill="#C8102E"/>
-          <rect y="5" width="20" height="2" fill="#C8102E"/>
-        </svg>
-      </button>
-    </div>
-      <button class="backup-btn" tabindex="-1" on:click={() => showBackup = true}>{$t('home.backup')}</button>
-      <button class="about-btn" tabindex="-1" on:click={() => goTo('about')}>{$t('about.title')}</button>
+    <div class="bottom-area">
+      <div class="selectors-row">
+        <div class="settings-row">
+          <span class="settings-label">{$t('home.language')}</span>
+          <div class="lang-row">
+            <button class="lang-btn" class:lang-btn--on={$lang === 'nl'} on:click={() => setLanguage('nl')}>
+              <svg width="24" height="16" viewBox="0 0 9 6" style="image-rendering:pixelated;display:block">
+                <rect width="9" height="2" fill="#AE1C28"/>
+                <rect y="2" width="9" height="2" fill="#fff"/>
+                <rect y="4" width="9" height="2" fill="#21468B"/>
+              </svg>
+            </button>
+            <button class="lang-btn" class:lang-btn--on={$lang === 'en'} on:click={() => setLanguage('en')}>
+              <svg width="28" height="16" viewBox="0 0 20 12" style="display:block">
+                <rect width="20" height="12" fill="#012169"/>
+                <polygon points="0,0 2.5,0 20,10.5 20,12 17.5,12 0,1.5" fill="#fff"/>
+                <polygon points="20,0 17.5,0 0,10.5 0,12 2.5,12 20,1.5" fill="#fff"/>
+                <line x1="0" y1="0" x2="20" y2="12" stroke="#C8102E" stroke-width="1.2"/>
+                <line x1="20" y1="0" x2="0" y2="12" stroke="#C8102E" stroke-width="1.2"/>
+                <rect x="8" width="4" height="12" fill="#fff"/>
+                <rect y="4" width="20" height="4" fill="#fff"/>
+                <rect x="9" width="2" height="12" fill="#C8102E"/>
+                <rect y="5" width="20" height="2" fill="#C8102E"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">{$t('home.keyboard')}</span>
+          <div class="layout-row">
+            <button class="layout-btn" class:layout-btn--on={$kbLayout.id === 'us'} on:click={() => setKbLayout('us')}>
+              <svg width="44" height="10" viewBox="0 0 44 10" fill="none" style="display:block">
+                <rect x="0.5" y="0.5" width="20" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                <rect x="23" y="0.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                <rect x="33" y="0.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+              </svg>
+              <span>US</span>
+            </button>
+            <button class="layout-btn" class:layout-btn--on={$kbLayout.id === 'nl'} on:click={() => setKbLayout('nl')}>
+              <svg width="44" height="10" viewBox="0 0 44 10" fill="none" style="display:block">
+                <rect x="0.5" y="0.5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                <rect x="15.5" y="0.5" width="5" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                <rect x="23" y="0.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+                <rect x="33" y="0.5" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1"/>
+              </svg>
+              <span>NL</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="actions-row">
+        <button class="backup-btn" tabindex="-1" on:click={() => showBackup = true}>{$t('home.backup')}</button>
+        <button class="about-btn" tabindex="-1" on:click={() => goTo('about')}>{$t('about.title')}</button>
+      </div>
     </div>
 
     {#if showBackup}
@@ -202,7 +232,7 @@
 
 <style>
   .home { max-width:820px; margin:0 auto; }
-  .inner { padding:48px 48px 56px; }
+  .inner { padding:48px 48px 32px; }
   .logo { font-size:40px; font-weight:bold; letter-spacing:6px; text-align:center; margin-bottom:4px; }
   .c1 { color:var(--accent-cyan);   text-shadow:0 0 18px color-mix(in srgb,var(--accent-cyan)   60%,transparent); }
   .c2 { color:var(--accent-green);  text-shadow:0 0 18px color-mix(in srgb,var(--accent-green)  60%,transparent); }
@@ -217,9 +247,21 @@
   .err { font-size:16px; color:#ff4455; }
   .btn-ok { background:var(--accent-cyan); color:var(--bg); border-radius:4px; padding:12px 18px; font-weight:bold; font-size:18px; letter-spacing:1px; }
   .btn-ok:hover { box-shadow:0 0 14px color-mix(in srgb,var(--accent-cyan) 50%,transparent); }
-  .bottom-row { display:flex; align-items:center; justify-content:space-between; margin-top:28px; }
-  .lang-row { display:flex; gap:8px; opacity:0.55; }
-  .lang-row:hover { opacity:0.75; }
+  .bottom-area { display:flex; flex-direction:column; gap:22px; margin-top:28px; }
+  .selectors-row { display:flex; align-items:center; gap:24px; opacity:0.55; }
+  .selectors-row:hover { opacity:0.8; }
+  .actions-row { display:flex; justify-content:space-between; align-items:center; }
+  .settings-row { display:flex; align-items:center; gap:10px; }
+  .settings-label { font-size:10px; color:var(--text-muted); letter-spacing:1px; white-space:nowrap; }
+  .lang-row { display:flex; gap:8px; }
+  .layout-row { display:flex; gap:6px; }
+  .layout-btn {
+    background:none; border:2px solid transparent; border-radius:4px;
+    padding:4px 6px; cursor:pointer; font-family:inherit; font-size:10px;
+    color:var(--text-muted); letter-spacing:1px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+  }
+  .layout-btn--on { border-color:var(--text-muted); color:var(--text); }
   .about-btn { background:none; border:1px solid var(--accent-yellow); border-radius:4px; cursor:pointer; font-family:inherit; font-size:13px; color:var(--accent-yellow); letter-spacing:1px; padding:5px 10px; text-shadow:0 0 8px color-mix(in srgb,var(--accent-yellow) 70%,transparent); box-shadow:0 0 8px color-mix(in srgb,var(--accent-yellow) 30%,transparent); }
   .about-btn:hover { text-shadow:0 0 12px var(--accent-yellow); box-shadow:0 0 16px color-mix(in srgb,var(--accent-yellow) 60%,transparent); }
   .lang-btn { background:none; border:2px solid transparent; border-radius:4px; padding:4px; cursor:pointer; display:flex; align-items:center; transition:opacity 0.15s; }

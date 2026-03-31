@@ -44,8 +44,9 @@
     if (lesson) {
       if (lesson.group === 'zinnen') {
         const sentenceList = SENTENCE_LISTS[$lang] ?? SENTENCE_LISTS.nl
-        const sentences = sentenceList[String(lesson.id)] ?? []
-        sequence = buildSentenceSequence(sentences, 200)
+        const stories = sentenceList[String(lesson.id)] ?? []
+        const idx = Math.floor(Math.random() * stories.length)
+        sequence = buildSentenceSequence(stories[idx] ?? [], 200)
       } else {
         sequence = buildExerciseSequence(learnedKeys, newKeys, 200, WORD_LISTS[$lang] ?? WORD_LISTS.nl)
       }
